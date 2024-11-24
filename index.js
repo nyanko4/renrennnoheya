@@ -100,13 +100,25 @@ const quizList = [
   { question: "日本の首都はどこ？", answer: "東京" },
   { question: "推しの子主題歌である「アイドル」のアーティストは誰？", answer: "YOASOBI" },
   { question: "3 + 5 = ？", answer: "8" },
-  { question: "1時間は何分？", answer: "60" },
-  { question: "青い果物は何？", answer: ["チョッパー", "トニートニー・チョッパー"] }
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "ホロライブを運営している会社はどこ？", answer: ["cover", "COVER", "カバー"] },
+  { question: "日本の元号で、平成の前は何ですか？", answer: "昭和" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
 ];
 
 async function startQuiz(body, message, messageId, roomId, fromAccountId) {
   if (quizzes[roomId]) {
-    await sendchatwork(`[room:${roomId}] 現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
+    await sendchatwork(`現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
     return;
   }
 
