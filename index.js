@@ -99,10 +99,10 @@ let quizzes = {};
 
 const quizList = [
   { question: "日本の首都はどこ？", answer: "東京" },
-  { question: "水の化学式は何？", answer: "H2O" },
-  { question: "3 + 5 は何？", answer: "8" },
+  { question: "推しの子主題歌である「アイドル」のアーティストは誰？", answer: "YOASOBI" },
+  { question: "3 + 5 = ？", answer: "8" },
   { question: "1時間は何分？", answer: "60" },
-  { question: "青い果物は何？", answer: "ブルーベリー" }
+  { question: "青い果物は何？", answer: ["チョッパー", "トニートニー・チョッパー"] }
 ];
 
 async function startQuiz(body, message, messageId, roomId, fromAccountId) {
@@ -113,8 +113,9 @@ async function startQuiz(body, message, messageId, roomId, fromAccountId) {
 
   const quiz = quizList[Math.floor(Math.random() * quizList.length)];
   quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
-
-  await sendchatwork(`クイズを開始します！\n問題: [info]${quiz.question}[/info]`, roomId);
+  await sendchatwork(`クイズを開始します！(5秒後にクイズが表示されます)`, roomId);
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  await sendchatwork(`問題: [info]${quiz.question}[/info]`, roomId);
 }
 
 app.post("/quiz", async (req, res) => {
@@ -130,10 +131,16 @@ app.post("/quiz", async (req, res) => {
   const currentQuiz = quizzes[roomId];
   const answer = message.trim();
 
-  if (answer.toLowerCase() === currentQuiz.answer.toLowerCase()) {
-    await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
-
-    delete quizzes[roomId];
-  } 
+  if (Array.isArray(currentQuiz.answer)) {
+    if (currentQuiz.answer.some(ans => ans.toLowerCase() === answer.toLowerCase())) {
+      await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
+      delete quizzes[roomId];
+    }
+  } else {
+    if (answer.toLowerCase() === currentQuiz.answer.toLowerCase()) {
+      await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
+      delete quizzes[roomId];
+    }
+  }
   res.sendStatus(200);
 });
