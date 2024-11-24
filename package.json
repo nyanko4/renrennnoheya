@@ -1,27 +1,34 @@
 {
-  "name": "glitch-hello-node",
-  "version": "0.1.0",
-  "description": "A simple Node app built on fastify, instantly up and running. Built to be remixed on Glitch.com.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "name": "わかめtube",
+  "version": "2.6.8",
+  "main": "index.js",
+  "license": "CC-BY-4.0",
   "dependencies": {
-    "fastify": "^4.21.0",
-    "handlebars": "^4.7.8",
-    "@fastify/formbody": "^7.4.0",
-    "@fastify/static": "^6.10.2",
-    "@fastify/view": "^8.0.0"
+    "express": "^4.17.1",
+    "axios": "latest",
+    "body-parser": "^2.0.2"
   },
+  "description": "わかめ",
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/glitch-hello-node"
+    "type": "git",
+    "url": "https://glitch.com/~wakame02m"
   },
-  "license": "MIT",
+  "author": "wakame",
+  "private": false,
+  "bugs": {
+    "url": "https://wakame02m.glitch.me/send",
+    "email": "23h11008@gmail.com"
+  },
+  "homepage": "https://wakame02m.glitch.me",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "keywords": [
-    "node",
-    "glitch"
+    "和布"
   ]
 }
