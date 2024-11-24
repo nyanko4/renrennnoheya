@@ -55,7 +55,7 @@ app.post("/webhook", async (req, res) => {
       roomId
     );
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何かご用でしょうか？使い方が分からない場合[info][code][To:9905801]和歌botさん /help/[/code][/info]と入力してみて下さい。`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何かご用でしょうか？使い方が分からない場合[info][code][To:9905801]和歌botさん /help/[/code][/info]と入力、もしくは僕のプロフィールを見て下さい。`, roomId);
   }
   
   res.sendStatus(200);
@@ -97,30 +97,48 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 //クイズ
 let quizzes = {};
 
-// Webhookエンドポイント
+// クイズリスト（例）
+const quizList = [
+  { question: "日本の首都はどこ？", answer: "東京" },
+  { question: "水の化学式は何？", answer: "H2O" },
+  { question: "3 + 5 は何？", answer: "8" },
+  { question: "1時間は何分？", answer: "60" },
+  { question: "青い果物は何？", answer: "ブルーベリー" }
+];
+
+// クイズを開始する関数
+async function startQuiz(body, message, messageId, roomId, fromAccountId) {
+  // クイズが既に開催中の場合
+  if (quizzes[roomId]) {
+    await sendchatwork(`現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
+    return;
+  }
+
+  // ランダムにクイズを選択
+  const quiz = quizList[Math.floor(Math.random() * quizList.length)];
+  quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
+
+  // クイズを開始
+  await sendchatwork(`[room:${roomId}] クイズを開始します！\n問題: ${quiz.question}`, roomId);
+}
+
 app.post("/quiz", async (req, res) => {
-  const message = req.body.webhook_event.body; // 送信されたメッセージ内容
-  const messageId = req.body.webhook_event.message_id; // メッセージID
-  const roomId = req.body.webhook_event.room_id; // ルームID
-  const fromAccountId = req.body.webhook_event.from_account_id; // メッセージを送ったユーザーのID
-  
-  // まずルームIDでクイズが開催中かを確認
+  const message = req.body.webhook_event.body;
+  const messageId = req.body.webhook_event.message_id;
+  const roomId = req.body.webhook_event.room_id;
+  const fromAccountId = req.body.webhook_event.from_account_id;
+
   if (!quizzes[roomId]) {
     console.log(`Room ${roomId} ではクイズが開催されていません。`);
     return res.sendStatus(200);
   }
-  
-  const currentQuiz = quizzes[roomId]; // 開催中のクイズ情報を取得
-  
-  // メッセージから答えを抽出（前処理、不要なら省略可能）
+
+  const currentQuiz = quizzes[roomId];
   const answer = message.trim();
 
-  // 答えが正しいかをチェック
   if (answer.toLowerCase() === currentQuiz.answer.toLowerCase()) {
-    // 正解の場合、正解メッセージを送信
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}] ${fromAccountId}さん、正解です！🎉`, roomId);
-    
-    // クイズ終了：そのルームのクイズデータを削除
+
     delete quizzes[roomId];
   } else {
     console.log(`Room ${roomId}: ${fromAccountId} の答え "${answer}" は不正解です。`);
@@ -128,15 +146,3 @@ app.post("/quiz", async (req, res) => {
 
   res.sendStatus(200);
 });
-
-// クイズを開始する関数（例）
-async function startQuiz(roomId, question, answer) {
-  if (quizzes[roomId]) {
-    await sendchatwork(`[room:${roomId}] 現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
-    return;
-  }
-
-  // クイズを開始
-  quizzes[roomId] = { question, answer };
-  await sendchatwork(`[room:${roomId}] クイズを開始します！\n問題: ${question}`, roomId);
-}
