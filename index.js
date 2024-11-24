@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const PORT = 3000;
 
+app.use(bodyParser.json());
+
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 
 const commands = {
@@ -16,18 +18,10 @@ app.get('/', (req, res) => {
 });
 
 app.post("/webhook", async (req, res) => {
-  const message = req.body.webhook_event.body;
+  const fromAccountId = req.body.webhook_event.from_account_id;
+  const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
-  const senderName = req.body.webhook_event.account_name;
-  console.log(req.body)
-
-  const command = extractCommand(message);
-
-  if (commands[command]) {
-    await commands[command](message, messageId, senderName);
-  } else {
-    await sendchatwork(`ごめんなさい、「${command}」というコマンドはわかりません。`, messageId);
-  }
+  const message = req.body.webhook_event.body;  
   res.sendStatus(200);
 });
 
