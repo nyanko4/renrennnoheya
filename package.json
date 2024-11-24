@@ -6,7 +6,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "axios": "latest",
-    "body-parser": "^2.0.2"
+    "body-parser": "^2.0.2",
+    "compression": "^1.7.4"
   },
   "description": "わかめ",
   "engines": {

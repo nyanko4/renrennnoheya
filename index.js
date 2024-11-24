@@ -1,8 +1,29 @@
+"use strict";
 const express = require("express");
+let app = express();
+const cluster = require("cluster");
+const os = require("os");
+const compression = require("compression");
+const numClusters = os.cpus().length;
+if (cluster.isMaster) {
+  for (let i = 0; i < numClusters; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker, code, signal) => {
+    cluster.fork();
+  });
+} else {
+  app.use(compression());
+  app.use(express.static(__dirname + "/public"));
+  app.set("view engine", "ejs");
+  app.listen(3000, () => {
+    console.log(`Worker ${process.pid} started`);
+  });
+}
+
 const axios = require('axios');
 const bodyParser = require("body-parser");
 
-const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
@@ -10,7 +31,7 @@ app.use(bodyParser.json());
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 //コマンドリスト
 const commands = {
-  "/help": wakamehelp,
+  "help": wakamehelp,
 };
 
 app.get('/', (req, res) => {
@@ -29,7 +50,7 @@ app.post("/webhook", async (req, res) => {
     await commands[command](body, message, messageId, roomId, fromAccountId);
   } else if (command) {
     await sendchatwork(
-      `[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何そのコマンド。ボク、知らないよ (｡∀゜)`,
+      `[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
       roomId
     );
   } else {
@@ -66,6 +87,13 @@ function getCommand(body) {
 
 
 //Help
+async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
+  await sendchatwork(
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n
+     [/info]`,
+    roomId
+  );
+}
 
 
 
