@@ -89,7 +89,7 @@ function getCommand(body) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。[/info]`,
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。[/info]`,
     roomId
   );
 }
@@ -167,18 +167,18 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
 
   if (match) {
     const videoId = match[1];
-    console.log("動画ID:", videoId);
 
     try {
       const response = await axios.get(`https://wataamee.glitch.me/api/${videoId}?token=wakameoishi`);
       const videoData = response.data;
-      console.log(videoData);
-
+      const streamurl = videoData.stream_url;
+      await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${streamurl}`, roomId);
+      
     } catch (error) {
       console.error("APIリクエストエラー:", error);
-      await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]`, roomId);
+      await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nえらー。あらら。時間をおいてもう一度お試し下さい。ー`, roomId);
     }
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}] URLが無効です。正しいYouTubeのURLを入力してください。`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nURLが無効です。正しいYouTubeのURLを入力してください。`, roomId);
   }
 }
