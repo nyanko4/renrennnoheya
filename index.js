@@ -32,7 +32,8 @@ const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 //コマンドリスト
 const commands = {
   "help": wakamehelp,
-  "quiz": startQuiz
+  "quiz": startQuiz,
+  "youtube": getwakametube
 };
 
 app.get('/', (req, res) => {
@@ -155,3 +156,28 @@ app.post("/quiz", async (req, res) => {
   }
   res.sendStatus(200);
 });
+
+
+//youtube
+const YOUTUBE_URL = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w\-]+)/;
+
+async function getwakametube(body, message, messageId, roomId, fromAccountId) {
+  const ms = message.replace(/\s+/g, "");
+  const match = message.match(YOUTUBE_URL_REGEX);
+  
+  if (match) {
+  const videoId = match[1];
+  console.log("動画ID:", videoId);
+} else {
+  await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}] URLが無効です。正しいYouTubeのURLを入力して下さい。`, roomId);
+}
+
+  try {
+        const response = await axios.get(`https://wataamee.glitch.me/api/${videoId}?token=wakameoishi`);
+        const videoData = response.data;
+        console.log(videoData);
+
+        
+  } catch (error) {
+  }
+};
