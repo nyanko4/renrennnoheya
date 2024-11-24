@@ -26,15 +26,23 @@ app.post("/webhook", async (req, res) => {
   
   const command = getCommand(message);
   if (command && commands[command]) {
-    // コマンドが有効なら対応する処理を実行
     await commands[command](roomId, fromAccountId);
   } else if (command) {
-    // 未定義のコマンドへの応答
-    await sendMessageToRoom(roomId, `[To:${fromAccountId}] そのコマンドはわかりません... 😅`);
+    await sendchatwork(
+      `[rp aid=${fromAccountId} to=${roomId}-${messageId}] コマンド「${command}」は認識されませんでした。🙇‍♂️` +
+      "\n利用可能なコマンドを確認するには、[info][To:9905801]和歌botさん /help/[/info] と入力してください。",
+      roomId
+    );
+  } else {
+    await sendchatwork(
+　     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}] 何かご用でしょうか？使い方が分からない場合[info][To:9905801]和歌botさん /help/[/info]と入力してみて下さい。`, roomId);
+      roomId
+    );
   }
   
   res.sendStatus(200);
 });
+
 
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
