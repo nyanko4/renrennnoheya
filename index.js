@@ -95,7 +95,7 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 }
 
 //クイズ
-let currentQuiz = null;
+let quizzes = {};
 
 const quizList = [
   { question: "日本の首都はどこ？", answer: "東京" },
@@ -105,34 +105,35 @@ const quizList = [
   { question: "青い果物は何？", answer: "ブルーベリー" }
 ];
 
-async function startQuiz() {
-  if (currentQuiz) {
-    console.log("現在クイズが開催中です。");
+async function startQuiz(body, message, messageId, roomId, fromAccountId) {
+  if (quizzes[roomId]) {
+    await sendchatwork(`[room:${roomId}] 現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
     return;
   }
 
-  currentQuiz = quizList[Math.floor(Math.random() * quizList.length)];
+  const quiz = quizList[Math.floor(Math.random() * quizList.length)];
+  quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
 
-  console.log(`クイズを開始します！\n問題: ${currentQuiz.question}`);
+  await sendchatwork(`クイズを開始します！\n問題: [info]${quiz.question}[/info]`, roomId);
 }
 
 app.post("/quiz", async (req, res) => {
-  const message = req.body.webhook_event.body;
-  const fromAccountId = req.body.webhook_event.from_account_id;
+  const message = req.body.webhook_event.body; 
+  const messageId = req.body.webhook_event.message_id;
+  const roomId = req.body.webhook_event.room_id;
+  const AccountId = req.body.webhook_event.account_id;
 
-  if (!currentQuiz) {
-    console.log("現在クイズは開催されていません。");
+  if (!quizzes[roomId]) {
     return res.sendStatus(200);
   }
 
+  const currentQuiz = quizzes[roomId];
   const answer = message.trim();
 
   if (answer.toLowerCase() === currentQuiz.answer.toLowerCase()) {
-    console.log(`${fromAccountId}さん、正解です！🎉`);
-    currentQuiz = null;
-  } else {
-    console.log(`${fromAccountId}さん、不正解！`);
-  }
+    await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
 
+    delete quizzes[roomId];
+  } 
   res.sendStatus(200);
 });
