@@ -32,6 +32,7 @@ const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 //コマンドリスト
 const commands = {
   "help": wakamehelp,
+  "quiz": wakamequiz
 };
 
 app.get('/', (req, res) => {
@@ -84,8 +85,6 @@ function getCommand(body) {
   return match ? match[1] : null;
 }
 
-
-
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
@@ -95,8 +94,53 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   );
 }
 
+//クイズ
+const quizzes = [
+  { question: "地球の最大の海は？", answer: "太平洋" },
+  { question: "日本の首都はどこですか？", answer: "東京" },
+  { question: "日本で最も高い山は？", answer: "富士山" },
+];
+const getRandomQuiz = () => {
+  const randomIndex = Math.floor(Math.random() * quizzes.length);
+  return quizzes[randomIndex];
+};
+let quizzesInProgress = {};
+async function wakamequiz(body, message, messageId, roomId, fromAccountId) {
+  const quiz = getRandomQuiz();
+  const question = quiz.question;
+  const answer = quiz.answer;
+  quizzesInProgress[messageId] = {
+    question: question,
+    answer: answer,
+    isAnswered: false,
+    correctUser: null,
+  };
 
+  await sendchatwork(`クイズ！\n${question}`, messageId);
 
-app.listen(PORT, () => {
-  console.log(`ボットがポート${PORT}で待機中...`);
-});
+  setTimeout(() => {
+    if (!quizzesInProgress[messageId].isAnswered) {
+      sendchatwork("クイズ終了！誰も正解しませんでした。", messageId);
+      delete quizzesInProgress[messageId];
+    }
+  }, 5 * 60 * 1000);
+
+  app.post("/webhook", (req, res) => {
+    const userMessage = req.body.webhook_event.body;
+    const userName = req.body.webhook_event.account_name;
+
+    if (quizzesInProgress[messageId]) {
+      const currentQuiz = quizzesInProgress[messageId];
+
+      if (userMessage.includes(currentQuiz.answer) && !currentQuiz.isAnswered) {
+        quizzesInProgress[messageId].isAnswered = true;
+        quizzesInProgress[messageId].correctUser = userName;
+
+        sendchatwork(`${userName}さん、正解！`, messageId);
+        delete quizzesInProgress[messageId];
+      }
+    }
+
+    res.sendStatus(200);
+  });
+}
