@@ -21,7 +21,18 @@ app.post("/webhook", async (req, res) => {
   const fromAccountId = req.body.webhook_event.from_account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
-  const message = req.body.webhook_event.body;  
+  const body = req.body.webhook_event.body;  
+  const message = body.replace(/\[To:\d+\]和歌botさん/, "");
+  
+  const command = getCommand(message);
+  if (command && commands[command]) {
+    // コマンドが有効なら対応する処理を実行
+    await commands[command](roomId, fromAccountId);
+  } else if (command) {
+    // 未定義のコマンドへの応答
+    await sendMessageToRoom(roomId, `[To:${fromAccountId}] そのコマンドはわかりません... 😅`);
+  }
+  
   res.sendStatus(200);
 });
 
@@ -43,9 +54,10 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   }
 }
 
-function extractCommand(message) {
-  const parts = message.split(" ");
-  return parts[1];
+function getCommand(body) {
+  const pattern = /\/(.*?)\//;
+  const match = body.match(pattern);
+  return match ? match[1] : null;
 }
 
 
