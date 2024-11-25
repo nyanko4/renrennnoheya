@@ -22,16 +22,14 @@ if (cluster.isMaster) {
 }
 
 const axios = require('axios');
+const fetch = require('axios');
 const bodyParser = require("body-parser");
-const fetch = require('node-fetch');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const PORT = 3000;
 
 app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
 
 //コマンドリスト
 const commands = {
