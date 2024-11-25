@@ -29,7 +29,7 @@ const PORT = 3000;
 app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
-const geminiapiKey = 'process.env.GEMINI_API';
+
 //コマンドリスト
 const commands = {
   "help": wakamehelp,
@@ -92,7 +92,7 @@ function getCommand(body) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。[/info]`,
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n\bokaro/\nボカロの歌詞クイズが楽しめます。[/info]`,
     roomId
   );
 }
@@ -240,8 +240,7 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
 
 //gemini
 async function generateAI(body, message, messageId, roomId, fromAccountId) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiapiKey}`;
-
+  const geminiapiUrl = process.env.GEMINI_API;
   const data = {
     contents: [
       {
@@ -255,17 +254,18 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
   };
 
   try {
-    const response = await axios.post(url, data, {
+    const response = await axios.post(geminiapiUrl, data, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
+    console.log(response);
 
     const aiResponse = response.data?.contents?.[0]?.parts?.[0]?.text || "エラーが発生しました。";
 
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${aiResponse}`, roomId);
   } catch (error) {
     console.error('Error:', error.response ? error.response.data : error.message);
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。APIキーを確認してください。`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。`, roomId);
   }
 }
