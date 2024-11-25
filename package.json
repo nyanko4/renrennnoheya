@@ -7,7 +7,9 @@
     "express": "^4.17.1",
     "axios": "latest",
     "body-parser": "^2.0.2",
-    "compression": "^1.7.4"
+    "compression": "^1.7.4",
+    "@google/generative-ai": "^0.21.0",
+    "node-fetch": "^2.7.0"
   },
   "description": "わかめ",
   "engines": {
