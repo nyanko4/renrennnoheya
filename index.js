@@ -51,6 +51,10 @@ app.post("/webhook", async (req, res) => {
   const body = req.body.webhook_event.body;  
   const message = body.replace(/\[To:\d+\]和歌botさん|\/.*?\//g, "");
   
+  if (message === body) {
+    return res.sendStatus(200);
+  }
+  
   const command = getCommand(body);
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, fromAccountId);
