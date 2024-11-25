@@ -29,12 +29,14 @@ const PORT = 3000;
 app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
+const geminiapiKey = 'process.env.GEMINI_API';
 //コマンドリスト
 const commands = {
   "help": wakamehelp,
   "quiz": startQuiz,
   "youtube": getwakametube,
-  "bokaro": startbQuiz
+  "bokaro": startbQuiz,
+  "ai": generateAI
 };
 
 app.get('/', (req, res) => {
@@ -48,7 +50,7 @@ app.post("/webhook", async (req, res) => {
   const body = req.body.webhook_event.body;  
   const message = body.replace(/\[To:\d+\]和歌botさん/, "");
   
-  const command = getCommand(message);
+  const command = getCommand(body);
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, fromAccountId);
   } else if (command) {
@@ -98,7 +100,7 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 //クイズ
 let quizzes = {};
 
-const additionalQuizList = [
+const quizList = [
   { question: "インターネットのURLで「https://」は何を意味しますか？", answer: ["セキュア", "安全"] },
   { question: "一週間のうち、英語で「Wednesday」は何曜日？", answer: "水曜日" },
   { question: "動物の中で最も速く走る陸上動物は？", answer: "チーター" },
@@ -232,5 +234,35 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
     }
   } else {
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nURLが無効です。正しいYouTubeのURLを入力してください。`, roomId);
+  }
+}
+
+
+//gemini
+async function generateAI(body, message, messageId, roomId, fromAccountId) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiapiKey}`;
+
+  const data = {
+    contents: [
+      {
+        parts: [
+          {
+            text: "Explain how AI works"
+          }
+        ]
+      }
+    ]
+  };
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('AI Response:', response.data);
+  } catch (error) {
+    console.error('Error:', error.response ? error.response.data : error.message);
   }
 }
