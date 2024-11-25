@@ -39,7 +39,8 @@ const commands = {
   "bokaro": startbQuiz,
   "ai": generateAI,
   "endquiz": endquiz,
-  "say": say
+  "say": say,
+  "eval": run
 };
 
 app.get('/', (req, res) => {
@@ -51,7 +52,7 @@ app.post("/webhook", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;  
-  const message = body.replace(/\[To:\d+\]和歌さん|\/.*?\//g, "");
+  const message = body.replace(/\[To:\d+\]和歌さん|\/.*?\/|\s+/g, "");
   
   if (message === body) {
     return res.sendStatus(200);
@@ -99,7 +100,7 @@ function getCommand(body) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます(ベータ版)。[/info]`,
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます。\n/eval/\njavascriptのコードの評価値を返します。[/info]`,
     roomId
   );
 }
@@ -295,4 +296,8 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
 
 async function say(body, message, messageId, roomId, fromAccountId) {
     sendchatwork(message, roomId);
+}
+
+async function run (body, message, messageId, roomId, fromAccountId) {
+    sendchatwork(eval(message), roomId);
 }
