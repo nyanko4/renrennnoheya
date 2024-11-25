@@ -107,7 +107,6 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 let quizzes = {};
 
 const quizList = [
-  { question: "インターネットのURLで「https://」は何を意味しますか？", answer: ["セキュア", "安全"] },
   { question: "一週間のうち、英語で「Wednesday」は何曜日？", answer: "水曜日" },
   { question: "動物の中で最も速く走る陸上動物は？", answer: "チーター" },
   { question: "夜空に光る星々の中で一番明るい星の名前は？", answer: ["シリウス", "シリウス星"] },
