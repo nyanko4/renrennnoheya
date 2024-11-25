@@ -294,6 +294,5 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
 }
 
 async function say(body, message, messageId, roomId, fromAccountId) {
-    const rmsg = body.match(/[^\/say\/]/g);
-    sendchatwork(rmsg[2], roomId);
+    sendchatwork(message, roomId);
 }
