@@ -48,7 +48,7 @@ app.post("/webhook", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;  
-  const message = body.replace(/\[To:\d+\]和歌botさん/, "");
+  const message = body.replace(/\[To:\d+\]和歌botさん|\/.*?\//g, "");
   
   const command = getCommand(body);
   if (command && commands[command]) {
@@ -247,7 +247,7 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
       {
         parts: [
           {
-            text: "Explain how AI works"
+            text: message
           }
         ]
       }
@@ -261,8 +261,11 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
       }
     });
 
-    console.log('AI Response:', response.data);
+    const aiResponse = response.data?.contents?.[0]?.parts?.[0]?.text || "エラーが発生しました。";
+
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${aiResponse}`, roomId);
   } catch (error) {
     console.error('Error:', error.response ? error.response.data : error.message);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。APIキーを確認してください。`, roomId);
   }
 }
