@@ -37,7 +37,8 @@ const commands = {
   "quiz": startQuiz,
   "youtube": getwakametube,
   "bokaro": startbQuiz,
-  "ai": generateAI
+  "ai": generateAI,
+  "endquiz": endquiz
 };
 
 app.get('/', (req, res) => {
@@ -214,6 +215,18 @@ async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(`ボカロクイズを開始します！歌詞の一部が表示されるので、曲のタイトルを正しく入力して下さい。(5秒後に表示されます)`, roomId);
   await new Promise(resolve => setTimeout(resolve, 5000));
   await sendchatwork(`問題: [info]${bokaro.question}[/info]`, roomId);
+}
+
+//クイズ終わり
+async function endquiz(body, message, messageId, roomId, fromAccountId) {
+  if (!quizzes[roomId]) {
+    await sendchatwork(`現在クイズは開催されていません。`, roomId);
+    return;
+  }
+  const currentQuiz = quizzes[roomId];
+  
+  await sendchatwork(`クイズ終了！答えは: [info]${currentQuiz.answer}[/info]です。`, roomId);
+  delete quizzes[roomId];
 }
 
 
