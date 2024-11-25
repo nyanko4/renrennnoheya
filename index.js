@@ -33,7 +33,8 @@ const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const commands = {
   "help": wakamehelp,
   "quiz": startQuiz,
-  "youtube": getwakametube
+  "youtube": getwakametube,
+  "bokaro": startbQuiz
 };
 
 app.get('/', (req, res) => {
@@ -156,6 +157,41 @@ app.post("/quiz", async (req, res) => {
   }
   res.sendStatus(200);
 });
+
+
+//ボカロ
+const bquizList = [
+  { question: "ここに居る理由が欲しかっただけ", answer: "くうになる" },
+  { question: "食べてすぐ寝る前に飲む\n起きてまた寝る前に飲む", answer: "可不ェイン" },
+  { question: "3 + 5 = ？", answer: "8" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "ホロライブを運営している会社はどこ？", answer: ["cover", "COVER", "カバー"] },
+  { question: "日本の元号で、平成の前は何ですか？", answer: "昭和" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+];
+
+async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
+  if (quizzes[roomId]) {
+    await sendchatwork(`現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
+    return;
+  }
+
+  const quiz = quizList[Math.floor(Math.random() * bquizList.length)];
+  quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
+  await sendchatwork(`ボカロクイズを開始します！歌詞の一部が表示されるので、曲のタイトルを正しく入力して下さい。(5秒後に表示されます)`, roomId);
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  await sendchatwork(`問題: [info]${quiz.question}[/info]`, roomId);
+}
 
 
 //youtube
