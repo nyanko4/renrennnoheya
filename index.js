@@ -50,7 +50,7 @@ app.post("/webhook", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;  
-  const message = body.replace(/\[To:\d+\]和歌botさん|\/.*?\//g, "");
+  const message = body.replace(/\[To:\d+\]和歌さん|\/.*?\//g, "");
   
   if (message === body) {
     return res.sendStatus(200);
@@ -65,7 +65,7 @@ app.post("/webhook", async (req, res) => {
       roomId
     );
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何かご用でしょうか？使い方が分からない場合[info][code][To:9905801]和歌botさん /help/[/code][/info]と入力、もしくは僕のプロフィールを見て下さい。`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何かご用でしょうか？使い方が分からない場合[info][code][To:9908250]和歌さん /help/[/code][/info]と入力、もしくは僕のプロフィールを見て下さい。`, roomId);
   }
   
   res.sendStatus(200);
