@@ -285,7 +285,8 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
     );
 
     const responseContent = response.data.candidates[0].content;
-    const responseParts = responseContent.parts.map((part) => part.text).join("\n");
+    let responseParts = responseContent.parts.map((part) => part.text).join("\n");
+    responseParts = responseParts.replace(/\*/g, "");
 
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${responseParts}`, roomId);
   } catch (error) {
