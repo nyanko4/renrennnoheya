@@ -22,7 +22,6 @@ if (cluster.isMaster) {
 }
 
 const axios = require('axios');
-const fetch = require('axios');
 const bodyParser = require("body-parser");
 
 const PORT = 3000;
@@ -30,6 +29,7 @@ const PORT = 3000;
 app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
+const geminiAPIKey = process.env.GEMINI_API;
 
 //コマンドリスト
 const commands = {
@@ -238,21 +238,36 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
   }
 }
 
-
 //gemini
 async function generateAI(body, message, messageId, roomId, fromAccountId) {
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
   try {
-    const prompt = message;
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiAPIKey}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: message,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+    const responseContent = response.data.candidates[0].content;
+    const responseParts = responseContent.parts.map((part) => part.text).join("\n");
 
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${text}`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${responseParts}`, roomId);
   } catch (error) {
-    console.error('Error:', error.response ? error.response.data : error.message);
+    console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
+
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。`, roomId);
   }
 }
