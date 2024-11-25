@@ -158,6 +158,10 @@ app.post("/quiz", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const roomId = req.body.webhook_event.room_id;
   const AccountId = req.body.webhook_event.account_id;
+  
+  if (message === "カソッターwww") {
+    await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nお好きに`, roomId);
+  }
 
   if (!quizzes[roomId]) {
     return res.sendStatus(200);
