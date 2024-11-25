@@ -173,11 +173,11 @@ const bquizList = [
   { question: "Rainy,rainy 求めるものだけを描いた", answer: "限りなく灰色へ" },
   { question: "正論も常識も　意味を持たないとか都会にサヨウナラ！", answer: "グッバイ宣言" },
   { question: "なんでなんでなんでなんでなんで なんでなの どういうつもり", answer: "ド屑" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+  { question: "お呪いが解けちゃった\n地獄に堕ちて 地獄に堕ちて\n地獄に、堕ちろ。", answer: "お呪い" },
+  { question: "さあさあ弱音はミュートして くだらないことで躊躇して", answer: "ヒバナ" },
+  { question: "斯く濁った正義へ問う\nあなたの話はつまんないよ", answer: "snooze" },
+  { question: "敢えて素知らぬ顔で\n身を任せるのが最適解？", answer: "メズマライザー" },
+  { question: "なにもない　なにもない　私なにもない", answer: "ダーリンダンス" },
 ];
 
 async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
