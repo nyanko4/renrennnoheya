@@ -93,7 +93,7 @@ function getCommand(body) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n\bokaro/\nボカロの歌詞クイズが楽しめます。[/info]`,
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。[/info]`,
     roomId
   );
 }
