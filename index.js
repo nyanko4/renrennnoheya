@@ -98,25 +98,39 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 //クイズ
 let quizzes = {};
 
-const quizList = [
-  { question: "日本の首都はどこ？", answer: "東京" },
-  { question: "推しの子主題歌である「アイドル」のアーティストは誰？", answer: "YOASOBI" },
-  { question: "3 + 5 = ？", answer: "8" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "ホロライブを運営している会社はどこ？", answer: ["cover", "COVER", "カバー"] },
-  { question: "日本の元号で、平成の前は何ですか？", answer: "昭和" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
-  { question: "太陽系で一番大きな惑星は何ですか？", answer: "木星" },
+const additionalQuizList = [
+  { question: "インターネットのURLで「https://」は何を意味しますか？", answer: ["セキュア", "安全"] },
+  { question: "一週間のうち、英語で「Wednesday」は何曜日？", answer: "水曜日" },
+  { question: "動物の中で最も速く走る陸上動物は？", answer: "チーター" },
+  { question: "夜空に光る星々の中で一番明るい星の名前は？", answer: ["シリウス", "シリウス星"] },
+  { question: "ホットケーキを焼くとき、膨らませるために使う粉は何？", answer: ["ベーキングパウダー", "重曹"] },
+  { question: "アニメ『ドラえもん』で、ドラえもんの鈴はどこについている？", answer: "首" },
+  { question: "ピアノの鍵盤は白と黒、どちらが多い？", answer: "白" },
+  { question: "タコが持つ足の数は？", answer: "8" },
+  { question: "スマートフォンの「iPhone」を販売している会社は？", answer: "Apple" },
+  { question: "Googleのロゴの中にない色は次のうちどれ？ (赤, 緑, 紫, 青)", answer: "紫" },
+  { question: "スカイツリーの高さは634メートルですが、この数字は何を意味していますか？", answer: "武蔵（むさし）" },
+  { question: "日本では「長寿」を祝う年齢は何歳？", answer: "77" },
+  { question: "ウサギの耳は普通、何本ありますか？", answer: "2本" },
+  { question: "次のうち、果物でないものはどれ？ (リンゴ, トマト, キャベツ)", answer: "キャベツ" },
+  { question: "カブトムシのオスにある特徴的な部位は何？", answer: ["角", "ツノ"] },
+  { question: "ドラえもんの妹の名前は？", answer: ["ドラミ", "ドラミちゃん"] },
+  { question: "ポケモンの中で一番最初に登場する伝説の鳥ポケモンは？(3匹中の1匹言えばおkです)", answer: ["フリーザー", "サンダー", "ファイヤー"] },
+  { question: "日本の古代文字で「亀の甲羅」に刻まれたものは何？", answer: ["甲骨文字", "こうこつもじ"] },
+  { question: "氷は水を固めるとできますが、逆に水を気体にすることを何と言いますか？", answer: "蒸発" },
+  { question: "日本の通貨単位は？", answer: ["円", "えん"] },
+  { question: "アニメ『ワンピース』で海賊王を目指す主人公の名前は？", answer: ["モンキー・D・ルフィ", "ルフィ"] },
+  { question: "次の中で哺乳類でないものはどれ？ (ゾウ, クジラ, トカゲ)", answer: "トカゲ" },
+  { question: "世界三大珍味のひとつで、魚卵を加工したものは？", answer: "キャビア" },
+  { question: "「赤」と「青」を混ぜると何色になりますか？", answer: "紫" },
+  { question: "人間の体の中で一番重い臓器は何？", answer: "肝臓" },
+  { question: "「ペンギン」は飛べる？飛べない？", answer: "飛べない" },
+  { question: "「トマト」は植物のどの部分を食べていますか？", answer: "実" },
+  { question: "宇宙にある地球の唯一の衛星は何？", answer: ["月", "お月様"] },
+  { question: "水は何度で凍りますか？", answer: "0" },
+  { question: "赤信号は進む？止まる？", answer: "止まる" },
 ];
+
 
 async function startQuiz(body, message, messageId, roomId, fromAccountId) {
   if (quizzes[roomId]) {
@@ -178,6 +192,7 @@ const bquizList = [
   { question: "斯く濁った正義へ問う\nあなたの話はつまんないよ", answer: "snooze" },
   { question: "敢えて素知らぬ顔で\n身を任せるのが最適解？", answer: "メズマライザー" },
   { question: "なにもない　なにもない　私なにもない", answer: "ダーリンダンス" },
+  { question: "権力に飲まれて揺らぐ灯り\n神を否定し神に成り代わり\n玉座で豹変ひょうへんする小物達\n批判に見せかけ自戒じかいの祈り", answer: "神っぽいな" },
 ];
 
 async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
