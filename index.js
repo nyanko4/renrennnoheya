@@ -186,11 +186,12 @@ async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
     return;
   }
 
-  const quiz = quizList[Math.floor(Math.random() * bquizList.length)];
-  quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
+  const bokaro = bquizList[Math.floor(Math.random() * bquizList.length)];
+  quizzes[roomId] = { question: bokaro.question, answer: bokaro.answer };
+
   await sendchatwork(`ボカロクイズを開始します！歌詞の一部が表示されるので、曲のタイトルを正しく入力して下さい。(5秒後に表示されます)`, roomId);
   await new Promise(resolve => setTimeout(resolve, 5000));
-  await sendchatwork(`問題: [info]${quiz.question}[/info]`, roomId);
+  await sendchatwork(`問題: [info]${bokaro.question}[/info]`, roomId);
 }
 
 
