@@ -38,7 +38,8 @@ const commands = {
   "youtube": getwakametube,
   "bokaro": startbQuiz,
   "ai": generateAI,
-  "endquiz": endquiz
+  "endquiz": endquiz,
+  "say": say
 };
 
 app.get('/', (req, res) => {
@@ -98,7 +99,7 @@ function getCommand(body) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。[/info]`,
+    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます(ベータ版)。[/info]`,
     roomId
   );
 }
@@ -290,4 +291,9 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
 
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。`, roomId);
   }
+}
+
+async function say(body, message, messageId, roomId, fromAccountId) {
+    const rmsg = body.match(/[^\/say\/]/g);
+    sendchatwork(rmsg[2], roomId);
 }
