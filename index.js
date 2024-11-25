@@ -243,14 +243,14 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
 
 //gemini
 async function generateAI(body, message, messageId, roomId, fromAccountId) {
-  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
   try {
-  const prompt = message;
+    const prompt = message;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
 
     await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${text}`, roomId);
   } catch (error) {
