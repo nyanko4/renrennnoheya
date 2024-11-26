@@ -213,7 +213,7 @@ const bquizList = [
   { question: "ずっと迷っていた　ほらね　僕等は変われない\nそうだろう　互いのせいで今があるのに", answer: "シャルル" },
   { question: "君がそれで良いなら僕だってそれで構わないさ", answer: "天ノ弱" },
   { question: "パッパラパッパララッパッパ", answer: "フォニイ" },
-  { question: "Wanna 心臓 Low 滅法で\n黎明 Friday Night！", answer: "命に嫌われている" },
+  { question: "Wanna 心臓 Low 滅法で\n黎明 Friday Night！", answer: "アンテナ39" },
 ];
 
 async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
@@ -271,7 +271,6 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
 //gemini
 async function generateAI(body, message, messageId, roomId, fromAccountId) {
   try {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nAIが無料だと思うなよ？`, roomId);
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiAPIKey}`,
       {
