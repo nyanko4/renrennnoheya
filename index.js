@@ -207,6 +207,13 @@ const bquizList = [
   { question: "敢えて素知らぬ顔で\n身を任せるのが最適解？", answer: "メズマライザー" },
   { question: "なにもない　なにもない　私なにもない", answer: "ダーリンダンス" },
   { question: "権力に飲まれて揺らぐ灯り\n神を否定し神に成り代わり\n玉座で豹変ひょうへんする小物達\n批判に見せかけ自戒じかいの祈り", answer: "神っぽいな" },
+  { question: "流行の病に媚び諂って 脳ミソ共々くれてやる\n悪い自意識の塊を以て 貴方の血肉になれるなら", answer: "p.h." },
+  { question: "あぁ　お金より良いでしょ\nこれで何も失わないね", answer: "ヴィラン" },
+  { question: "もう時間がない\n我らに見下す権利などない", answer: "potatoになっていく" },
+  { question: "ずっと迷っていた　ほらね　僕等は変われない\nそうだろう　互いのせいで今があるのに", answer: "シャルル" },
+  { question: "君がそれで良いなら僕だってそれで構わないさ", answer: "天ノ弱" },
+  { question: "パッパラパッパララッパッパ", answer: "フォニイ" },
+  { question: "Wanna 心臓 Low 滅法で\n黎明 Friday Night！", answer: "命に嫌われている" },
 ];
 
 async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
@@ -264,6 +271,7 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
 //gemini
 async function generateAI(body, message, messageId, roomId, fromAccountId) {
   try {
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nAIが無料だと思うなよ？`, roomId);
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiAPIKey}`,
       {
