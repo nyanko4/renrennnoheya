@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
 });
 //エンドポイント
 app.post("/webhook", async (req, res) => {
-  const fromAccountId = req.body.webhook_event.from_account_id;
+  const accountId = req.body.webhook_event.from_account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;  
@@ -54,17 +54,17 @@ app.post("/webhook", async (req, res) => {
   if (tooms === body) {
     return res.sendStatus(200);
   }
-  const sendername = getSenderName(fromAccountId, roomId);
+  const sendername = await getSenderName(accountId, roomId);
   const command = getCommand(body);
   if (command && commands[command]) {
-    await commands[command](body, message, messageId, roomId, fromAccountId, sendername);
+    await commands[command](body, message, messageId, roomId, accountId, sendername);
   } else if (command) {
     await sendchatwork(
-      `[rp aid=${fromAccountId} to=${roomId}-${messageId}]${sendername}さん\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
       roomId
     );
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]${sendername}さん\n何かご用でしょうか？使い方が分からない場合[info][code][To:9908250]ゆずbotさん /help/[/code][/info]と入力、もしくはプロフィールを見てね。`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n何かご用でしょうか？使い方が分からない場合[info][code][To:9884448]ゆずbotさん /help/[/code][/info]と入力、もしくはプロフィールを見てね。`, roomId);
   }
   
   res.sendStatus(200);
@@ -121,7 +121,7 @@ async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   if (members) {
     const sender = members.find((member) => member.account_id === accountId);
-    return sender ? sender.name : "Unknown User";
+    return sender ? sender.name : "名前を取得できませんでした";
   }
   return "chatworkユーザー";
 }
