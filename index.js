@@ -54,17 +54,17 @@ app.post("/webhook", async (req, res) => {
   if (tooms === body) {
     return res.sendStatus(200);
   }
-  
+  const sendername = getSenderName(fromAccountId, roomId);
   const command = getCommand(body);
   if (command && commands[command]) {
-    await commands[command](body, message, messageId, roomId, fromAccountId);
+    await commands[command](body, message, messageId, roomId, fromAccountId, sendername);
   } else if (command) {
     await sendchatwork(
-      `[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
+      `[rp aid=${fromAccountId} to=${roomId}-${messageId}]${sendername}さん\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
       roomId
     );
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n何かご用でしょうか？使い方が分からない場合[info][code][To:9908250]和歌さん /help/[/code][/info]と入力、もしくは僕のプロフィールを見て下さい。`, roomId);
+    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]${sendername}さん\n何かご用でしょうか？使い方が分からない場合[info][code][To:9908250]ゆずbotさん /help/[/code][/info]と入力、もしくはプロフィールを見てね。`, roomId);
   }
   
   res.sendStatus(200);
@@ -92,6 +92,38 @@ function getCommand(body) {
   const pattern = /\/(.*?)\//;
   const match = body.match(pattern);
   return match ? match[1] : null;
+}
+
+//利用者データ取得
+async function getChatworkMembers(roomId) {
+  try {
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
+
+    const members = response.data;
+    return members;
+  } catch (error) {
+    console.error(
+      "Error fetching Chatwork members:",
+      error.response?.data || error.message
+    );
+    return null;
+  }
+}
+
+async function getSenderName(accountId, roomId) {
+  const members = await getChatworkMembers(roomId);
+  if (members) {
+    const sender = members.find((member) => member.account_id === accountId);
+    return sender ? sender.name : "Unknown User";
+  }
+  return "chatworkユーザー";
 }
 
 //Help
