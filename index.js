@@ -69,6 +69,29 @@ app.post("/webhook", async (req, res) => {
   
   res.sendStatus(200);
 });
+//全てのメッセージを受け取ります
+app.post("/getchat", async (req, res) => {
+  console.log(req.body);
+  const message = req.body.webhook_event.body;
+  const accountId = req.body.webhook_event.account_id;
+  const roomId = req.body.webhook_event.room_id;
+  const messageId = req.body.webhook_event.message_id;
+  
+
+  if (accountId === 9908250) {
+    return res.sendStatus(200);
+  }
+  
+  try {
+    const Name = await getSenderName(accountId);
+    const senderName = "©️" + Name;
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    res.sendStatus(500);
+  }
+});
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
