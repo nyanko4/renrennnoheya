@@ -23,6 +23,7 @@ if (cluster.isMaster) {
 
 const axios = require('axios');
 const bodyParser = require("body-parser");
+const { createClient } = require('@supabase/supabase-js');
 
 const PORT = 3000;
 
@@ -30,6 +31,9 @@ app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const geminiAPIKey = process.env.GEMINI_API;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY; 
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 //コマンドリスト
 const commands = {
