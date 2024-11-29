@@ -271,10 +271,22 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
 
 //トリガー保存
 async function saveTriggerResponse(body, message, messageId, roomId, accountId, sendername) {
+  const match = text.match(/^([^「]+)「(.+)」$/);
+
+  if (match) {
+  const firstPart = match[1];
+  const secondPart = match[2];
+
+  console.log('最初の部分:', firstPart);
+  console.log('鉤括弧内の部分:', secondPart);
+  }
   const { data, error } = await supabase
     .from('text')
     .insert([
-      { roomId: roomId, triggerMessage: triggerMessage, responseMessage: responseMessage }
+      { roomId: roomId,
+        triggerMessage: triggerMessage,
+        responseMessage: responseMessage 
+      }
     ]);
 
   if (error) {
