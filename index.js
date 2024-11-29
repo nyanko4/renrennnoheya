@@ -268,3 +268,18 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
     const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${result.fortune}`;
     sendchatwork(ms, roomId);
 }
+
+//トリガー保存
+async function saveTriggerResponse(body, message, messageId, roomId, accountId, sendername) {
+  const { data, error } = await supabase
+    .from('text')
+    .insert([
+      { roomId: roomId, triggerMessage: triggerMessage, responseMessage: responseMessage }
+    ]);
+
+  if (error) {
+    console.error('エラー:', error);
+  } else {
+    console.log('メッセージが保存されました:', data);
+  }
+}
