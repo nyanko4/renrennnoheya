@@ -78,6 +78,7 @@ app.post("/webhook", async (req, res) => {
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
   console.log(req.body);
+
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
   const accountId = req.body.webhook_event.account_id;
@@ -88,13 +89,35 @@ app.post("/getchat", async (req, res) => {
   if (accountId === 9908250) {
     return res.sendStatus(200);
   }
+  
   if (message === "おみくじ") {
     await omikuji(body, message, messageId, roomId, accountId, sendername);
     return res.sendStatus(200);
   }
-  
+
+  const { data, error } = await supabase
+    .from('text')
+    .select('triggerMessage, responseMessage')
+    .eq('roomId', roomId);
+
+  if (error) {
+    console.error('Supabaseエラー:', error);
+    return res.sendStatus(500);
+  }
+
+  const matchedData = data.find(item => message.includes(item.triggerMessage));
+
+  if (matchedData) {
+    const responseMessage = matchedData.responseMessage;
+
+    await sendchatwork(responseMessage, roomId);
+
+    return res.sendStatus(200);
+  }
+
   res.sendStatus(200);
 });
+
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
@@ -323,5 +346,28 @@ async function save(body, message, messageId, roomId, accountId, sendername) {
     console.error('エラー:', error);
   } else {
     console.log('メッセージが保存されました:', data);
+  }
+}
+
+//トリガー削除
+async function deleteData(body, triggerMessage, messageId, roomId, accountId, sendername) {
+  
+  const isAdmin = await isUserAdmin(roomId, accountId);
+
+  if (!isAdmin) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー: この操作は管理者にしか行えません。`, roomId);
+    return;
+  }
+  
+  const { data, error } = await supabase
+    .from('text')
+    .delete()
+    .eq('roomId', roomId)
+    .eq('triggerMessage', triggerMessage);
+
+  if (error) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n構文エラー`, roomId);
+  } else {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n構文エラー`, roomId);
   }
 }
