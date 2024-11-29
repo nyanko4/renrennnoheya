@@ -73,20 +73,20 @@ app.post("/webhook", async (req, res) => {
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
   console.log(req.body);
+  const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
   const accountId = req.body.webhook_event.account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
+  const sendername = await getSenderName(accountId, roomId);
   
-
   if (accountId === 9908250) {
     return res.sendStatus(200);
   }
   if (message === "おみくじ") {
+    await omikuji(body, message, messageId, roomId, accountId, sendername);
     return res.sendStatus(200);
   }
-  
-  
   
   res.sendStatus(200);
 });
@@ -223,21 +223,27 @@ async function say(body, message, messageId, roomId, accountId, sendername) {
 //おみくじ
 function omikuji(body, message, messageId, roomId, accountId, sendername) {
     const results = [
-        { fortune: "大吉"},
-        { fortune: "中吉"},
-        { fortune: "小吉"},
-        { fortune: "末吉"},
-        { fortune: "凶"},
-        { fortune: "大凶"}
+        { fortune: "ゆず！" },
+        { fortune: "極大吉" },
+        { fortune: "超大吉" },
+        { fortune: "大吉" },
+        { fortune: "中吉" },
+        { fortune: "小吉" },
+        { fortune: "末吉" },
+        { fortune: "凶" },
+        { fortune: "大凶" }
     ];
 
     const probabilities = [
-        { fortuneIndex: 0, probability: 0.2 },
-        { fortuneIndex: 1, probability: 0.3 },
-        { fortuneIndex: 2, probability: 0.25 },
-        { fortuneIndex: 3, probability: 0.15 },
-        { fortuneIndex: 4, probability: 0.05 },
-        { fortuneIndex: 5, probability: 0.05 }
+        { fortuneIndex: 0, probability: 0.003 },
+        { fortuneIndex: 1, probability: 0.10 },
+        { fortuneIndex: 2, probability: 0.10 },
+        { fortuneIndex: 3, probability: 0.40 },
+        { fortuneIndex: 4, probability: 0.10 },
+        { fortuneIndex: 5, probability: 0.08 },
+        { fortuneIndex: 6, probability: 0.07 },
+        { fortuneIndex: 7, probability: 0.07 },
+        { fortuneIndex: 8, probability: 0.07 }
     ];
 
     const rand = Math.random();
@@ -253,6 +259,6 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
     }
 
     const result = results[resultIndex];
-    const ms = result.fortune;
+    const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${result.fortune}`;
     sendchatwork(ms, roomId);
 }
