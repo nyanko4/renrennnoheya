@@ -41,7 +41,8 @@ const commands = {
   "youtube": getwakametube,
   "ai": generateAI,
   "say": say,
-  "おみくじ": omikuji
+  "おみくじ": omikuji,
+  "save": save
 };
 
 app.get('/', (req, res) => {
@@ -149,6 +150,27 @@ async function getSenderName(accountId, roomId) {
     return sender ? sender.name : "名前を取得できませんでした";
   }
   return "chatworkユーザー";
+}
+
+//管理者ですか？
+async function isUserAdmin(accountId, roomId) {
+  try {
+    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}/members`, {
+      headers: {
+        'X-ChatWorkToken': CHATWORK_API_TOKEN
+      }
+    });
+    const member = response.data.find(m => m.account_id === accountId);
+
+    if (member && member.role === 'admin') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('エラーが発生しました:', error);
+    return false;
+  }
 }
 
 //Help
@@ -270,16 +292,24 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
 }
 
 //トリガー保存
-async function saveTriggerResponse(body, message, messageId, roomId, accountId, sendername) {
-  const match = text.match(/^([^「]+)「(.+)」$/);
-
-  if (match) {
-  const firstPart = match[1];
-  const secondPart = match[2];
-
-  console.log('最初の部分:', firstPart);
-  console.log('鉤括弧内の部分:', secondPart);
+async function save(body, message, messageId, roomId, accountId, sendername) {
+  
+  const match = message.match(/^([^「]+)「(.+)」$/);
+  const triggerMessage = match[1];
+  const responseMessage = match[2];
+  
+  if (!match) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n構文エラー`, roomId);
+    return;
   }
+  
+  const isAdmin = await isUserAdmin(roomId, accountId);
+
+  if (!isAdmin) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー: この操作は管理者にしか行えません。`, roomId);
+    return;
+  }
+  
   const { data, error } = await supabase
     .from('text')
     .insert([
