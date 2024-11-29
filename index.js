@@ -36,7 +36,8 @@ const commands = {
   "help": wakamehelp,
   "youtube": getwakametube,
   "ai": generateAI,
-  "say": say
+  "say": say,
+  "おみくじ": omikuji
 };
 
 app.get('/', (req, res) => {
@@ -81,16 +82,13 @@ app.post("/getchat", async (req, res) => {
   if (accountId === 9908250) {
     return res.sendStatus(200);
   }
-  
-  try {
-    const Name = await getSenderName(accountId);
-    const senderName = "©️" + Name;
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.error("Error processing webhook:", error);
-    res.sendStatus(500);
+  if (message === "おみくじ") {
+    return res.sendStatus(200);
   }
+  
+  
+  
+  res.sendStatus(200);
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -150,9 +148,9 @@ async function getSenderName(accountId, roomId) {
 }
 
 //Help
-async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
+async function wakamehelp(body, message, messageId, roomId, accountId, sendername) {
   await sendchatwork(
-    `[rp aid=${fromAccountId} to=${roomId}-${messageId}][info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます。\n/eval/\njavascriptのコードの評価値を返します。[/info]`,
+    `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん[info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます。\n/eval/\njavascriptのコードの評価値を返します。[/info]`,
     roomId
   );
 }
@@ -160,7 +158,7 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
 //youtube
 const YOUTUBE_URL = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w\-]+)/;
 
-async function getwakametube(body, message, messageId, roomId, fromAccountId) {
+async function getwakametube(body, message, messageId, roomId, accountId, sendername) {
   const ms = message.replace(/\s+/g, "");
   const match = ms.match(YOUTUBE_URL);
 
@@ -171,19 +169,19 @@ async function getwakametube(body, message, messageId, roomId, fromAccountId) {
       const response = await axios.get(`https://wataamee.glitch.me/api/${videoId}?token=wakameoishi`);
       const videoData = response.data;
       const streamurl = videoData.stream_url;
-      await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${streamurl}`, roomId);
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]\n${streamurl}`, roomId);
       
     } catch (error) {
       console.error("APIリクエストエラー:", error);
-      await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nえらー。あらら。時間をおいてもう一度お試し下さい。ー`, roomId);
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nえらー。あらら。時間をおいてもう一度お試し下さい。ー`, roomId);
     }
   } else {
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nURLが無効です。正しいYouTubeのURLを入力してください。`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nURLが無効です。正しいYouTubeのURLを入力してください。`, roomId);
   }
 }
 
 //gemini
-async function generateAI(body, message, messageId, roomId, fromAccountId) {
+async function generateAI(body, message, messageId, roomId, accountId, sendername) {
   try {
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiAPIKey}`,
@@ -209,14 +207,52 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
     let responseParts = responseContent.parts.map((part) => part.text).join("\n");
     responseParts = responseParts.replace(/\*/g, "");
 
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\n${responseParts}`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${responseParts}`, roomId);
   } catch (error) {
     console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
 
-    await sendchatwork(`[rp aid=${fromAccountId} to=${roomId}-${messageId}]\nエラーが発生しました。`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラーが発生しました。`, roomId);
   }
 }
 
-async function say(body, message, messageId, roomId, fromAccountId) {
+//say
+async function say(body, message, messageId, roomId, accountId, sendername) {
     sendchatwork(message, roomId);
+}
+
+//おみくじ
+function omikuji(body, message, messageId, roomId, accountId, sendername) {
+    const results = [
+        { fortune: "大吉"},
+        { fortune: "中吉"},
+        { fortune: "小吉"},
+        { fortune: "末吉"},
+        { fortune: "凶"},
+        { fortune: "大凶"}
+    ];
+
+    const probabilities = [
+        { fortuneIndex: 0, probability: 0.2 },
+        { fortuneIndex: 1, probability: 0.3 },
+        { fortuneIndex: 2, probability: 0.25 },
+        { fortuneIndex: 3, probability: 0.15 },
+        { fortuneIndex: 4, probability: 0.05 },
+        { fortuneIndex: 5, probability: 0.05 }
+    ];
+
+    const rand = Math.random();
+    let cumulativeProbability = 0;
+    let resultIndex = 0;
+
+    for (const prob of probabilities) {
+        cumulativeProbability += prob.probability;
+        if (rand < cumulativeProbability) {
+            resultIndex = prob.fortuneIndex;
+            break;
+        }
+    }
+
+    const result = results[resultIndex];
+    const ms = result.fortune;
+    sendchatwork(ms, roomId);
 }
