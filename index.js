@@ -42,7 +42,9 @@ const commands = {
   "ai": generateAI,
   "say": say,
   "おみくじ": omikuji,
-  "save": save
+  "save": save,
+  "delete": deleteData,
+  "setting": Settings
 };
 
 app.get('/', (req, res) => {
@@ -86,7 +88,7 @@ app.post("/getchat", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
   
-  if (accountId === 9908250) {
+  if (accountId === 9884448) {
     return res.sendStatus(200);
   }
   
@@ -110,7 +112,7 @@ app.post("/getchat", async (req, res) => {
   if (matchedData) {
     const responseMessage = matchedData.responseMessage;
 
-    await sendchatwork(responseMessage, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${responseMessage}`, roomId);
 
     return res.sendStatus(200);
   }
@@ -327,7 +329,7 @@ async function save(body, message, messageId, roomId, accountId, sendername) {
     return;
   }
   
-  const isAdmin = await isUserAdmin(roomId, accountId);
+  const isAdmin = await isUserAdmin(accountId, roomId);
 
   if (!isAdmin) {
     await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー: この操作は管理者にしか行えません。`, roomId);
@@ -353,7 +355,7 @@ async function save(body, message, messageId, roomId, accountId, sendername) {
 //トリガー削除
 async function deleteData(body, triggerMessage, messageId, roomId, accountId, sendername) {
   
-  const isAdmin = await isUserAdmin(roomId, accountId);
+  const isAdmin = await isUserAdmin(accountId, roomId);
 
   if (!isAdmin) {
     await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー: この操作は管理者にしか行えません。`, roomId);
@@ -374,7 +376,7 @@ async function deleteData(body, triggerMessage, messageId, roomId, accountId, se
 }
 
 //設定閲覧
-async function Settings(roomId) {
+async function Settings(body, triggerMessage, messageId, roomId, accountId, sendername) {
   const { data, error } = await supabase
     .from('text')
     .select('triggerMessage, responseMessage')
@@ -384,11 +386,11 @@ async function Settings(roomId) {
     console.error('設定取得エラー:', error);
   } else {
     if (data.length === 0) {
-      console.log('このルームには設定されたメッセージはありません');
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nこのルームに設定されたメッセージはありません`, roomId);
     } else {
-      let messageToSend = "設定されたメッセージ:\n";
+      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n設定されたメッセージ\n`;
       data.forEach(item => {
-        messageToSend += `- トリガーメッセージ: ${item.triggerMessage}\n  レスポンスメッセージ: ${item.responseMessage}\n\n`;
+        messageToSend += `${item.triggerMessage} - ${item.responseMessage}\n`;
       });
 
       await sendchatwork(messageToSend, roomId);
