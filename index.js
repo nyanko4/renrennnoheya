@@ -231,7 +231,8 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
         { fortune: "小吉" },
         { fortune: "末吉" },
         { fortune: "凶" },
-        { fortune: "大凶" }
+        { fortune: "大凶" },
+        { fortune: "---深刻なエラーが発生しました---" }
     ];
 
     const probabilities = [
@@ -243,7 +244,8 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
         { fortuneIndex: 5, probability: 0.08 },
         { fortuneIndex: 6, probability: 0.07 },
         { fortuneIndex: 7, probability: 0.07 },
-        { fortuneIndex: 8, probability: 0.07 }
+        { fortuneIndex: 8, probability: 0.07 },
+        { fortuneIndex: 9, probability: 0.007 }
     ];
 
     const rand = Math.random();
