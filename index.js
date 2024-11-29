@@ -68,11 +68,11 @@ app.post("/webhook", async (req, res) => {
     await commands[command](body, message, messageId, roomId, accountId, sendername);
   } else if (command) {
     await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n何そのコマンド。ボク、知らないよ (｡∀゜)\n機能要望だったら、僕じゃなくてわかめに言ってね。`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n存在しないコマンドです`,
       roomId
     );
   } else {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n何かご用でしょうか？使い方が分からない場合[info][code][To:9884448]ゆずbotさん /help/[/code][/info]と入力、もしくはプロフィールを見てね。`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nこんにちはー。`, roomId);
   }
   
   res.sendStatus(200);
@@ -89,6 +89,10 @@ app.post("/getchat", async (req, res) => {
   const sendername = await getSenderName(accountId, roomId);
   
   if (accountId === 9884448) {
+    return res.sendStatus(200);
+  }
+  
+  if (body.includes("[To:9884448]")) {
     return res.sendStatus(200);
   }
   
@@ -202,7 +206,7 @@ async function isUserAdmin(accountId, roomId) {
 //Help
 async function wakamehelp(body, message, messageId, roomId, accountId, sendername) {
   await sendchatwork(
-    `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん[info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/quiz/\n和歌がクイズを出題してくれます。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/bokaro/\nボカロの歌詞クイズが楽しめます。\n/ai/\nAIと一緒におはなし出来ます。\n/say/\n和歌に好きなことを言わせられます。\n/eval/\njavascriptのコードの評価値を返します。[/info]`,
+    `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん[info][title]ヘルプ[/title]/help/\nコマンドリストを表示します。\n/youtube/\nYouTubeのurlを一緒に送ることでストリームURLを表示してくれます。\n/ai/\nAIと一緒におはなし出来ます。[/info]`,
     roomId
   );
 }
@@ -388,11 +392,12 @@ async function Settings(body, triggerMessage, messageId, roomId, accountId, send
     if (data.length === 0) {
       await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nこのルームに設定されたメッセージはありません`, roomId);
     } else {
-      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n設定されたメッセージ\n`;
+      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん[info][title]設定されたメッセージ[/title]`;
       data.forEach(item => {
         messageToSend += `${item.triggerMessage} - ${item.responseMessage}\n`;
       });
-
+      
+      messageToSend += "[/info]"
       await sendchatwork(messageToSend, roomId);
     }
   }
