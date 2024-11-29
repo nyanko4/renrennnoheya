@@ -168,6 +168,7 @@ async function getChatworkMembers(roomId) {
 
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
+  console.log(members);
   if (members) {
     const sender = members.find((member) => member.account_id === accountId);
     return sender ? sender.name : "名前を取得できませんでした";
@@ -343,9 +344,9 @@ async function save(body, message, messageId, roomId, accountId, sendername) {
     ]);
 
   if (error) {
-    console.error('エラー:', error);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nデータを保存できませんでした`, roomId);
   } else {
-    console.log('メッセージが保存されました:', data);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nデータを保存しました！`, roomId);
   }
 }
 
@@ -366,8 +367,31 @@ async function deleteData(body, triggerMessage, messageId, roomId, accountId, se
     .eq('triggerMessage', triggerMessage);
 
   if (error) {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n構文エラー`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n削除しようとしているデータが見つかりません。settingコマンドを使って保存中のデータを閲覧できます。`, roomId);
   } else {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n構文エラー`, roomId);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n削除しました`, roomId);
+  }
+}
+
+//設定閲覧
+async function Settings(roomId) {
+  const { data, error } = await supabase
+    .from('text')
+    .select('triggerMessage, responseMessage')
+    .eq('roomId', roomId);
+
+  if (error) {
+    console.error('設定取得エラー:', error);
+  } else {
+    if (data.length === 0) {
+      console.log('このルームには設定されたメッセージはありません');
+    } else {
+      let messageToSend = "設定されたメッセージ:\n";
+      data.forEach(item => {
+        messageToSend += `- トリガーメッセージ: ${item.triggerMessage}\n  レスポンスメッセージ: ${item.responseMessage}\n\n`;
+      });
+
+      await sendchatwork(messageToSend, roomId);
+    }
   }
 }
