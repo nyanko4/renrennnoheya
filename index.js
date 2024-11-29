@@ -34,13 +34,9 @@ const geminiAPIKey = process.env.GEMINI_API;
 //コマンドリスト
 const commands = {
   "help": wakamehelp,
-  "quiz": startQuiz,
   "youtube": getwakametube,
-  "bokaro": startbQuiz,
   "ai": generateAI,
-  "endquiz": endquiz,
-  "say": say,
-  "eval": run
+  "say": say
 };
 
 app.get('/', (req, res) => {
@@ -106,143 +102,6 @@ async function wakamehelp(body, message, messageId, roomId, fromAccountId) {
   );
 }
 
-//クイズ
-let quizzes = {};
-
-const quizList = [
-  { question: "一週間のうち、英語で「Wednesday」は何曜日？", answer: "水曜日" },
-  { question: "動物の中で最も速く走る陸上動物は？", answer: "チーター" },
-  { question: "夜空に光る星々の中で一番明るい星の名前は？", answer: ["シリウス", "シリウス星"] },
-  { question: "ホットケーキを焼くとき、膨らませるために使う粉は何？", answer: ["ベーキングパウダー", "重曹"] },
-  { question: "アニメ『ドラえもん』で、ドラえもんの鈴はどこについている？", answer: "首" },
-  { question: "ピアノの鍵盤は白と黒、どちらが多い？", answer: "白" },
-  { question: "タコが持つ足の数は？", answer: "8" },
-  { question: "スマートフォンの「iPhone」を販売している会社は？", answer: "Apple" },
-  { question: "Googleのロゴの中にない色は次のうちどれ？ (赤, 緑, 紫, 青)", answer: "紫" },
-  { question: "スカイツリーの高さは634メートルですが、この数字は何を意味していますか？", answer: "武蔵（むさし）" },
-  { question: "日本では「長寿」を祝う年齢は何歳？", answer: "77" },
-  { question: "ウサギの耳は普通、何本ありますか？", answer: "2本" },
-  { question: "次のうち、果物でないものはどれ？ (リンゴ, トマト, キャベツ)", answer: "キャベツ" },
-  { question: "カブトムシのオスにある特徴的な部位は何？", answer: ["角", "ツノ"] },
-  { question: "ドラえもんの妹の名前は？", answer: ["ドラミ", "ドラミちゃん"] },
-  { question: "ポケモンの中で一番最初に登場する伝説の鳥ポケモンは？(3匹中の1匹言えばおkです)", answer: ["フリーザー", "サンダー", "ファイヤー"] },
-  { question: "日本の古代文字で「亀の甲羅」に刻まれたものは何？", answer: ["甲骨文字", "こうこつもじ"] },
-  { question: "氷は水を固めるとできますが、逆に水を気体にすることを何と言いますか？", answer: "蒸発" },
-  { question: "日本の通貨単位は？", answer: ["円", "えん"] },
-  { question: "アニメ『ワンピース』で海賊王を目指す主人公の名前は？", answer: ["モンキー・D・ルフィ", "ルフィ"] },
-  { question: "次の中で哺乳類でないものはどれ？ (ゾウ, クジラ, トカゲ)", answer: "トカゲ" },
-  { question: "世界三大珍味のひとつで、魚卵を加工したものは？", answer: "キャビア" },
-  { question: "「赤」と「青」を混ぜると何色になりますか？", answer: "紫" },
-  { question: "人間の体の中で一番重い臓器は何？", answer: "肝臓" },
-  { question: "「ペンギン」は飛べる？飛べない？", answer: "飛べない" },
-  { question: "「トマト」は植物のどの部分を食べていますか？", answer: "実" },
-  { question: "宇宙にある地球の唯一の衛星は何？", answer: ["月", "お月様"] },
-  { question: "水は何度で凍りますか？", answer: "0" },
-  { question: "赤信号は進む？止まる？", answer: "止まる" },
-];
-
-
-async function startQuiz(body, message, messageId, roomId, fromAccountId) {
-  if (quizzes[roomId]) {
-    await sendchatwork(`現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
-    return;
-  }
-
-  const quiz = quizList[Math.floor(Math.random() * quizList.length)];
-  quizzes[roomId] = { question: quiz.question, answer: quiz.answer };
-  await sendchatwork(`クイズを開始します！(5秒後にクイズが表示されます)`, roomId);
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  await sendchatwork(`問題: [info]${quiz.question}[/info]`, roomId);
-}
-
-app.post("/quiz", async (req, res) => {
-  const message = req.body.webhook_event.body; 
-  const messageId = req.body.webhook_event.message_id;
-  const roomId = req.body.webhook_event.room_id;
-  const AccountId = req.body.webhook_event.account_id;
-  
-  if (message === "カソッターwww") {
-    await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nお好きに`, roomId);
-  }
-
-  if (!quizzes[roomId]) {
-    return res.sendStatus(200);
-  }
-
-  const currentQuiz = quizzes[roomId];
-  const answer = message.trim();
-
-  if (Array.isArray(currentQuiz.answer)) {
-    if (currentQuiz.answer.some(ans => ans.toLowerCase() === answer.toLowerCase())) {
-      await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
-      delete quizzes[roomId];
-    }
-  } else {
-    if (answer.toLowerCase() === currentQuiz.answer.toLowerCase()) {
-      await sendchatwork(`[rp aid=${AccountId} to=${roomId}-${messageId}]\nおみごと！正解です！🎉`, roomId);
-      delete quizzes[roomId];
-    }
-  }
-  res.sendStatus(200);
-});
-
-
-//ボカロ
-const bquizList = [
-  { question: "ここに居る理由が欲しかっただけ", answer: "くうになる" },
-  { question: "食べてすぐ寝る前に飲む\n起きてまた寝る前に飲む", answer: "可不ェイン" },
-  { question: "縁取った怒張に病んでいる\n音で識って雨みたい熱に", answer: "レリギオス" },
-  { question: "死ぬまでピュアピュアやってんのん？", answer: "ラビットホール" },
-  { question: "見ないで理解出来ないでしょう？", answer: "化けの花" },
-  { question: "知っちゃった大嫌いを裏返したとて\nそこに大好きは隠れてないと", answer: "妄想感傷代償連盟" },
-  { question: "3つ1つに罪はない\n捨てたものじゃない\nだってそうじゃない？", answer: "QUEEN" },
-  { question: "レールの要らない僕らは\n望み好んで夜を追うんだな", answer: "ドーナツホール" },
-  { question: "誰か誰か僕を見つけて\nって叫べたら楽になれるのかな", answer: "ハナタバ" },
-  { question: "Rainy,rainy 求めるものだけを描いた", answer: "限りなく灰色へ" },
-  { question: "正論も常識も　意味を持たないとか都会にサヨウナラ！", answer: "グッバイ宣言" },
-  { question: "なんでなんでなんでなんでなんで なんでなの どういうつもり", answer: "ド屑" },
-  { question: "お呪いが解けちゃった\n地獄に堕ちて 地獄に堕ちて\n地獄に、堕ちろ。", answer: "お呪い" },
-  { question: "さあさあ弱音はミュートして くだらないことで躊躇して", answer: "ヒバナ" },
-  { question: "斯く濁った正義へ問う\nあなたの話はつまんないよ", answer: "snooze" },
-  { question: "敢えて素知らぬ顔で\n身を任せるのが最適解？", answer: "メズマライザー" },
-  { question: "なにもない　なにもない　私なにもない", answer: "ダーリンダンス" },
-  { question: "権力に飲まれて揺らぐ灯り\n神を否定し神に成り代わり\n玉座で豹変ひょうへんする小物達\n批判に見せかけ自戒じかいの祈り", answer: "神っぽいな" },
-  { question: "流行の病に媚び諂って 脳ミソ共々くれてやる\n悪い自意識の塊を以て 貴方の血肉になれるなら", answer: "p.h." },
-  { question: "あぁ　お金より良いでしょ\nこれで何も失わないね", answer: "ヴィラン" },
-  { question: "もう時間がない\n我らに見下す権利などない", answer: "potatoになっていく" },
-  { question: "ずっと迷っていた　ほらね　僕等は変われない\nそうだろう　互いのせいで今があるのに", answer: "シャルル" },
-  { question: "君がそれで良いなら僕だってそれで構わないさ", answer: "天ノ弱" },
-  { question: "パッパラパッパララッパッパ", answer: "フォニイ" },
-  { question: "Wanna 心臓 Low 滅法で\n黎明 Friday Night！", answer: "アンテナ39" },
-];
-
-async function startbQuiz(body, message, messageId, roomId, fromAccountId) {
-  if (quizzes[roomId]) {
-    await sendchatwork(`現在クイズが開催中です！終了後に新しいクイズを開始してください。`, roomId);
-    return;
-  }
-
-  const bokaro = bquizList[Math.floor(Math.random() * bquizList.length)];
-  quizzes[roomId] = { question: bokaro.question, answer: bokaro.answer };
-
-  await sendchatwork(`ボカロクイズを開始します！歌詞の一部が表示されるので、曲のタイトルを正しく入力して下さい。(5秒後に表示されます)`, roomId);
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  await sendchatwork(`問題: [info]${bokaro.question}[/info]`, roomId);
-}
-
-//クイズ終わり
-async function endquiz(body, message, messageId, roomId, fromAccountId) {
-  if (!quizzes[roomId]) {
-    await sendchatwork(`現在クイズは開催されていません。`, roomId);
-    return;
-  }
-  const currentQuiz = quizzes[roomId];
-  
-  await sendchatwork(`クイズ終了！答えは: [info]${currentQuiz.answer}[/info]です。`, roomId);
-  delete quizzes[roomId];
-}
-
-
 //youtube
 const YOUTUBE_URL = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w\-]+)/;
 
@@ -305,12 +164,4 @@ async function generateAI(body, message, messageId, roomId, fromAccountId) {
 
 async function say(body, message, messageId, roomId, fromAccountId) {
     sendchatwork(message, roomId);
-}
-
-async function run (body, message, messageId, roomId, fromAccountId) {
-    try{
-      sendchatwork(eval(message), roomId);
-    } catch (error) {
-      sendchatwork(error, roomId)
-    }
 }
