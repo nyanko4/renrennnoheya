@@ -319,7 +319,7 @@ async function omikuji(body, message, messageId, roomId, accountId, sendername) 
     }
 
     if (data) {
-        const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n今日は既におみくじを引いています！明日また挑戦してね！`;
+        const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n今日はもうおみくじを引いています！明日また挑戦してね！`;
         sendchatwork(ms, roomId);
         return;
     }
@@ -338,7 +338,18 @@ async function omikuji(body, message, messageId, roomId, accountId, sendername) 
 
     const result = results[resultIndex];
     const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${result.fortune}`;
+    const { data: insertData, error: insertError } = await supabase
+        .from('omikuji_log')
+        .insert([
+            { accountId: accountId, date: today}
+        ]);
     sendchatwork(ms, roomId);
+
+    if (insertError) {
+        console.error('Supabase保存エラー:', insertError);
+    } else {
+        console.log('おみくじ結果が保存されました:', insertData);
+    }
 }
 
 //トリガー保存
