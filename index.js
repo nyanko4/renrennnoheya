@@ -50,7 +50,8 @@ const commands = {
   "delete": deleteData,
   "setting": Settings,
   "member": RandomMember,
-  "画像送ってみて": sendFile
+  "画像送ってみて": sendFile,
+  "filter": arasitaisaku
 };
 
 app.get('/', (req, res) => {
@@ -450,7 +451,6 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
     const members = await getChatworkMembers(roomId);
 
     if (!members || members.length === 0) {
-      console.log("エラー");
       return;
     }
 
@@ -466,6 +466,16 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
 //荒らし対策
 async function blockMembers(body, message, messageId, roomId, accountIdToBlock, sendername) {
   try {
+    const { data, error } = await supabase
+      .from('arashi_rooms')
+      .select('roomId')
+      .eq('roomId', roomId);
+
+    if (data.length === 0) {
+      return;
+    }
+
+  
     const members = await getChatworkMembers(roomId);
 
     let adminIds = [];
@@ -504,58 +514,55 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
     });
     await sendchatwork(`[piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。`, roomId);
 
-    console.log('権限が正常に変更されました:', response.data);
   } catch (error) {
-    console.error('権限変更に失敗しました:', error.response ? error.response.data : error.message);
+    console.error('不正利用フィルターエラー:', error.response ? error.response.data : error.message);
   }
 }
 
 //任意の荒らし対策
 async function arasitaisaku(body, message, messageId, roomId, accountId, sendername) {
   try {
+    const isAdmin = await isUserAdmin(accountId, roomId);
+
+    if (!isAdmin) {
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー: この操作は管理者にしか行えません。`, roomId);
+      return;
+    }
+    
     const { data, error } = await supabase
       .from('arashi_rooms')
       .select('roomId')
       .eq('roomId', roomId);
 
     if (error) {
-      console.error('Supabaseのエラー:', error);
       await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。`, roomId);
       return;
     }
 
-    if (data.length === 0) {
-      console.log(`ルームID ${roomId} は登録されていません。登録します...`);
-           
+    if (data.length === 0) {           
       const { error: insertError } = await supabase
         .from('arashi_rooms') 
         .insert([{ roomId: roomId }]);
 
       if (insertError) {
-        console.error('ルームID登録中にエラーが発生しました:', insertError);
         await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。設定の変更を保存できませんでした`, roomId);
         return;
       }
       await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nゆずbotによる不正利用フィルターをONにしました。`, roomId);
-      console.log(`ルームID ${roomId} を登録しました。`);
     } else {
-      console.log(`ルームID ${roomId} はすでに登録されています。削除します...`);
-
       const { error: deleteError } = await supabase
         .from('arashi_rooms')
         .delete()
         .eq('roomId', roomId);
 
       if (deleteError) {
-        console.error('ルームID削除中にエラーが発生しました:', deleteError);
         await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。設定の変更を保存できませんでした`, roomId);
         return;
       }
       await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nゆずbotによる不正利用フィルターをOFFにしました。`, roomId);
-      console.log(`ルームID ${roomId} を削除しました。`);
     }
   } catch (err) {
-    console.error('予期しないエラー:', err);
+    console.error('エラー:', err);
   }
 }
 
