@@ -98,7 +98,7 @@ app.post("/getchat", async (req, res) => {
     return res.sendStatus(200);
   }
   
-  if (body.includes("わたわたわたわた")) {
+  if ((body.match(/\)/g) || []).length >= 30) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   
