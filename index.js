@@ -512,7 +512,7 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
         'x-chatworktoken': CHATWORK_API_TOKEN,
       },
     });
-    await sendchatwork(`[piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。`, roomId);
+    await sendchatwork(`[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`, roomId);
 
   } catch (error) {
     console.error('不正利用フィルターエラー:', error.response ? error.response.data : error.message);
