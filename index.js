@@ -241,6 +241,7 @@ async function getwakametube(body, message, messageId, roomId, accountId, sender
 //gemini
 async function generateAI(body, message, messageId, roomId, accountId, sendername) {
   try {
+    message = "200字以下で生成して下さい:" + message;
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiAPIKey}`,
       {
