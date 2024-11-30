@@ -512,28 +512,45 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
 //画像送ってみよか
 async function sendFile(body, message, messageId, roomId, accountId, sendername) {
   try {
-    // FormDataを作成し、ファイルを追加
+    // 一時的なローカルファイルパス
+    const localFilePath = 'tstfile';  // 保存するファイル名（例: temp_downloaded_file.jpeg）
+
+    // 1. ファイルをURLからダウンロードしてローカルに保存
+    const writer = fs.createWriteStream(localFilePath);
+    const response = await axios({
+      method: 'get',
+      url: "https://cdn.glitch.global/17268288-67ef-4f38-bc54-bd0c299f1e57/IMG_1111_Original.jpeg?v=1732982430878",
+      responseType: 'stream', // ストリームとしてファイルを取得
+    });
+    response.data.pipe(writer);
+
+    // ダウンロード完了を待つ
+    await new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+
+    console.log('ファイルダウンロード成功:', localFilePath);
+
+    // 2. ダウンロードしたファイルをChatworkにアップロード
     const formData = new FormData();
-    formData.append('file', fs.createReadStream("https://cdn.glitch.global/17268288-67ef-4f38-bc54-bd0c299f1e57/IMG_1111_Original.jpeg?v=1732982430878")); // ファイルのストリームを追加
+    formData.append('file', fs.createReadStream(localFilePath));
 
-    // 送信するURLを作成
-    const url = `https://api.chatwork.com/v2/rooms/${roomId}/files`;
-
-    // リクエストヘッダーに必要な情報を設定
+    const uploadUrl = `https://api.chatwork.com/v2/rooms/${roomId}/files`;
     const headers = {
-      ...formData.getHeaders(), // FormDataに必要なヘッダー
-      'x-chatworktoken': CHATWORK_API_TOKEN, // Chatwork APIトークン
+      ...formData.getHeaders(),
+      'x-chatworktoken': CHATWORK_API_TOKEN,
     };
 
-    // ファイルをPOSTで送信
-    const response = await axios.post(url, formData, { headers });
+    // アップロードリクエスト
+    const uploadResponse = await axios.post(uploadUrl, formData, { headers });
+    console.log('ファイルアップロード成功:', uploadResponse.data);
 
-    // 成功時のレスポンス
-    console.log('ファイルが正常にアップロードされました:', response.data);
-    return response.data;
+    // ダウンロードしたローカルファイルを削除（不要になったファイルを削除）
+    fs.unlinkSync(localFilePath);
+    console.log('ローカルファイルを削除しました:', localFilePath);
+
   } catch (error) {
-    // エラー処理
-    console.error('ファイルアップロードに失敗しました:', error.response ? error.response.data : error.message);
-    throw error;
+    console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
   }
 }
