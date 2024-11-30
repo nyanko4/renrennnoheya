@@ -25,6 +25,9 @@ const axios = require('axios');
 const bodyParser = require("body-parser");
 const { createClient } = require('@supabase/supabase-js');
 const { DateTime } = require('luxon');
+const fs = require('fs');
+const FormData = require('form-data');
+const https = require('https');
 
 const PORT = 3000;
 
@@ -46,7 +49,8 @@ const commands = {
   "save": save,
   "delete": deleteData,
   "setting": Settings,
-  "member": RandomMember
+  "member": RandomMember,
+  "画像送ってみて": sendFile
 };
 
 app.get('/', (req, res) => {
@@ -502,5 +506,34 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
     console.log('権限が正常に変更されました:', response.data);
   } catch (error) {
     console.error('権限変更に失敗しました:', error.response ? error.response.data : error.message);
+  }
+}
+
+//画像送ってみよか
+async function sendFile(body, message, messageId, roomId, accountId, sendername) {
+  try {
+    // FormDataを作成し、ファイルを追加
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream("https://cdn.glitch.global/17268288-67ef-4f38-bc54-bd0c299f1e57/IMG_1111_Original.jpeg?v=1732982430878")); // ファイルのストリームを追加
+
+    // 送信するURLを作成
+    const url = `https://api.chatwork.com/v2/rooms/${roomId}/files`;
+
+    // リクエストヘッダーに必要な情報を設定
+    const headers = {
+      ...formData.getHeaders(), // FormDataに必要なヘッダー
+      'x-chatworktoken': CHATWORK_API_TOKEN, // Chatwork APIトークン
+    };
+
+    // ファイルをPOSTで送信
+    const response = await axios.post(url, formData, { headers });
+
+    // 成功時のレスポンス
+    console.log('ファイルが正常にアップロードされました:', response.data);
+    return response.data;
+  } catch (error) {
+    // エラー処理
+    console.error('ファイルアップロードに失敗しました:', error.response ? error.response.data : error.message);
+    throw error;
   }
 }

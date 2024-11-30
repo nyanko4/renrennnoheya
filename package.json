@@ -9,7 +9,9 @@
     "body-parser": "^2.0.2",
     "compression": "^1.7.4",
     "luxon": "^3.0.0",
-    "@supabase/supabase-js": "^2.45.6"
+    "@supabase/supabase-js": "^2.45.6",
+    "fs": "^0.0.2",
+    "form-data": "^4.0.1"
   },
   "description": "わかめ",
   "engines": {
