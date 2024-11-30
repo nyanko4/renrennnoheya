@@ -8,6 +8,7 @@
     "axios": "latest",
     "body-parser": "^2.0.2",
     "compression": "^1.7.4",
+    "luxon": "^3.0.0",
     "@supabase/supabase-js": "^2.45.6"
   },
   "description": "わかめ",

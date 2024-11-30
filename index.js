@@ -24,6 +24,7 @@ if (cluster.isMaster) {
 const axios = require('axios');
 const bodyParser = require("body-parser");
 const { createClient } = require('@supabase/supabase-js');
+const { DateTime } = require('luxon');
 
 const PORT = 3000;
 
@@ -277,7 +278,7 @@ async function say(body, message, messageId, roomId, accountId, sendername) {
 }
 
 //おみくじ
-function omikuji(body, message, messageId, roomId, accountId, sendername) {
+async function omikuji(body, message, messageId, roomId, accountId, sendername) {
     const results = [
         { fortune: "ゆず！" },
         { fortune: "極大吉" },
@@ -303,6 +304,25 @@ function omikuji(body, message, messageId, roomId, accountId, sendername) {
         { fortuneIndex: 8, probability: 0.07 },
         { fortuneIndex: 9, probability: 0.007 }
     ];
+  
+    const today = DateTime.now().setZone('Asia/Tokyo').toFormat('yyyy-MM-dd');
+  
+    const { data, error } = await supabase
+        .from('omikuji_log')
+        .select('*')
+        .eq('accountId', accountId)
+        .eq('date', today)
+        .single();
+
+    if (error) {
+        console.error('Supabaseエラー:', error);
+    }
+
+    if (data) {
+        const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n今日は既におみくじを引いています！明日また挑戦してね！`;
+        sendchatwork(ms, roomId);
+        return;
+    }
 
     const rand = Math.random();
     let cumulativeProbability = 0;
