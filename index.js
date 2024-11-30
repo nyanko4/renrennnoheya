@@ -463,6 +463,8 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
 async function blockMembers(body, message, messageId, roomId, accountId, sendername) {
   try {
     const encodedParams = new URLSearchParams();
+    encodedParams.set('members_admin_ids', '');
+    encodedParams.set('members_member_ids', '');
     encodedParams.set('members_readonly_ids', `${accountId}`);
 
     const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
