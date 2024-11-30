@@ -460,25 +460,47 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
 }
 
 //荒らし対策
-async function blockMembers(body, message, messageId, roomId, accountId, sendername) {
+async function blockMembers(body, message, messageId, roomId, accountIdToBlock, sendername) {
   try {
+    const members = await getChatworkMembers(roomId);
+
+    let adminIds = [];
+    let memberIds = [];
+    let readonlyIds = [];
+
+    members.forEach(member => {
+      if (member.role === 'admin') {
+        adminIds.push(member.account_id);
+      } else if (member.role === 'member') {
+        memberIds.push(member.account_id);
+      } else if (member.role === 'readonly') {
+        readonlyIds.push(member.account_id);
+      }
+    });
+
+    if (!readonlyIds.includes(accountIdToBlock)) {
+      readonlyIds.push(accountIdToBlock);
+    }
+
+    adminIds = adminIds.filter(id => id !== accountIdToBlock);
+    memberIds = memberIds.filter(id => id !== accountIdToBlock);
+
     const encodedParams = new URLSearchParams();
-    encodedParams.set('members_admin_ids', '');
-    encodedParams.set('members_member_ids', '');
-    encodedParams.set('members_readonly_ids', `${accountId}`);
+    encodedParams.set('members_admin_ids', adminIds.join(','));
+    encodedParams.set('members_member_ids', memberIds.join(','));
+    encodedParams.set('members_readonly_ids', readonlyIds.join(','));
 
     const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
-
     const response = await axios.put(url, encodedParams.toString(), {
       headers: {
         accept: 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',
-        'x-chatworktoken': CHATWORK_API_TOKEN
-      }
+        'x-chatworktoken': CHATWORK_API_TOKEN,
+      },
     });
 
-    console.log('レスポンス:', response.data);
+    console.log('権限が正常に変更されました:', response.data);
   } catch (error) {
-    console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
+    console.error('権限変更に失敗しました:', error.response ? error.response.data : error.message);
   }
 }
