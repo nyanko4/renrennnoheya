@@ -45,7 +45,8 @@ const commands = {
   "おみくじ": omikuji,
   "save": save,
   "delete": deleteData,
-  "setting": Settings
+  "setting": Settings,
+  "member": RandomMember
 };
 
 app.get('/', (req, res) => {
@@ -447,8 +448,8 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
     const randomIndex = Math.floor(Math.random() * members.length);
     const randomMember = members[randomIndex];
 
-    console.log(`ランダムで選ばれたメンバー: ${randomMember.account.name} (${randomMember.account.account_id})`);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n[piconname:${randomMember.account_id}]さんが選ばれました！`, roomId);
   } catch (error) {
-    console.error("エラーが発生しました:", error.message);
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。あらら`, roomId);
   }
 }
