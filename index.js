@@ -98,6 +98,10 @@ app.post("/getchat", async (req, res) => {
     return res.sendStatus(200);
   }
   
+  if (body.includes("わたわたわたわた")) {
+    await blockMembers(body, message, messageId, roomId, accountId, sendername);
+  }
+  
   if (message === "おみくじ") {
     await omikuji(body, message, messageId, roomId, accountId, sendername);
     return res.sendStatus(200);
@@ -467,7 +471,7 @@ async function blockMembers(body, message, messageId, roomId, accountId, sendern
       headers: {
         accept: 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded',
-        'x-chatworktoken': 'YOUR_API_TOKEN'
+        'x-chatworktoken': CHATWORK_API_TOKEN
       }
     });
 
