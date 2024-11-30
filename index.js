@@ -433,3 +433,22 @@ async function Settings(body, triggerMessage, messageId, roomId, accountId, send
     }
   }
 }
+
+//利用者ランダム表示
+async function RandomMember(body, triggerMessage, messageId, roomId, accountId, sendername) {
+  try {
+    const members = await getChatworkMembers(roomId);
+
+    if (!members || members.length === 0) {
+      console.log("エラー");
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * members.length);
+    const randomMember = members[randomIndex];
+
+    console.log(`ランダムで選ばれたメンバー: ${randomMember.account.name} (${randomMember.account.account_id})`);
+  } catch (error) {
+    console.error("エラーが発生しました:", error.message);
+  }
+}
