@@ -512,19 +512,16 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
 //画像送ってみよか
 async function sendFile(body, message, messageId, roomId, accountId, sendername) {
   try {
-    // 一時的なローカルファイルパス
-    const localFilePath = 'tstfile';  // 保存するファイル名（例: temp_downloaded_file.jpeg）
+    const localFilePath = 'tstfile';
 
-    // 1. ファイルをURLからダウンロードしてローカルに保存
     const writer = fs.createWriteStream(localFilePath);
     const response = await axios({
       method: 'get',
       url: "https://cdn.glitch.global/17268288-67ef-4f38-bc54-bd0c299f1e57/IMG_1111_Original.jpeg?v=1732982430878",
-      responseType: 'stream', // ストリームとしてファイルを取得
+      responseType: 'stream',
     });
     response.data.pipe(writer);
 
-    // ダウンロード完了を待つ
     await new Promise((resolve, reject) => {
       writer.on('finish', resolve);
       writer.on('error', reject);
@@ -532,7 +529,6 @@ async function sendFile(body, message, messageId, roomId, accountId, sendername)
 
     console.log('ファイルダウンロード成功:', localFilePath);
 
-    // 2. ダウンロードしたファイルをChatworkにアップロード
     const formData = new FormData();
     formData.append('file', fs.createReadStream(localFilePath));
 
@@ -542,11 +538,9 @@ async function sendFile(body, message, messageId, roomId, accountId, sendername)
       'x-chatworktoken': CHATWORK_API_TOKEN,
     };
 
-    // アップロードリクエスト
     const uploadResponse = await axios.post(uploadUrl, formData, { headers });
     console.log('ファイルアップロード成功:', uploadResponse.data);
 
-    // ダウンロードしたローカルファイルを削除（不要になったファイルを削除）
     fs.unlinkSync(localFilePath);
     console.log('ローカルファイルを削除しました:', localFilePath);
 
