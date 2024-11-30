@@ -502,12 +502,63 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
         'x-chatworktoken': CHATWORK_API_TOKEN,
       },
     });
+    await sendchatwork(`[piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。`, roomId);
 
     console.log('権限が正常に変更されました:', response.data);
   } catch (error) {
     console.error('権限変更に失敗しました:', error.response ? error.response.data : error.message);
   }
 }
+
+//任意の荒らし対策
+async function arasitaisaku(body, message, messageId, roomId, accountId, sendername) {
+  try {
+    const { data, error } = await supabase
+      .from('arashi_rooms')
+      .select('roomId')
+      .eq('roomId', roomId);
+
+    if (error) {
+      console.error('Supabaseのエラー:', error);
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。`, roomId);
+      return;
+    }
+
+    if (data.length === 0) {
+      console.log(`ルームID ${roomId} は登録されていません。登録します...`);
+           
+      const { error: insertError } = await supabase
+        .from('arashi_rooms') 
+        .insert([{ roomId: roomId }]);
+
+      if (insertError) {
+        console.error('ルームID登録中にエラーが発生しました:', insertError);
+        await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。設定の変更を保存できませんでした`, roomId);
+        return;
+      }
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nゆずbotによる不正利用フィルターをONにしました。`, roomId);
+      console.log(`ルームID ${roomId} を登録しました。`);
+    } else {
+      console.log(`ルームID ${roomId} はすでに登録されています。削除します...`);
+
+      const { error: deleteError } = await supabase
+        .from('arashi_rooms')
+        .delete()
+        .eq('roomId', roomId);
+
+      if (deleteError) {
+        console.error('ルームID削除中にエラーが発生しました:', deleteError);
+        await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。設定の変更を保存できませんでした`, roomId);
+        return;
+      }
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nゆずbotによる不正利用フィルターをOFFにしました。`, roomId);
+      console.log(`ルームID ${roomId} を削除しました。`);
+    }
+  } catch (err) {
+    console.error('予期しないエラー:', err);
+  }
+}
+
 
 //画像送ってみよか
 async function sendFile(body, message, messageId, roomId, accountId, sendername) {
