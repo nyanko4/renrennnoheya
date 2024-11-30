@@ -454,3 +454,25 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
     await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。あらら`, roomId);
   }
 }
+
+//荒らし対策
+async function blockMembers(body, message, messageId, roomId, accountId, sendername) {
+  try {
+    const encodedParams = new URLSearchParams();
+    encodedParams.set('members_readonly_ids', `${accountId}`);
+
+    const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
+
+    const response = await axios.put(url, encodedParams.toString(), {
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'x-chatworktoken': 'YOUR_API_TOKEN'
+      }
+    });
+
+    console.log('レスポンス:', response.data);
+  } catch (error) {
+    console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
+  }
+}
