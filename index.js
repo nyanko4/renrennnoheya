@@ -585,8 +585,6 @@ async function sendFile(body, message, messageId, roomId, accountId, sendername)
       writer.on('error', reject);
     });
 
-    console.log('ファイルダウンロード成功:', localFilePath);
-
     const formData = new FormData();
     formData.append('file', fs.createReadStream(localFilePath));
 
@@ -597,11 +595,8 @@ async function sendFile(body, message, messageId, roomId, accountId, sendername)
     };
 
     const uploadResponse = await axios.post(uploadUrl, formData, { headers });
-    console.log('ファイルアップロード成功:', uploadResponse.data);
 
     fs.unlinkSync(localFilePath);
-    console.log('ローカルファイルを削除しました:', localFilePath);
-
   } catch (error) {
     console.error('エラーが発生しました:', error.response ? error.response.data : error.message);
   }
