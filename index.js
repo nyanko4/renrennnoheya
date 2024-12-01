@@ -122,7 +122,7 @@ app.post("/getchat", async (req, res) => {
     return res.sendStatus(500);
   }
 
-  const matchedData = data.find(item => item.triggerMessage.includes(message));
+  const matchedData = data.find(item => message === item.triggerMessage);
 
   if (matchedData) {
     const responseMessage = matchedData.responseMessage;
