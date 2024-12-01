@@ -45,7 +45,7 @@ const commands = {
   "youtube": getwakametube,
   "ai": generateAI,
   "say": say,
-  "おみくじ": omikuji,
+  "おみくじ": komikuji,
   "save": save,
   "delete": deleteData,
   "setting": Settings,
@@ -361,6 +361,53 @@ async function omikuji(body, message, messageId, roomId, accountId, sendername) 
     } else {
         console.log('おみくじ結果が保存されました:', insertData);
     }
+}
+
+//おみくじ(貫通用)
+async function komikuji(body, message, messageId, roomId, accountId, sendername) {
+    const results = [
+        { fortune: "ゆず！" },
+        { fortune: "極大吉" },
+        { fortune: "超大吉" },
+        { fortune: "大吉" },
+        { fortune: "中吉" },
+        { fortune: "小吉" },
+        { fortune: "末吉" },
+        { fortune: "凶" },
+        { fortune: "大凶" },
+        { fortune: "---深刻なエラーが発生しました---" }
+    ];
+
+    const probabilities = [
+        { fortuneIndex: 0, probability: 0.003 },
+        { fortuneIndex: 1, probability: 0.10 },
+        { fortuneIndex: 2, probability: 0.10 },
+        { fortuneIndex: 3, probability: 0.40 },
+        { fortuneIndex: 4, probability: 0.10 },
+        { fortuneIndex: 5, probability: 0.08 },
+        { fortuneIndex: 6, probability: 0.07 },
+        { fortuneIndex: 7, probability: 0.07 },
+        { fortuneIndex: 8, probability: 0.07 },
+        { fortuneIndex: 9, probability: 0.007 }
+    ];
+
+    const rand = Math.random();
+    let cumulativeProbability = 0;
+    let resultIndex = 0;
+
+    for (const prob of probabilities) {
+        cumulativeProbability += prob.probability;
+        if (rand < cumulativeProbability) {
+            resultIndex = prob.fortuneIndex;
+            break;
+        }
+    }
+
+    const result = results[resultIndex];
+    const ms = `[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\n${result.fortune}`;
+
+    sendchatwork(ms, roomId);
+  
 }
 
 //トリガー保存
