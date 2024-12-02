@@ -508,7 +508,6 @@ async function RandomMember(body, triggerMessage, messageId, roomId, accountId, 
   } catch (error) {
     await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}]${sendername}さん\nエラー。あらら`, roomId);
   }
-}
 
 //荒らし対策
 async function blockMembers(body, message, messageId, roomId, accountIdToBlock, sendername) {
