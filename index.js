@@ -46,7 +46,10 @@ app.post("/getchat", async (req, res) => {
   const sendername = await getSenderName(accountId, roomId);
   
 
-  if ((body.match(/\)/g) || []).length >= 30) {
+  if ((body.match(/\)/g) || []).length >= 20) {
+    await blockMembers(body, message, messageId, roomId, accountId, sendername);
+  }
+  if ((body.match(/\:/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   
