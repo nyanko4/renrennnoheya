@@ -52,7 +52,9 @@ app.post("/getchat", async (req, res) => {
   if ((body.match(/\:/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
-  
+  if ((body.match(/\all/g) || []).length >= 10) {
+    await blockMembers(body, message, messageId, roomId, accountId, sendername);
+  }
   //ここに荒らしだと思われるメッセージの検出
 
   res.sendStatus(200);
