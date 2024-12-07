@@ -174,9 +174,9 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
     });
     await sendchatwork(`[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`, roomId);
     for(let nemu = 0; nemu < 9; nemu++) {
-      await sendchatwork('あ\nあ\nあ\nあ\nあ\nあ\nあ\nあ\nあ\nあ', roomId)
+      await sendchatwork('あ', roomId)
       for(let samu = 0; samu < 9; samu++){
-        await sendchatwork('あ\nあ\nあ\nあ\nあ\nあ\nあ\nあ\nあ\nあ', roomId)
+        await sendchatwork('あ', roomId)
       }
     }
   } catch (error) {
