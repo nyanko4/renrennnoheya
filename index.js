@@ -21,7 +21,7 @@ if (cluster.isMaster) {
   });
 }
 
-const axios = require('axios');
+const axios = require("axios");
 const bodyParser = require("body-parser");
 
 const PORT = 3000;
@@ -30,8 +30,8 @@ app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 
-app.get('/', (req, res) => {
-    res.sendStatus(200);
+app.get("/", (req, res) => {
+  res.sendStatus(200);
 });
 
 //全てのメッセージを受け取ります
@@ -44,7 +44,6 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -75,7 +74,10 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     );
     console.log("メッセージ送信成功");
   } catch (error) {
-    console.error("Chatworkへのメッセージ送信エラー:", error.response?.data || error.message);
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
   }
 }
 
@@ -115,26 +117,36 @@ async function getSenderName(accountId, roomId) {
 //管理者ですか？
 async function isUserAdmin(accountId, roomId) {
   try {
-    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}/members`, {
-      headers: {
-        'X-ChatWorkToken': CHATWORK_API_TOKEN
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
       }
-    });
-    const member = response.data.find(m => m.account_id === accountId);
+    );
+    const member = response.data.find((m) => m.account_id === accountId);
 
-    if (member && member.role === 'admin') {
+    if (member && member.role === "admin") {
       return true;
     } else {
       return false;
     }
   } catch (error) {
-    console.error('エラーが発生しました:', error);
+    console.error("エラーが発生しました:", error);
     return false;
   }
 }
 
 //荒らし対策
-async function blockMembers(body, message, messageId, roomId, accountIdToBlock, sendername) {
+async function blockMembers(
+  body,
+  message,
+  messageId,
+  roomId,
+  accountIdToBlock,
+  sendername
+) {
   try {
     const members = await getChatworkMembers(roomId);
 
@@ -142,12 +154,12 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
     let memberIds = [];
     let readonlyIds = [];
 
-    members.forEach(member => {
-      if (member.role === 'admin') {
+    members.forEach((member) => {
+      if (member.role === "admin") {
         adminIds.push(member.account_id);
-      } else if (member.role === 'member') {
+      } else if (member.role === "member") {
         memberIds.push(member.account_id);
-      } else if (member.role === 'readonly') {
+      } else if (member.role === "readonly") {
         readonlyIds.push(member.account_id);
       }
     });
@@ -156,30 +168,37 @@ async function blockMembers(body, message, messageId, roomId, accountIdToBlock, 
       readonlyIds.push(accountIdToBlock);
     }
 
-    adminIds = adminIds.filter(id => id !== accountIdToBlock);
-    memberIds = memberIds.filter(id => id !== accountIdToBlock);
+    adminIds = adminIds.filter((id) => id !== accountIdToBlock);
+    memberIds = memberIds.filter((id) => id !== accountIdToBlock);
 
     const encodedParams = new URLSearchParams();
-    encodedParams.set('members_admin_ids', adminIds.join(','));
-    encodedParams.set('members_member_ids', memberIds.join(','));
-    encodedParams.set('members_readonly_ids', readonlyIds.join(','));
+    encodedParams.set("members_admin_ids", adminIds.join(","));
+    encodedParams.set("members_member_ids", memberIds.join(","));
+    encodedParams.set("members_readonly_ids", readonlyIds.join(","));
 
     const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
     const response = await axios.put(url, encodedParams.toString(), {
       headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'x-chatworktoken': CHATWORK_API_TOKEN,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "x-chatworktoken": CHATWORK_API_TOKEN,
       },
     });
-    await sendchatwork(`[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`, roomId);
-    for(let nemu = 0; nemu < 9; nemu++) {
-      await sendchatwork('あ', roomId)
-      for(let samu = 0; samu < 9; samu++){
-        await sendchatwork('あ', roomId)
-      }
+    await sendchatwork(
+      `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
+      roomId
+    );
+    for (let nemu = 0; nemu < 9; nemu++) {
+      setTimeout(function () {
+        for (let samu = 0; samu < 9; samu++) {
+          sendchatwork("あ", roomId);
+        }
+      }, 10000);
     }
   } catch (error) {
-    console.error('不正利用フィルターエラー:', error.response ? error.response.data : error.message);
+    console.error(
+      "不正利用フィルターエラー:",
+      error.response ? error.response.data : error.message
+    );
   }
 }
