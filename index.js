@@ -226,26 +226,7 @@ async function sankashita(
   try {
     const members = await getChatworkMembers(roomId);
     
-    let adminIds = [];
-    let memberIds = [];
-    let readonlyIds = [];
-
-    members.forEach((member) => {
-      if (member.role === "admin") {
-        adminIds.push(member.account_id);
-      } else if (member.role === "member") {
-        memberIds.push(member.account_id);
-      } else if (member.role === "readonly") {
-        readonlyIds.push(member.account_id);
-      }
-    });
-    if (!readonlyIds.includes(accountIdToSanka)) {
-      readonlyIds.push(accountIdToSanka);
-    }
-
-    adminIds = adminIds.filter((id) => id !== accountIdToSanka);
-    memberIds = memberIds.filter((id) => id !== accountIdToSanka);
-    await sendchatwork(`[rp aid=${accountIdToSanka} to=${roomId}-${messageId}] [piconname:${accountIdToSanka}]さん\nよろ〜`, roomId);
+    await sendchatwork(`[rp aid=${accountIdToSanka} to=${roomId}-${messageId}] [pname:${accountIdToSanka}]さん\nよろ〜`, roomId);
   } catch (error) {
     console.error(
       "あいさつエラー",
