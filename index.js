@@ -224,7 +224,7 @@ async function sankashita(
   sankasya
 ) {
   try {
-    const members = await getChatworkMembers(roomId);
+    await sendchatwork(`[picon:${sankaToaccountId}]`, roomId);
   } catch (error) {
     console.error(
       "あいさつエラー",
