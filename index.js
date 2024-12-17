@@ -220,7 +220,7 @@ async function sankashita(
   message,
   messageId,
   roomId,
-  accountId,
+  accountIdToSanka,
   sankasya
 ) {
   try {
@@ -245,21 +245,7 @@ async function sankashita(
 
     adminIds = adminIds.filter((id) => id !== accountIdToSanka);
     memberIds = memberIds.filter((id) => id !== accountIdToSanka);
-
-    const encodedParams = new URLSearchParams();
-    encodedParams.set("members_admin_ids", adminIds.join(","));
-    encodedParams.set("members_member_ids", memberIds.join(","));
-    encodedParams.set("members_readonly_ids", readonlyIds.join(","));
-
-    const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
-    const response = await axios.put(url, encodedParams.toString(), {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "x-chatworktoken": CHATWORK_API_TOKEN,
-      },
-    });
-    await sendchatwork(`[picon:${accountIdToSanka}]`, roomId);
+    await sendchatwork(`[rp aid=${accountIdToSanka} to=${roomId}-${messageId}] [piconname:${accountIdToSanka}]さん\nよろ〜`, roomId);
   } catch (error) {
     console.error(
       "あいさつエラー",
