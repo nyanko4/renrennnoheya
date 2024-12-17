@@ -44,6 +44,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
+  const sankasya = await getsankasya(accountId, roomId)
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -55,6 +56,9 @@ app.post("/getchat", async (req, res) => {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   //ここに荒らしだと思われるメッセージの検出
+  if (body.match(/\[dtext:chatroom_added]/g)) {
+    await sanka(body, message, messageId, roomId, accountId, sankasya)
+  }
 
   res.sendStatus(200);
 });
@@ -112,6 +116,15 @@ async function getSenderName(accountId, roomId) {
     return sender ? sender.name : "名前を取得できませんでした";
   }
   return "chatworkユーザー";
+}
+async function getsankasya(accountId, roomId) {
+  const members = await getChatworkMembers(roomId);
+  console.log(members);
+  if(members) {
+  const sanka = members.find((member) => member.accountId === accountId);
+  return sanka ? sanka.name : "名前を取得できませんでした";
+}
+return "chatworkユーザー";
 }
 
 //管理者ですか？
@@ -200,5 +213,10 @@ async function blockMembers(
       "不正利用フィルターエラー:",
       error.response ? error.response.data : error.message
     );
+  }
+}
+async sanka() => {
+  try {
+    
   }
 }
