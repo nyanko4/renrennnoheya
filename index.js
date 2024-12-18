@@ -44,7 +44,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = req.body.webhook_event.body.match(/[0-9]{8}/);
+  const welcomeId = req.body.webhook_event.body.match(/[0-9]/)
   console.log(welcomeId)
 
   if ((body.match(/\)/g) || []).length >= 20) {
@@ -154,7 +154,7 @@ async function blockMembers(
 ) {
   try {
     const members = await getChatworkMembers(roomId);
-
+    
     let adminIds = [];
     let memberIds = [];
     let readonlyIds = [];
