@@ -44,7 +44,6 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const sankasya = await getsankasya(accountId, roomId);
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -57,7 +56,7 @@ app.post("/getchat", async (req, res) => {
   }
   //ここに荒らしだと思われるメッセージの検出
   if (body.match(/\[dtext:chatroom_added]/g)) {
-    await sankashita(body, message, messageId, roomId, accountId, sankasya);
+    await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
 
   res.sendStatus(200);
@@ -114,15 +113,6 @@ async function getSenderName(accountId, roomId) {
   if (members) {
     const sender = members.find((member) => member.account_id === accountId);
     return sender ? sender.name : "名前を取得できませんでした";
-  }
-  return "chatworkユーザー";
-}
-async function getsankasya(accountId, roomId) {
-  const members = await getChatworkMembers(roomId);
-  console.log(members);
-  if (members) {
-    const sanka = members.find((member) => member.accountId === accountId);
-    return sanka ? sanka.name : "名前を取得できませんでした";
   }
   return "chatworkユーザー";
 }
@@ -220,16 +210,16 @@ async function sankashita(
   message,
   messageId,
   roomId,
-  accountIdToSanka,
-  sankasya
+  welcomeId,
+  sendername
 ) {
   try {
     const members = await getChatworkMembers(roomId);
     
-    await sendchatwork(`[rp aid=${accountIdToSanka} to=${roomId}-${messageId}] [pname:${accountIdToSanka}]さん\nよろ〜`, roomId);
+    await sendchatwork(`[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`, roomId);
   } catch (error) {
     console.error(
-      "あいさつエラー",
+      "入室エラー",
       error.response ? error.response.data : error.message
     );
   }
