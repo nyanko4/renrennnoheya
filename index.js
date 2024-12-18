@@ -44,7 +44,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = req.body.webhook_event.body.replace(/[^0-9]/,'')
+  const welcomeId = req.body.webhook_event.body.replace(/[\^0-9]/,'')
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
