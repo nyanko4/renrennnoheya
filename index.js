@@ -44,7 +44,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = req.body.webhook_event.body.split(':').replace('[]','')
+  const welcomeId = req.body.webhook_event.body.replace(/[^0-9]/,'')
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -217,7 +217,7 @@ async function sankashita(
   try {
     const members = await getChatworkMembers(roomId);
     
-    await sendchatwork(`[rp aid=${welcomeId[3]} to=${roomId}-${messageId}] [pname:${welcomeId[3]}]さん\nよろ〜`, roomId);
+    await sendchatwork(`[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`, roomId);
   } catch (error) {
     console.error(
       "入室エラー",
