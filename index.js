@@ -23,7 +23,6 @@ if (cluster.isMaster) {
 
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const cron = require("node-cron");
 const PORT = 3000;
 
 app.use(bodyParser.json());
