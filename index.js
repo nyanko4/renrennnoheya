@@ -228,4 +228,3 @@ async function sankashita(
     );
   }
 }
-cron.schedule('0 0 0,6,12,18 * * *', () => console.log('毎日0時,6時,12時,18時に実行'));
