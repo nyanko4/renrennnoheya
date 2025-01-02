@@ -23,7 +23,7 @@ if (cluster.isMaster) {
 
 const axios = require("axios");
 const bodyParser = require("body-parser");
-
+const cron = require("node-cron");
 const PORT = 3000;
 
 app.use(bodyParser.json());
@@ -44,7 +44,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = req.body.webhook_event.body.replace(/\D/g,'')
+  const welcomeId = req.body.webhook_event.body.replace(/\D/g, "");
 
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -153,7 +153,7 @@ async function blockMembers(
 ) {
   try {
     const members = await getChatworkMembers(roomId);
-    
+
     let adminIds = [];
     let memberIds = [];
     let readonlyIds = [];
@@ -216,8 +216,11 @@ async function sankashita(
 ) {
   try {
     const members = await getChatworkMembers(roomId);
-    
-    await sendchatwork(`[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`, roomId);
+
+    await sendchatwork(
+      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
+      roomId
+    );
   } catch (error) {
     console.error(
       "入室エラー",
