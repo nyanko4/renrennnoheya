@@ -228,4 +228,4 @@ async function sankashita(
     );
   }
 }
-cron.schedule('59 59 23 * * *', () => console.log('毎日23時59分59秒に実行'));
+cron.schedule('*/10 * * * * *', () => console.log('毎日23時59分59秒に実行'));
