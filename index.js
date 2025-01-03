@@ -58,10 +58,13 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\[dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
-
+//時報bot
+const CronJob = require("cron").CronJob
+new CronJob('0 0 9 * * *', function () {
+  zihoubot()
+},null, true, 'Asia/Tokyo')
   res.sendStatus(200);
 });
-
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
@@ -223,6 +226,21 @@ async function sankashita(
   } catch (error) {
     console.error(
       "入室エラー",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+async function zihoubot(roomId) {
+  try {
+    const members = await getChatworkMembers(roomId);
+
+    await sendchatwork(
+      'テスト',
+      roomId
+    );
+  } catch (error) {
+    console.error(
+      "時報エラー",
       error.response ? error.response.data : error.message
     );
   }
