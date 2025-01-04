@@ -1,5 +1,5 @@
 "use strict";
-let i = 0;
+let kaisuu = 0;
 const express = require("express");
 const app = express();
 const cluster = require("cluster");
@@ -63,7 +63,7 @@ app.post("/getchat", async (req, res) => {
 });
 //時報bot
 new CronJob(
-  "0 58 11 * * *",
+  "0 26 14 * * *",
   function () {
     console.log("成功");
     zihoubot();
@@ -241,12 +241,12 @@ async function zihoubot() {
   try {
     const roomId = 374987857;
     const members = await getChatworkMembers(roomId);
-    if (i == 4) {
+    if (kaisuu == 4) {
       let i = 0;
       await sendchatwork("テスト", roomId);
     } else {
-      i++;
-      console.log(i);
+      kaisuu++;
+      console.log(kaisuu);
     }
   } catch (error) {
     console.error(
