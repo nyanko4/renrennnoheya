@@ -61,8 +61,9 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot 日本時間にするために-9時間する
-cron.schedule("50 26 10 * * *", function () {
-  zihoubot();
+cron.schedule("0 40 10 * * *", function () {
+  const roomId = 374987857;
+  console.log("a")
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -85,7 +86,19 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     );
   }
 }
-
+async function chatworksoushin(ms, CHATWORK_ROOM_ID) {
+    await axios.post(
+      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
+      new URLSearchParams({ body: ms }),
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("メッセージ送信成功");
+  }
 //利用者データ取得
 async function getChatworkMembers(roomId) {
   try {
@@ -227,9 +240,4 @@ async function sankashita(
       error.response ? error.response.data : error.message
     );
   }
-}
-async function zihoubot() {
-  console.log("a");
-  const roomId = 374987857;
-  sendchatwork("テスト", roomId)
 }
