@@ -63,7 +63,7 @@ app.post("/getchat", async (req, res) => {
 });
 //時報bot
 new CronJob(
-  "0 24 11 * * *",
+  "0 58 11 * * *",
   function () {
     console.log("成功");
     zihoubot();
