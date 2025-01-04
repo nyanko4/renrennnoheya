@@ -22,10 +22,9 @@ if (cluster.isMaster) {
 }
 
 const axios = require("axios");
-const bodyParser = require("body-parser");
 const PORT = 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 
