@@ -60,7 +60,10 @@ app.post("/getchat", async (req, res) => {
 //時報bot
 const CronJob = require("cron").CronJob
 new CronJob('0 0 9 * * *', function () {
-  zihoubot()
+  app.post("/getchat", async (req, res) => {
+    const roomId = req.body.webhook_event.room_id
+   await zihoubot(roomId) 
+  })
 },null, true, 'Asia/Tokyo')
   res.sendStatus(200);
 });
