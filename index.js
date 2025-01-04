@@ -61,7 +61,7 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot
-new CronJob('0 5 10 * * *', function () {
+new CronJob('0 14 11 * * *', function () {
     console.log("成功")
    zihoubot() 
 },null, true, 'Asia/Tokyo')
@@ -234,11 +234,17 @@ async function zihoubot() {
   try {
     const roomId = 374987857
     const members = await getChatworkMembers(roomId);
-
+    let i = 0 
+if(i == 4) {
+  let i = 0;
     await sendchatwork(
       'テスト',
       roomId
     );
+} else {
+  i++
+  console.log(i)
+}
   } catch (error) {
     console.error(
       "時報エラー",
