@@ -4,7 +4,7 @@ const app = express();
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
-const cron = require("node-cron");
+//const CronJob = require("cron").Cron.Job;
 const numClusters = os.cpus().length;
 if (cluster.isMaster) {
   for (let i = 0; i < numClusters; i++) {
@@ -60,11 +60,8 @@ app.post("/getchat", async (req, res) => {
   }
   res.sendStatus(200);
 });
-//時報bot 日本時間にするために-9時間する
-cron.schedule("0 41 10 * * *", function () {
-  //const roomId = 374987857;
-  console.log("a")
-});
+//時報bot
+
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {

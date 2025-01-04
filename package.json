@@ -7,7 +7,7 @@
     "express": "^5.0.1",
     "axios": "latest",
     "compression": "^1.7.4",
-    "node-cron": "^3.0.3"
+    "cron": "^3.3.2"
   },
   "engines": {
     "node": "16.x"
