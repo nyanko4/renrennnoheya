@@ -61,8 +61,8 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot 日本時間にするために-9時間する
-cron.schedule("55 17 10 * * *", function () {
-  console.log("a");
+cron.schedule("50 26 10 * * *", function () {
+  zihoubot();
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -108,7 +108,6 @@ async function getChatworkMembers(roomId) {
     return null;
   }
 }
-
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   console.log(members);
@@ -230,13 +229,7 @@ async function sankashita(
   }
 }
 async function zihoubot() {
-  try {
-    const roomId = 374987857;
-    const members = await getChatworkMembers(roomId);
-  } catch (error) {
-    console.error(
-      "時報エラー",
-      error.response ? error.response.data : error.message
-    );
-  }
+  console.log("a");
+  const roomId = 374987857;
+  sendchatwork("テスト", roomId)
 }
