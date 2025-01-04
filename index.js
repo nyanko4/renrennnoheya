@@ -66,7 +66,6 @@ new CronJob(
   function () {
     console.log("成功");
     zihoubot();
-    job.stop()
   },
   null,
   true,
