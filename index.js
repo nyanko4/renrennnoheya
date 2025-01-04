@@ -3,7 +3,40 @@ const express = require("express");
 const app = express();
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
+const cluster = require("cluster");
+const os = require("os");
 
+const numClusters = os.cpus().length;
+
+if (cluster.isMaster) {
+
+  for (let i = 0; i < numClusters; i++) {
+
+    cluster.fork();
+
+  }
+
+  cluster.on("exit", (worker, code, signal) => {
+
+    cluster.fork();
+
+  });
+
+} else {
+
+  app.use(compression());
+
+  app.use(express.static(__dirname + "/public"));
+
+  app.set("view engine", "ejs");
+
+  app.listen(3000, () => {
+
+    console.log(`Worker ${process.pid} started`);
+
+  });
+
+}
 
 const axios = require("axios");
 const PORT = 3000;
