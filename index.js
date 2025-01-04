@@ -1,26 +1,9 @@
 "use strict";
 const express = require("express");
 const app = express();
-const cluster = require("cluster");
-const os = require("os");
 const compression = require("compression");
-//const CronJob = require("cron").Cron.Job;
-const numClusters = os.cpus().length;
-if (cluster.isMaster) {
-  for (let i = 0; i < numClusters; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker, code, signal) => {
-    cluster.fork();
-  });
-} else {
-  app.use(compression());
-  app.use(express.static(__dirname + "/public"));
-  app.set("view engine", "ejs");
-  app.listen(3000, () => {
-    console.log(`Worker ${process.pid} started`);
-  });
-}
+const CronJob = require("cron").CronJob;
+
 
 const axios = require("axios");
 const PORT = 3000;
@@ -61,7 +44,15 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot
-
+new CronJob(
+  "0 32 21 * * *",
+  function () {
+    console.log("a");
+  },
+  null,
+  true,
+  "Asia/Tokyo"
+);
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
@@ -84,18 +75,18 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   }
 }
 async function chatworksoushin(ms, CHATWORK_ROOM_ID) {
-    await axios.post(
-      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
-      new URLSearchParams({ body: ms }),
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    console.log("メッセージ送信成功");
-  }
+  await axios.post(
+    `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
+    new URLSearchParams({ body: ms }),
+    {
+      headers: {
+        "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+  console.log("メッセージ送信成功");
+}
 //利用者データ取得
 async function getChatworkMembers(roomId) {
   try {
