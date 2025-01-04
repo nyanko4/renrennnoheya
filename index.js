@@ -1,5 +1,4 @@
 "use strict";
-let kaisuu = 0;
 const express = require("express");
 const app = express();
 const cluster = require("cluster");
@@ -241,13 +240,7 @@ async function zihoubot() {
   try {
     const roomId = 374987857;
     const members = await getChatworkMembers(roomId);
-    if (kaisuu == 4) {
-      let i = 0;
-      await sendchatwork("テスト", roomId);
-    } else {
-      kaisuu++;
-      console.log(kaisuu);
-    }
+    
   } catch (error) {
     console.error(
       "時報エラー",
