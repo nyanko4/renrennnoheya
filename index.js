@@ -4,7 +4,7 @@ const app = express();
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
-const CronJob = require("cron").CronJob;
+const cron = require("node-cron");
 const numClusters = os.cpus().length;
 if (cluster.isMaster) {
   for (let i = 0; i < numClusters; i++) {
@@ -60,17 +60,10 @@ app.post("/getchat", async (req, res) => {
   }
   res.sendStatus(200);
 });
-//時報bot
-new CronJob(
-  "0 26 14 * * *",
-  function () {
-    console.log("成功");
-    zihoubot();
-  },
-  null,
-  true,
-  "Asia/Tokyo"
-);
+//時報bot 日本時間にするために-9時間する
+cron.schedule("55 17 10 * * *", function () {
+  console.log("a");
+});
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
@@ -240,7 +233,6 @@ async function zihoubot() {
   try {
     const roomId = 374987857;
     const members = await getChatworkMembers(roomId);
-    
   } catch (error) {
     console.error(
       "時報エラー",
