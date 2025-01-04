@@ -4,6 +4,7 @@ let app = express();
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
+const CronJob = require("cron").CronJob
 const numClusters = os.cpus().length;
 if (cluster.isMaster) {
   for (let i = 0; i < numClusters; i++) {
@@ -43,7 +44,7 @@ app.post("/getchat", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
   const welcomeId = req.body.webhook_event.body.replace(/\D/g, "");
-
+  //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
@@ -53,20 +54,17 @@ app.post("/getchat", async (req, res) => {
   if ((body.match(/\all/g) || []).length >= 10) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
-  //ここに荒らしだと思われるメッセージの検出
+  //参加
   if (body.match(/\[dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
-//時報bot
-const CronJob = require("cron").CronJob
-new CronJob('0 0 9 * * *', function () {
-  app.post("/getchat", async (req, res) => {
-    const roomId = req.body.webhook_event.room_id
-   await zihoubot(roomId) 
-  })
-},null, true, 'Asia/Tokyo')
   res.sendStatus(200);
 });
+//時報bot
+new CronJob('0 43 9 * * *', function () {
+    console.log("成功")
+   zihoubot() 
+},null, true, 'Asia/Tokyo')
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
