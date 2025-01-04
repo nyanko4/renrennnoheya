@@ -61,8 +61,8 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot 日本時間にするために-9時間する
-cron.schedule("0 40 10 * * *", function () {
-  const roomId = 374987857;
+cron.schedule("0 41 10 * * *", function () {
+  //const roomId = 374987857;
   console.log("a")
 });
 //メッセージ送信
