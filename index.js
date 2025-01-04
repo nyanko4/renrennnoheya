@@ -1,10 +1,11 @@
 "use strict";
+let i = 0;
 const express = require("express");
-let app = express();
+const app = express();
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
-const CronJob = require("cron").CronJob
+const CronJob = require("cron").CronJob;
 const numClusters = os.cpus().length;
 if (cluster.isMaster) {
   for (let i = 0; i < numClusters; i++) {
@@ -61,10 +62,16 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 //時報bot
-new CronJob('0 14 11 * * *', function () {
-    console.log("成功")
-   zihoubot() 
-},null, true, 'Asia/Tokyo')
+new CronJob(
+  "0 24 11 * * *",
+  function () {
+    console.log("成功");
+    zihoubot();
+  },
+  null,
+  true,
+  "Asia/Tokyo"
+);
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
@@ -232,19 +239,15 @@ async function sankashita(
 }
 async function zihoubot() {
   try {
-    const roomId = 374987857
+    const roomId = 374987857;
     const members = await getChatworkMembers(roomId);
-    let i = 0 
-if(i == 4) {
-  let i = 0;
-    await sendchatwork(
-      'テスト',
-      roomId
-    );
-} else {
-  i++
-  console.log(i)
-}
+    if (i == 4) {
+      let i = 0;
+      await sendchatwork("テスト", roomId);
+    } else {
+      i++;
+      console.log(i);
+    }
   } catch (error) {
     console.error(
       "時報エラー",
