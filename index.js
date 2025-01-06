@@ -77,6 +77,28 @@ app.post("/getchat", async (req, res) => {
   res.sendStatus(200);
 });
 
+//メッセージ送信
+async function sendchatwork(ms, CHATWORK_ROOM_ID) {
+  try {
+    await axios.post(
+      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
+      new URLSearchParams({ body: ms }),
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("メッセージ送信成功");
+  } catch (error) {
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
+  }
+}
+//ユーザー情報を取得
 async function getChatworkMembers(roomId) {
   try {
     const response = await axios.get(
