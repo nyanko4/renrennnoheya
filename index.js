@@ -122,7 +122,7 @@ async function getChatworkMembers(roomId) {
 }
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
-  console.log(members);
+  //console.log(members);
   if (members) {
     const sender = members.find((member) => member.account_id === accountId);
     return sender ? sender.name : "名前を取得できませんでした";
