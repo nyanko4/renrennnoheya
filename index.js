@@ -67,6 +67,7 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\[dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
+  //おみくじ
   if (body.match(/^おみくじ$/)) {
     await omikuji(body, message, messageId, roomId, accountId);
   }
