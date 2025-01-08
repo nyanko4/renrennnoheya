@@ -5,9 +5,12 @@ const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const cluster = require("cluster");
 const os = require("os");
-
 const numClusters = os.cpus().length;
-
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 if (cluster.isMaster) {
 
   for (let i = 0; i < numClusters; i++) {
@@ -73,6 +76,9 @@ app.post("/getchat", async (req, res) => {
   //参加
   if (body.match(/\[dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
+  }
+  if (body.match(/^おみくじ$/)) {
+    await omikuji(body, message, messageId, roomId, accountId);
   }
   res.sendStatus(200);
 });
@@ -240,3 +246,58 @@ async function sankashita(
     );
   }
 }
+async function omikuji(body, message, messageId, roomId, accountId) {
+  try {
+    let today = new Date().toLocaleDateString("JP-ja");
+      const { error: insertError } = await supabase
+        .from("おみくじ")
+        .insert({ aid_today: `${accountId}_${today}`})
+      if (insertError) {
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
+      roomId
+    );
+        return
+    };
+    const omikujiResult = getOmikujiResult();
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
+      roomId
+    )
+    function getOmikujiResult() {
+      const random = Math.random() * 100;
+      if (random < 5) return "大凶";
+      //5
+      else if (random < 25) return "小吉";
+      //20
+      else if (random < 37.3) return "末吉";
+      //12.3
+      else if (random < 57.3) return "吉";
+      //20
+      else if (random < 72.3) return "中吉";
+      //15
+      else if (random < 87.3) return "凶";
+      //15
+      else if (random < 87.6) return "願い事叶えたるよ(できることだけ)";
+      //0.3
+      else return "大吉"; //12.4
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+new CronJob(
+  "59 59 23 * * *",
+  async () => {
+      const { data, error } = await supabase
+        .from('おみくじ')
+        .delete()
+        .neq('aid_today', '0')
+  },
+  null,
+  true,
+  "Asia/Tokyo"
+);
