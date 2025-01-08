@@ -245,6 +245,9 @@ async function sankashita(
       `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
       roomId
     );
+    await bokuhe(
+      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`
+    );
   } catch (error) {
     console.error(
       "入室エラー",
