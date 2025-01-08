@@ -12,21 +12,14 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 if (cluster.isMaster) {
-
   for (let i = 0; i < numClusters; i++) {
-
     cluster.fork();
-
   }
 
   cluster.on("exit", (worker, code, signal) => {
-
     cluster.fork();
-
   });
-
 } else {
-
   app.use(compression());
 
   app.use(express.static(__dirname + "/public"));
@@ -34,11 +27,8 @@ if (cluster.isMaster) {
   app.set("view engine", "ejs");
 
   app.listen(3000, () => {
-
     console.log(`Worker ${process.pid} started`);
-
   });
-
 }
 
 const axios = require("axios");
@@ -88,6 +78,26 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
     await axios.post(
       `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
+      new URLSearchParams({ body: ms }),
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("メッセージ送信成功");
+  } catch (error) {
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
+  }
+}
+async function bokuhe(ms) {
+  try {
+    await axios.post(
+      `https://api.chatwork.com/v2/rooms/364276838/messages`,
       new URLSearchParams({ body: ms }),
       {
         headers: {
@@ -210,13 +220,9 @@ async function blockMembers(
       `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
       roomId
     );
-    for (let nemu = 0; nemu < 9; nemu++) {
-      setTimeout(function () {
-        for (let samu = 0; samu < 9; samu++) {
-          sendchatwork("あ", roomId);
-        }
-      }, 10000);
-    }
+    await bokuhe(
+      `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`
+    );
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
@@ -249,21 +255,21 @@ async function sankashita(
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
     let today = new Date().toLocaleDateString("JP-ja");
-      const { error: insertError } = await supabase
-        .from("おみくじ")
-        .insert({ aid_today: `${accountId}_${today}`})
-      if (insertError) {
-    await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
-      roomId
-    );
-        return
-    };
+    const { error: insertError } = await supabase
+      .from("おみくじ")
+      .insert({ aid_today: `${accountId}_${today}` });
+    if (insertError) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
+        roomId
+      );
+      return;
+    }
     const omikujiResult = getOmikujiResult();
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
       roomId
-    )
+    );
     function getOmikujiResult() {
       const random = Math.random() * 100;
       if (random < 5) return "大凶";
@@ -292,10 +298,10 @@ async function omikuji(body, message, messageId, roomId, accountId) {
 new CronJob(
   "59 59 23 * * *",
   async () => {
-      const { data, error } = await supabase
-        .from('おみくじ')
-        .delete()
-        .neq('aid_today', '0')
+    const { data, error } = await supabase
+      .from("おみくじ")
+      .delete()
+      .neq("aid_today", "0");
   },
   null,
   true,
