@@ -230,7 +230,7 @@ async function sankashita(
 }
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
-    let today = new Date().toLocaleDateString("JP-ja");
+    let today = new Date().toLocaleDateString("JP-ja", { timeZone: "Asia/Tokyo" });
     console.log(today)
     const { error: insertError } = await supabase
       .from("おみくじ")
