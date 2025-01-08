@@ -94,26 +94,6 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     );
   }
 }
-async function bokuhe(ms) {
-  try {
-    await axios.post(
-      `https://api.chatwork.com/v2/rooms/364276838/messages`,
-      new URLSearchParams({ body: ms }),
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    console.log("メッセージ送信成功");
-  } catch (error) {
-    console.error(
-      "Chatworkへのメッセージ送信エラー:",
-      error.response?.data || error.message
-    );
-  }
-}
 //ユーザー情報を取得
 async function getChatworkMembers(roomId) {
   try {
@@ -220,9 +200,6 @@ async function blockMembers(
       `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
       roomId
     );
-    await bokuhe(
-      `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`
-    );
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
@@ -244,9 +221,6 @@ async function sankashita(
     await sendchatwork(
       `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
       roomId
-    );
-    await bokuhe(
-      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`
     );
   } catch (error) {
     console.error(
