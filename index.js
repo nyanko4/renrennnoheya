@@ -217,7 +217,6 @@ async function sankashita(
 ) {
   try {
     const members = await getChatworkMembers(roomId);
-
     await sendchatwork(
       `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
       roomId
@@ -232,6 +231,7 @@ async function sankashita(
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
     let today = new Date().toLocaleDateString("JP-ja");
+    console.log(today)
     const { error: insertError } = await supabase
       .from("おみくじ")
       .insert({ aid_today: `${accountId}_${today}` });
