@@ -75,6 +75,12 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/chatwork.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId)
   }
+  if (body.match(/\https:\/\/odaibako.net/g)) {
+    await sendenkinshi(body, message, messageId, roomId, accountId)
+  }
+  if (body.match(/\https:\/\/scratch.mit.edu/g)) {
+    await sendenkinshi(body, message, messageId, roomId, accountId)
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -325,19 +331,20 @@ async function sendenkinshi(
   messageId,
   roomId,
   welcomeId,
-  sendername
+  sendername,
+  accountId
 ) {
   try {
     const members = await getChatworkMembers(roomId);
-    const isAdmin = await isUserAdmin(sendername, roomId);
+    const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
-      console.log("管理者のため見逃されました")
-      return
-    }
-    await sendchatwork(
+      await sendchatwork(
       `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
       roomId
     );
+      return
+    }
+    console.log("管理者のため見逃されました")
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
