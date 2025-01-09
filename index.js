@@ -71,6 +71,10 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/^おみくじ$/)) {
     await omikuji(body, message, messageId, roomId, accountId);
   }
+  //宣伝感知
+  if (body.match(/\https:\/\/chatwork.com/g)) {
+    await sendenkinshi(body, message, messageId, roomId, accountId)
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
