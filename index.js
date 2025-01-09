@@ -86,10 +86,14 @@ app.post("/getchat", async (req, res) => {
 //メンションされたら起動する
 app.post("/mention", async (req, res) => {
   console.log(req.body);
-
+  
+  const fromaccountId = req.body.webhook_event.from_account_id
+  const toaccountId = req.body.webhook_event.to_account_id
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
+  const body = req.body.webhook_event.body;
   await messageread(messageId, roomId);
+  if (roomId == )
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
