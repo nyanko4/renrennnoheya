@@ -73,9 +73,13 @@ app.post("/getchat", async (req, res) => {
   }
   res.sendStatus(200);
 });
+//メンションされたら起動する
 app.post("/mention", async (req, res) => {
   console.log(req.body)
   
+  const roomId = req.body.webhook_event.room_id;
+  const messageId = req.body.webhok_event.message_id
+  await messageread(messageId,roomId)
 })
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -99,10 +103,11 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   }
 }
 //メッセージ読み込み
-async function commentread() {
+async function messageread(messageId,roomId) {
   try {
     await axios.post(
-      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages/read`,
+      `https://api.chatwork.com/v2/rooms/${roomId}/messages/read`,
+      new URLSearchParams({ 'message_id': messageId }),
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
