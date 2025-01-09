@@ -73,27 +73,29 @@ app.post("/getchat", async (req, res) => {
   }
   //宣伝感知
   if (body.match(/\https:\/\/chatwork.com/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId)
+    await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   if (body.match(/\https:\/\/odaibako.net/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId)
+    await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   if (body.match(/\https:\/\/scratch.mit.edu/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId)
+    await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   res.sendStatus(200);
 });
 //メンションされたら起動する
 app.post("/mention", async (req, res) => {
   console.log(req.body);
-  
-  const fromaccountId = req.body.webhook_event.from_account_id
-  const toaccountId = req.body.webhook_event.to_account_id
+
+  const fromaccountId = req.body.webhook_event.from_account_id;
+  const toaccountId = req.body.webhook_event.to_account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
   await messageread(messageId, roomId);
-  if (roomId == )
+  if (roomId == "374987857") {
+    
+  }
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -343,12 +345,12 @@ async function sendenkinshi(
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       await sendchatwork(
-      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
-      roomId
-    );
-      return
+        `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
+        roomId
+      );
+      return;
     }
-    console.log("管理者のため見逃されました")
+    console.log("管理者のため見逃されました");
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
