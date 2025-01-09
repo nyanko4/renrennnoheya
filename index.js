@@ -78,7 +78,7 @@ app.post("/mention", async (req, res) => {
   console.log(req.body)
   
   const roomId = req.body.webhook_event.room_id;
-  const messageId = req.body.webhok_event.message_id
+  const messageId = req.body.webhook_event.message_id
   await messageread(messageId,roomId)
 })
 //メッセージ送信
@@ -115,10 +115,10 @@ async function messageread(messageId,roomId) {
         },
       }
     );
-    console.log("メッセージ送信成功");
+    console.log("既読をつけました");
   } catch (error) {
     console.error(
-      "Chatworkへのメッセージ送信エラー:",
+      "既読がつけれませんでした:",
       error.response?.data || error.message
     );
   }
