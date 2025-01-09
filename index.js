@@ -73,7 +73,9 @@ app.post("/getchat", async (req, res) => {
   }
   res.sendStatus(200);
 });
-
+app.post("/mention", async (req, res) => {
+  console.log(req.body)
+})
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   try {
