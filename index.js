@@ -319,3 +319,29 @@ new CronJob(
   true,
   "Asia/Tokyo"
 );
+async function sendenkinshi(
+  body,
+  message,
+  messageId,
+  roomId,
+  welcomeId,
+  sendername
+) {
+  try {
+    const members = await getChatworkMembers(roomId);
+    const isAdmin = await isUserAdmin(sendername, roomId);
+    if (!isAdmin) {
+      console.log("管理者のため見逃されました")
+      return
+    }
+    await sendchatwork(
+      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
+      roomId
+    );
+  } catch (error) {
+    console.error(
+      "宣伝禁止エラー",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
