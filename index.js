@@ -102,10 +102,10 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     );
   }
 }
-//メッセージ読み込み
+//メッセージに既読をつける
 async function messageread(messageId, roomId) {
   try {
-    await axios.post(
+    await axios.put(
       `https://api.chatwork.com/v2/rooms/${roomId}/messages/read`,
       new URLSearchParams({ message_id: messageId }),
       {
