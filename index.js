@@ -93,9 +93,9 @@ app.post("/mention", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
   await messageread(messageId, roomId);
-  if (roomId == "374987857") {
-    if(body.match(/おみくじ/g)) {
-      
+  if (roomId == 374987857) {
+    if(body.match(/\おみくじ/g)) {
+      Toomikuji(fromaccountId,roomId)
     }
   }
 });
@@ -333,6 +333,38 @@ new CronJob(
   true,
   "Asia/Tokyo"
 );
+async function Toomikuji(body, message, messageId, roomId, accountId) {
+  try {
+    const omikujiResult = getOmikujiResult();
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
+      roomId
+    );
+    function getOmikujiResult() {
+      const random = Math.random() * 100;
+      if (random < 5) return "大凶";
+      //5
+      else if (random < 25) return "小吉";
+      //20
+      else if (random < 37.3) return "末吉";
+      //12.3
+      else if (random < 57.3) return "吉";
+      //20
+      else if (random < 72.3) return "中吉";
+      //15
+      else if (random < 87.3) return "凶";
+      //15
+      else if (random < 87.6) return "シークレット";
+      //0.3
+      else return "大吉"; //12.4
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
 async function sendenkinshi(
   body,
   message,
