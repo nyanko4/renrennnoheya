@@ -94,8 +94,8 @@ app.post("/mention", async (req, res) => {
   const body = req.body.webhook_event.body;
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
-    if(body.match(/\おみくじ/g)) {
-      Toomikuji(fromaccountId,roomId)
+    if (body.match(/\おみくじ/g)) {
+      Toomikuji(fromaccountId, messageId, roomId);
     }
   }
 });
@@ -333,11 +333,11 @@ new CronJob(
   true,
   "Asia/Tokyo"
 );
-async function Toomikuji(body, message, messageId, roomId, accountId) {
+async function Toomikuji(fromaccountId, messageId, roomId) {
   try {
     const omikujiResult = getOmikujiResult();
     await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
       roomId
     );
     function getOmikujiResult() {
