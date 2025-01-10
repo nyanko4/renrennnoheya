@@ -94,8 +94,11 @@ app.post("/mention", async (req, res) => {
   const body = req.body.webhook_event.body;
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
-    if (body.match(/\おみくじ/g)) {
-      Toomikuji(fromaccountId, messageId, roomId);
+    if (body.match(/\[To:9587322]/g)) {
+      if (body.match(/\おみくじ/g)) {
+        Toomikuji(fromaccountId, messageId, roomId);
+        return;
+      }
     }
   }
 });
