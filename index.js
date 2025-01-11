@@ -21,11 +21,6 @@ if (cluster.isMaster) {
   });
 } else {
   app.use(compression());
-
-  app.use(express.static(__dirname + "/public"));
-
-  app.set("view engine", "ejs");
-
   app.listen(3000, () => {
     console.log(`Worker ${process.pid} started`);
   });
@@ -72,7 +67,10 @@ app.post("/getchat", async (req, res) => {
         sendername
       );
     } else {
-      sendchatwork('管理者がtoallを使用しました。見逃してあげてください()', roomId)
+      sendchatwork(
+        "管理者がtoallを使用しました。見逃してあげてください()",
+        roomId
+      );
     }
   }
   //参加
@@ -104,15 +102,15 @@ app.post("/mention", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
-  const message = req.body.webhook_event.body
+  const message = req.body.webhook_event.body;
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
-    if (body.match(/\[To:9587322]暇やねぇ/g) && body.match(/\おみくじ/)) {
+    if (body.match(/\[To:9587322]/g) && body.match(/\おみくじ/)) {
       Toomikuji(fromaccountId, messageId, roomId);
       return;
     }
     if (body.match(/\削除/)) {
-      deletemessage(body, message, messageId, roomId, fromaccountId)
+      deletemessage(body, message, messageId, roomId, fromaccountId);
     }
   }
 });
@@ -139,7 +137,9 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
 }
 //メッセージを削除する
 async function deletemessage(body, message, messageId, roomId, fromaccountId) {
-  const dlmessageIds = [...message.matchAll(/(?<=to=\d+-)(\d+)/g)].map(match => match[0]);
+  const dlmessageIds = [...message.matchAll(/(?<=to=\d+-)(\d+)/g)].map(
+    (match) => match[0]
+  );
 
   if (dlmessageIds.length === 0) {
     return;
@@ -152,13 +152,15 @@ async function deletemessage(body, message, messageId, roomId, fromaccountId) {
     try {
       const response = await axios.delete(url, {
         headers: {
-          'Accept': 'application/json',
-          'x-chatworktoken': CHATWORK_API_TOKEN,
-        }
+          Accept: "application/json",
+          "x-chatworktoken": CHATWORK_API_TOKEN,
+        },
       });
-
     } catch (err) {
-      console.error(`メッセージID ${messageId} の削除中にエラーが発生しました:`, err.response ? err.response.data : err.message);
+      console.error(
+        `メッセージID ${messageId} の削除中にエラーが発生しました:`,
+        err.response ? err.response.data : err.message
+      );
     }
   }
 }
