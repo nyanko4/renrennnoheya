@@ -110,7 +110,9 @@ app.post("/mention", async (req, res) => {
       Toomikuji(fromaccountId, messageId, roomId);
       return;
     }
-    if (body.match(/\[To:9587322]暇やねぇ/g) && body.match(/\z/)) {
+    if (body.match(/\rp/g) && body.match(/\削除/)) {
+      const deletemessageId = ""
+      deletemessage(deletemessageId, roomId)
     }
   }
 });
