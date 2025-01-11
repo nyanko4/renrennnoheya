@@ -84,7 +84,7 @@ app.post("/getchat", async (req, res) => {
     await omikuji(body, message, messageId, roomId, accountId);
   }
   //宣伝感知
-  if (body.match(/\https:\/\/chatwork.com/g)) {
+  if (body.match(/\https:\/\/www.chatwork.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   if (body.match(/\https:\/\/odaibako.net/g)) {
