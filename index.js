@@ -98,6 +98,9 @@ app.post("/mention", async (req, res) => {
         Toomikuji(fromaccountId, messageId, roomId);
         return;
       }
+    if ("a") {
+      
+    }
   }
 });
 //メッセージ送信
