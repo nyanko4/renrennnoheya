@@ -60,8 +60,20 @@ app.post("/getchat", async (req, res) => {
   if ((body.match(/\:/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
-  if ((body.match(/\all/g) || []).length >= 10) {
-    await blockMembers(body, message, messageId, roomId, accountId, sendername);
+  if (body.match(/\[toall]/g)) {
+    const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    } else {
+      sendchatwork('管理者がtoallを使用しました。見逃してあげてください()', roomId)
+    }
   }
   //参加
   if (body.match(/\[dtext:chatroom_added]/g)) {
@@ -95,11 +107,10 @@ app.post("/mention", async (req, res) => {
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
     if (body.match(/\[To:9587322]暇やねぇ/g) && body.match(/\おみくじ/)) {
-        Toomikuji(fromaccountId, messageId, roomId);
-        return;
-      }
+      Toomikuji(fromaccountId, messageId, roomId);
+      return;
+    }
     if (body.match(/\[To:9587322]暇やねぇ/g) && body.match(/\z/)) {
-      
     }
   }
 });
