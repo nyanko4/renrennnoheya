@@ -135,6 +135,26 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     );
   }
 }
+//メッセージを削除する
+async function deletemessage(messageId, CHATWORK_ROOM_ID) {
+  try {
+    await axios.delete(
+      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages/${messageId}`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("メッセージ送信成功");
+  } catch (error) {
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
+  }
+}
 //メッセージに既読をつける
 async function messageread(messageId, roomId) {
   try {
