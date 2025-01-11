@@ -104,6 +104,7 @@ app.post("/mention", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
+  const message = req.body.webhook_event.body
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
     if (body.match(/\[To:9587322]暇やねぇ/g) && body.match(/\おみくじ/)) {
@@ -111,8 +112,7 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\rp/g) && body.match(/\削除/)) {
-      const deletemessageId = ""
-      deletemessage(deletemessageId, roomId)
+      deletemessage(body, message, messageId, roomId, fromaccountId)
     }
   }
 });
@@ -138,23 +138,28 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
   }
 }
 //メッセージを削除する
-async function deletemessage(messageId, CHATWORK_ROOM_ID) {
-  try {
-    await axios.delete(
-      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages/${messageId}`,
-      {
+async function deletemessage(body, message, messageId, roomId, fromaccountId) {
+  const dlmessageIds = [...message.matchAll(/(?<=to=\d+-)(\d+)/g)].map(match => match[0]);
+
+  if (dlmessageIds.length === 0) {
+    return;
+  }
+
+  for (let i = 0; i < dlmessageIds.length; i++) {
+    const messageId = dlmessageIds[i];
+    const url = `https://api.chatwork.com/v2/rooms/${roomId}/messages/${messageId}`;
+
+    try {
+      const response = await axios.delete(url, {
         headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    console.log("メッセージ送信成功");
-  } catch (error) {
-    console.error(
-      "Chatworkへのメッセージ送信エラー:",
-      error.response?.data || error.message
-    );
+          'Accept': 'application/json',
+          'x-chatworktoken': CHATWORK_API_TOKEN,
+        }
+      });
+
+    } catch (err) {
+      console.error(`メッセージID ${messageId} の削除中にエラーが発生しました:`, err.response ? err.response.data : err.message);
+    }
   }
 }
 //メッセージに既読をつける
