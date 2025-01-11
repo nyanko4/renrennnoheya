@@ -111,7 +111,7 @@ app.post("/mention", async (req, res) => {
       Toomikuji(fromaccountId, messageId, roomId);
       return;
     }
-    if (body.match(/\rp/g) && body.match(/\削除/)) {
+    if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId)
     }
   }
