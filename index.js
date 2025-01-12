@@ -47,7 +47,11 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = req.body.webhook_event.body.replace(/\D/g, "");
+  const welcomeId = const dlmessageIds = [...message.matchAll(/(?<=to=\d+piconname:)(\d+)/g)].map(
+
+    (match) => match[0]
+
+  );
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -140,7 +144,6 @@ async function deletemessage(body, message, messageId, roomId, fromaccountId) {
   const dlmessageIds = [...message.matchAll(/(?<=to=\d+-)(\d+)/g)].map(
     (match) => match[0]
   );
-
   if (dlmessageIds.length === 0) {
     return;
   }
