@@ -3,14 +3,14 @@ const express = require("express");
 const app = express();
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
-const cluster = require("cluster");
-const os = require("os");
-const numClusters = os.cpus().length;
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
+const cluster = require("cluster");
+const os = require("os");
+const numClusters = os.cpus().length;
 if (cluster.isMaster) {
   for (let i = 0; i < numClusters; i++) {
     cluster.fork();
