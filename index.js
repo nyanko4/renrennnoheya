@@ -47,7 +47,7 @@ app.post("/getchat", async (req, res) => {
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
-  const welcomeId = body.replace(/\d/, "");
+  const welcomeId = body.replace(/\D/g, "");
   console.log(welcomeId)
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
