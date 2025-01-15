@@ -111,7 +111,10 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\削除/)) {
+      const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
+    }
     }
   }
 });
