@@ -228,7 +228,7 @@ async function isUserAdmin(accountId, roomId) {
         },
       }
     );
-    const member = response.data.find((membe) => membe.account_id === accountId);
+    const member = response.data.find((m) => m.account_id === accountId);
 
     if (member && member.role === "admin") {
       return true;
@@ -424,9 +424,9 @@ async function sendenkinshi(
       );
       
       return;
-    } 
+    } else {
       console.log("管理者のため見逃されました");
-    
+    }
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
