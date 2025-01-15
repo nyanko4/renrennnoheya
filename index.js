@@ -426,7 +426,10 @@ async function sendenkinshi(
         `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
         roomId
       );
-      
+      const { error: insertError } = await supabase
+      .from("発禁カウント")
+      .insert({ aid_today: accountId, 理由: '無断で宣伝した', カウント: +1});
+    if (insertError)
       return;
     }
     console.log("管理者のため見逃されました");
