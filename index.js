@@ -48,7 +48,7 @@ app.post("/getchat", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
   const welcomeId = body.replace(/\D/g, "");
-  console.log(welcomeId)
+  console.log(welcomeId);
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -113,9 +113,9 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
       const accountId = fromaccountId;
       const isAdmin = await isUserAdmin(accountId, roomId);
-    if (isAdmin) {
-      deletemessage(body, message, messageId, roomId, fromaccountId);
-    }
+      if (isAdmin) {
+        deletemessage(body, message, messageId, roomId, fromaccountId);
+      }
     }
   }
 });
@@ -421,18 +421,20 @@ async function sendenkinshi(
   try {
     const members = await getChatworkMembers(roomId);
     const isAdmin = await isUserAdmin(accountId, roomId);
-    if (!isAdmin) {
+    if (isAdmin) {
       await sendchatwork(
         `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
         roomId
       );
       const { error: insertError } = await supabase
-      .from("発禁カウント")
-      .insert({ aid_today: accountId, 理由: '無断で宣伝した', カウント: +1});
-    if (insertError)
+        .from("発禁カウント")
+        .insert({ aid_today: accountId, 理由: "無断で宣伝した", カウント: +1 });
+      if (insertError) {
+      }
       return;
+    } else {
+      console.log("管理者のため見逃されました");
     }
-    console.log("管理者のため見逃されました");
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
