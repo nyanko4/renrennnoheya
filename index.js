@@ -422,7 +422,6 @@ async function sendenkinshi(
         `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
         roomId
       );
-      
       return;
     } else {
       console.log("管理者のため見逃されました");
