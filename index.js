@@ -111,11 +111,8 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\削除/)) {
-      const isAdmin = await isUserAdminmention(fromaccountId, roomId);
-      if (isAdmin) {
         deletemessage(body, message, messageId, roomId, fromaccountId);
       }
-    }
   }
 });
 //メッセージ送信
@@ -231,30 +228,7 @@ async function isUserAdmin(accountId, roomId) {
         },
       }
     );
-    const member = response.data.find((m) => m.account_id === accountId);
-
-    if (member && member.role === "admin") {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("エラーが発生しました:", error);
-    return false;
-  }
-}
-//メンション用
-async function isUserAdminmention(fromaccountId, roomId) {
-  try {
-    const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-        },
-      }
-    );
-    const member = response.data.find((m) => m.account_id === fromaccountId);
+    const member = response.data.find((membe) => membe.account_id === accountId);
 
     if (member && member.role === "admin") {
       return true;
@@ -448,11 +422,7 @@ async function sendenkinshi(
         `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
         roomId
       );
-      const { error: insertError } = await supabase
-        .from("発禁カウント")
-        .insert({ aid_today: accountId, 理由: "宣伝した", カウント: 1 });
-      if (insertError) {
-      }
+      
       return;
     } 
       console.log("管理者のため見逃されました");
