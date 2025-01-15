@@ -111,8 +111,9 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\削除/)) {
+      const accountId = fromaccountId;
       const isAdmin = await isUserAdmin(accountId, roomId);
-    if (!isAdmin) {
+    if (isAdmin) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
     }
     }
@@ -429,6 +430,7 @@ async function sendenkinshi(
         `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
         roomId
       );
+      
       return;
     }
     console.log("管理者のため見逃されました");
