@@ -219,6 +219,16 @@ async function getSenderName(accountId, roomId) {
   return "chatworkユーザー";
 }
 
+async function messagecount(body) {
+  try {
+    const roomId = body.map(number => number)
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}`
+    )
+  } catch {
+    
+  }
+}
 //管理者ですか？
 async function isUserAdmin(accountId, roomId) {
   try {
