@@ -94,6 +94,9 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/padlet.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/\messagecount/)) {
+      roommessagecount(body, message, messageId, roomId, accountId);
+    }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -114,9 +117,6 @@ app.post("/mention", async (req, res) => {
     }
     if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
-    }
-    if (body.match(/\messagecount/)) {
-      roommessagecount(body, message, messageId, roomId, fromaccountId);
     }
   }
 });
@@ -243,13 +243,9 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 //メッセージ数を表示する
-async function messagecount(body, message, messageId, roomId, fromaccountId) {
+async function messagecount(body, message, messageId, roomId, accountId) {
   try {
-    const roomId = [...body.matchAll(/(?<=t)\d+/g)].map(
-      (roomid) => roomid[0]
-    );
-    const room = [...body.matchAll(/(?<=t)\d+/g)]
-    console.log(room);
+    const roomId = body.replace(/\D/g, "")
     await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN,
@@ -445,9 +441,9 @@ async function sendenkinshi(
     );
   }
 }
-async function roommessagecount(body, message, messageId, roomId, fromaccountId) {
+async function roommessagecount(body, message, messageId, roomId, accountId) {
   try {
-    const messagenumber = await messagecount(body, message, messageId, roomId, fromaccountId);
+    const messagenumber = await messagecount(body, message, messageId, roomId, accountId);
     await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
   } catch (error) {
     console.error("エラー", error);
