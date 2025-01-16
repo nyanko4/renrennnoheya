@@ -218,18 +218,24 @@ async function getSenderName(accountId, roomId) {
   }
   return "chatworkユーザー";
 }
-
+//メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = body.map(number => number.filter(/\a/))
+    const roomId = body.replace(/\D/g, "")
     const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/${roomId}`
+      `https://api.chatwork.com/v2/rooms/${roomId}`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
     )
-  } catch {
-    
+  } catch(error) {
+    console.error("エラーが発生しました", error)
   }
 }
-//管理者ですか？
+
 async function isUserAdmin(accountId, roomId) {
   try {
     const response = await axios.get(
