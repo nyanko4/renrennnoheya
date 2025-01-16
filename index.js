@@ -221,7 +221,7 @@ async function getSenderName(accountId, roomId) {
 
 async function messagecount(body) {
   try {
-    const roomId = body.map(number => number)
+    const roomId = body.map(number => number.filter(/\a/))
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${roomId}`
     )
