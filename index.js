@@ -187,7 +187,7 @@ async function messageread(messageId, roomId) {
     );
   }
 }
-//ユーザー情報を取得
+//利用者データ取得
 async function getChatworkMembers(roomId) {
   try {
     const response = await axios.get(
@@ -209,6 +209,7 @@ async function getChatworkMembers(roomId) {
     return null;
   }
 }
+
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   //console.log(members);
@@ -217,6 +218,26 @@ async function getSenderName(accountId, roomId) {
     return sender ? sender.name : "名前を取得できませんでした";
   }
   return "chatworkユーザー";
+}
+//管理者ですか？
+async function isUserAdmin(accountId, roomId) {
+  try {
+    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}/members`, {
+      headers: {
+        'X-ChatWorkToken': CHATWORK_API_TOKEN
+      }
+    });
+    const member = response.data.find(m => m.account_id === accountId);
+
+    if (member && member.role === 'admin') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('エラーが発生しました:', error);
+    return false;
+  }
 }
 //メッセージ数を表示する
 async function messagecount(body) {
@@ -235,29 +256,6 @@ async function messagecount(body) {
     console.log("success");
   } catch (error) {
     console.error("error:", error.response?.data || error.message);
-  }
-}
-
-async function isUserAdmin(accountId, roomId) {
-  try {
-    const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-        },
-      }
-    );
-    const member = response.data.find((m) => m.account_id === accountId);
-
-    if (member && member.role === "admin") {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error("エラーが発生しました:", error);
-    return false;
   }
 }
 
