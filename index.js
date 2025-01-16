@@ -207,8 +207,7 @@ async function getChatworkMembers(roomId) {
       error.response?.data || error.message
     );
     return null;
-  }
-}
+
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   //console.log(members);
@@ -221,7 +220,7 @@ async function getSenderName(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = [...body.matchall(/\a/).map()]
+    const roomId = [...body.matchAll(/(?<=messagecount)\d+/g)].map((roomid) =>roomid[0] )
     console.log(roomId)
     await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
       headers: {
