@@ -207,7 +207,8 @@ async function getChatworkMembers(roomId) {
       error.response?.data || error.message
     );
     return null;
-
+  }
+}
 async function getSenderName(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   //console.log(members);
@@ -220,8 +221,11 @@ async function getSenderName(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = [...body.matchAll(/(?<=messagecount)\d+/g)].map((roomid) =>roomid[0] )
-    console.log(roomId)
+    const roomId = [...body.matchAll(/(?<=t)\d+/g)].map(
+      (roomid) => roomid[0]
+    );
+    const room = [...body.matchAll(/(?<=t)\d+/g)]
+    console.log(room);
     await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN,
@@ -230,10 +234,7 @@ async function messagecount(body) {
     });
     console.log("success");
   } catch (error) {
-    console.error(
-      "error:",
-      error.response?.data || error.message
-    );
+    console.error("error:", error.response?.data || error.message);
   }
 }
 
