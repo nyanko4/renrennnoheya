@@ -112,6 +112,9 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
         deletemessage(body, message, messageId, roomId, fromaccountId);
       }
+    if (body.match(/\メッセージ数/)) {
+      messagecount(body)
+    }
   }
 });
 //メッセージ送信
