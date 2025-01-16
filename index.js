@@ -112,8 +112,8 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
         deletemessage(body, message, messageId, roomId, fromaccountId);
       }
-    if (body.match(/\メッセージ数/)) {
-      messagecount(body)
+    if (body.match(/\messagecount/)) {
+      roommessagecount(body)
     }
   }
 });
@@ -229,8 +229,7 @@ async function messagecount(body) {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
         },
       }
-    );
-    )
+      );
   } catch(error) {
     console.error("エラーが発生しました", error)
   }
@@ -450,4 +449,8 @@ async function sendenkinshi(
       error.response ? error.response.data : error.message
     );
   }
+}
+async function roommessagecount(body) {
+  const messagecount = await messagecount(body)
+  sendchatwork(messagecount)
 }
