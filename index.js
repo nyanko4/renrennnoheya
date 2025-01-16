@@ -110,10 +110,10 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\削除/)) {
-        deletemessage(body, message, messageId, roomId, fromaccountId);
-      }
+      deletemessage(body, message, messageId, roomId, fromaccountId);
+    }
     if (body.match(/\messagecount/)) {
-      roommessagecount(body)
+      roommessagecount(body, roomId);
     }
   }
 });
@@ -221,17 +221,22 @@ async function getSenderName(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = body.replace(/\D/g, "")
-    const response = await axios.get(
+    const roomId = body.relace(/\D/g,"")
+    await axios.get(
       `https://api.chatwork.com/v2/rooms/${roomId}`,
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       }
-      );
-  } catch(error) {
-    console.error("エラーが発生しました", error)
+    );
+    console.log("既読をつけました");
+  } catch (error) {
+    console.error(
+      "既読がつけれませんでした:",
+      error.response?.data || error.message
+    );
   }
 }
 
@@ -450,7 +455,11 @@ async function sendenkinshi(
     );
   }
 }
-async function roommessagecount(body) {
-  const messagecount = await messagecount(body)
-  sendchatwork(messagecount)
+async function roommessagecount(body, roomId) {
+  try {
+  let messagenumber = await messagecount(body);
+  sendchatwork(messagenumber, roomId);
+}catch (error) {
+  console.error("エラー", error)
+}
 }
