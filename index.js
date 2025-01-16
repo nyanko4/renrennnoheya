@@ -436,13 +436,10 @@ async function sendenkinshi(
     const members = await getChatworkMembers(roomId);
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
-      await sendchatwork(
-        `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\n宣伝禁止`,
-        roomId
-      );
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`, roomId);
       return;
     } else {
-      console.log("管理者のため見逃されました");
+      console.log("管理者のため見逃されました")
     }
   } catch (error) {
     console.error(
