@@ -91,6 +91,9 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/scratch.mit.edu/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/\https:\/\/padlet.com/g)) {
+    await sendenkinshi(body, message, messageId, roomId, accountId);
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -113,7 +116,7 @@ app.post("/mention", async (req, res) => {
       deletemessage(body, message, messageId, roomId, fromaccountId);
     }
     if (body.match(/\messagecount/)) {
-      roommessagecount(body, roomId);
+      roommessagecount(body, message, messageId, roomId, fromaccountId);
     }
   }
 });
@@ -240,7 +243,7 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 //メッセージ数を表示する
-async function messagecount(body) {
+async function messagecount(body, message, messageId, roomId, fromaccountId) {
   try {
     const roomId = [...body.matchAll(/(?<=t)\d+/g)].map(
       (roomid) => roomid[0]
@@ -424,13 +427,7 @@ async function Toomikuji(fromaccountId, messageId, roomId) {
   }
 }
 async function sendenkinshi(
-  body,
-  message,
-  messageId,
-  roomId,
-  welcomeId,
-  sendername,
-  accountId
+  body, message, messageId, roomId, accountId
 ) {
   try {
     const members = await getChatworkMembers(roomId);
@@ -448,10 +445,10 @@ async function sendenkinshi(
     );
   }
 }
-async function roommessagecount(body, roomId) {
+async function roommessagecount(body, message, messageId, roomId, fromaccountId) {
   try {
-    const messagenumber = await messagecount(body);
-    sendchatwork(messagenumber, roomId);
+    const messagenumber = await messagecount(body, message, messageId, roomId, fromaccountId);
+    await sendchatwork(messagenumber, roomId);
   } catch (error) {
     console.error("エラー", error);
   }
