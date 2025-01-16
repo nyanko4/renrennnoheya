@@ -91,6 +91,7 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/scratch.mit.edu/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/\a/))
   res.sendStatus(200);
 });
 //メンションされたら起動する
