@@ -94,7 +94,7 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/padlet.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
-  if (body.match(/\messagecount/)) {
+  if (body.match(/\messagecount/g)) {
       roommessagecount(body, message, messageId, roomId, accountId);
     }
   res.sendStatus(200);
@@ -245,11 +245,9 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body, message, messageId, roomId, accountId) {
   try {
-    const roomId = body.replace(/\D/g, "")
     await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN,
-        "Content-Type": "application/x-www-form-urlencoded",
       },
     });
     console.log("success");
