@@ -221,7 +221,8 @@ async function getSenderName(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = body.replace(/\D/g, "");
+    const roomId = [...body.matchall(/\a/).map()]
+    console.log(roomId)
     await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN,
