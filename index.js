@@ -448,7 +448,7 @@ async function sendenkinshi(
 async function roommessagecount(body, message, messageId, roomId, fromaccountId) {
   try {
     const messagenumber = await messagecount(body, message, messageId, roomId, fromaccountId);
-    await sendchatwork(messagenumber, roomId);
+    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
   } catch (error) {
     console.error("エラー", error);
   }
