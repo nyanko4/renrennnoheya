@@ -221,20 +221,17 @@ async function getSenderName(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body) {
   try {
-    const roomId = body.relace(/\D/g,"")
-    await axios.get(
-      `https://api.chatwork.com/v2/rooms/${roomId}`,
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    console.log("既読をつけました");
+    const roomId = body.replace(/\D/g, "");
+    await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
+      headers: {
+        "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    console.log("success");
   } catch (error) {
     console.error(
-      "既読がつけれませんでした:",
+      "error:",
       error.response?.data || error.message
     );
   }
@@ -457,9 +454,9 @@ async function sendenkinshi(
 }
 async function roommessagecount(body, roomId) {
   try {
-  let messagenumber = await messagecount(body);
-  sendchatwork(messagenumber, roomId);
-}catch (error) {
-  console.error("エラー", error)
-}
+    const messagenumber = await messagecount(body);
+    sendchatwork(messagenumber, roomId);
+  } catch (error) {
+    console.error("エラー", error);
+  }
 }
