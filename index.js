@@ -137,8 +137,9 @@ app.post("/mention", async (req, res) => {
     const janken = getjanken();
     function getjanken() {
       const random = Math.random() * 100;
-      if (random < 33.5) return "ぐー";
-      else if (random < 67) return "ちょき";
+      console.log(random)
+      if (random < 33.333333333333333) return "ぐー";
+      else if (random < 66.66666666666666) return "ちょき";
       else return "ぱー";
     }
 
