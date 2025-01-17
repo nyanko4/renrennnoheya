@@ -122,7 +122,7 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
     }
-    if (body.match(/[To:9587322]/g && /\messagecount/g)) {
+    if (body.match(/[To:9587322]暇/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
   }
@@ -130,8 +130,11 @@ app.post("/mention", async (req, res) => {
     const number = Math.floor(Math.random()* 100) + 1;
     sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`, roomId);
   }
-  if (body.match(/[To:9587322]/g && /じゃんけん/)) {
-    sendchatwork(ぐー　貯金)
+  if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
+    sendchatwork('ぐー ちょき　ぱー　から選んでください')
+    if (body.match(/ぐー/)) {
+      
+    }
   }
 });
 //メッセージ送信
