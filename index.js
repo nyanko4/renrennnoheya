@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const date = new Date().toLocaleString("ja-JP", {
+const date = new Date().toDateString("ja-JP", {
   timeZone: "Asia/Tokyo",
 });
 const cluster = require("cluster");
