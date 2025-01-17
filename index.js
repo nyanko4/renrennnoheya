@@ -494,6 +494,15 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`,
         roomId
       );
+      const { error: insertError } = await supabase
+        .from("発禁カウント")
+        .insert({ accountId: accountId });
+      if (insertError) {
+      }
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
+        roomId
+      );
       return;
     } else {
       console.log("管理者のため見逃されました");
