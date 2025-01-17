@@ -259,9 +259,7 @@ async function messagecount(message, roomId) {
     );
     const messagenumber = response.message_num;
     await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
-    console.log("メッセージ数を送りました");
-    console.log(response)
-    return messagenumber;
+    console.log(messagenumber);
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
