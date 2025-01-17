@@ -19,6 +19,15 @@ if (cluster.isMaster) {
   cluster.on("exit", (worker, code, signal) => {
     cluster.fork();
   });
+    new CronJob(
+  "0 0 0 * * *",
+  async () => {
+    sendchatwork("日付変更", 374987857)
+  },
+  null,
+  true,
+  "Asia/Tokyo"
+);
 } else {
   app.use(compression());
   app.listen(3000, () => {
