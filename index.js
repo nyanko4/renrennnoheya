@@ -245,7 +245,8 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    await axios.put(
+    console.log(roomId)
+    await axios.get(
       `https://api.chatwork.com/v2/rooms/${roomId}`,
       {
         headers: {
@@ -445,9 +446,9 @@ async function sendenkinshi(
     );
   }
 }
-async function roommessagecount(body, message, messageId, roomId, accountId) {
+async function roommessagecount(message,roomId,) {
   try {
-    const messagenumber = await messagecount(body, message, messageId, roomId, accountId);
+    const messagenumber = await messagecount(message, messageId, roomId, accountId);
     await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
   } catch (error) {
     console.error("エラー", error);
