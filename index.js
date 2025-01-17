@@ -127,13 +127,23 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    const number = Math.floor(Math.random()* 100) + 1;
-    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`, roomId);
+    const number = Math.floor(Math.random() * 100) + 1;
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
+      roomId
+    );
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
-    sendchatwork('ぐー ちょき　ぱー　から選んでください')
+    sendchatwork("ぐー ちょき　ぱー　から選んでください");
+    const janken = getjanken;
+    function getjanken() {
+      const random = Math.random() * 100;
+      if (random < 33) return "ぐー"
+      else {}
+      else return "ぱー";
+    }
     if (body.match(/ぐー/)) {
-      
+      console.log(janken);
     }
   }
 });
@@ -150,6 +160,7 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
         },
       }
     );
+
     console.log("メッセージ送信成功");
   } catch (error) {
     console.error(
