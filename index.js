@@ -243,16 +243,22 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 //メッセージ数を表示する
-async function messagecount(body, message, messageId, roomId, accountId) {
+async function messagecount(message, roomId) {
   try {
-    await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
-      headers: {
-        "X-ChatWorkToken": CHATWORK_API_TOKEN,
-      },
-    });
-    console.log("success");
+    await axios.put(
+      `https://api.chatwork.com/v2/rooms/${roomId}`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
+    console.log("メッセージ数を送りました");
   } catch (error) {
-    console.error("error:", error.response?.data || error.message);
+    console.error(
+      "メッセージ数エラー:",
+      error.response?.data || error.message
+    );
   }
 }
 
