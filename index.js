@@ -498,11 +498,12 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
         .from("発禁カウント")
         .insert({ accountId: accountId, 理由: "宣伝", カウント: 1 });
       if (insertError) {
+        const { error: insertError } = await supabase
+        .from("発禁カウント")
+        .upsert({ accountId: accountId, 理由: "宣伝", カウント: 2 });
+      if (insertError) {
+      
       }
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
-        roomId
-      );
       return;
     } else {
       console.log("管理者のため見逃されました");
