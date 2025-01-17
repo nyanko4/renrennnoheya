@@ -95,8 +95,9 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/padlet.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
-  if (body.match(/\now/i)) {
-    const today = new Date()
+  if (body.match(/^now$/i)) {
+    const today = new Date().toLocaleString("ja-JP",{ timeZone: 'Asia/Tokyo' })
+    sendchatwork(today, roomId)
   }
   res.sendStatus(200);
 });
