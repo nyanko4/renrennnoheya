@@ -127,8 +127,8 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    const number = Math.froor(Math.random()* 100;
-    sendchatwork(number, roomId);
+    const number = Math.floor(Math.random()* 100) + 1;
+    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`, roomId);
   }
 });
 //メッセージ送信
