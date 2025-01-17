@@ -496,7 +496,7 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
       );
       const { error: insertError } = await supabase
         .from("発禁カウント")
-        .insert({ accountId: accountId });
+        .insert({ accountId: accountId, 理由: "宣伝", カウント: 1 });
       if (insertError) {
       }
       await sendchatwork(
