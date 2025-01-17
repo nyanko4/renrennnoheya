@@ -139,14 +139,22 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0])
-    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0])
-    const number = Math.floor(Math.random() * men) + 1;
-    if (men == 0)
-    sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
-      roomId
+    const saikoro = [...body.matchAll(/\d+(?=d)/g)].map(
+      (saikoro) => saikoro[0]
     );
+    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
+    const number = Math.floor(Math.random() * men) + 1;
+    if (men > 0) {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
+        roomId
+      );
+    } else {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nダイスの数と面の数を指定してください`,
+        roomId
+      );
+    }
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
     const janken = getjanken();
