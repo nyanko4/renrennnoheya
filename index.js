@@ -96,8 +96,10 @@ app.post("/getchat", async (req, res) => {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   if (body.match(/^now$/i)) {
-    const today = new Date().toLocaleString("ja-JP",{ timeZone: 'Asia/Tokyo' })
-    sendchatwork(today, roomId)
+    const today = new Date().toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+    });
+    sendchatwork(today, roomId);
   }
   res.sendStatus(200);
 });
@@ -124,8 +126,9 @@ app.post("/mention", async (req, res) => {
       messagecount(message, roomId);
     }
   }
-  if (body.match(/^dice$/i)) {
-    const number = Math.ramdom
+  if (body.match(/dice/gi)) {
+    const number = Math.froor(Math.random()* 100;
+    sendchatwork(number, roomId);
   }
 });
 //メッセージ送信
@@ -267,7 +270,10 @@ async function messagecount(message, roomId) {
         },
       }
     );
-    await sendchatwork(`部屋名: ${response.data.name} メッセージ数: ${response.data.message_num}`, roomId);
+    await sendchatwork(
+      `部屋名: ${response.data.name} メッセージ数: ${response.data.message_num}`,
+      roomId
+    );
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
