@@ -260,7 +260,7 @@ async function messagecount(message, roomId) {
         },
       }
     );
-    await sendchatwork(`部屋名: ${} メッセージ数: ${resoponse}`, roomId);
+    await sendchatwork(`部屋名: ${response.data.name} メッセージ数: ${response.data.message_num}`, roomId);
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
