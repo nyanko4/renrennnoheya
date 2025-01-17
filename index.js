@@ -139,6 +139,8 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
+    const saikoro = [...body.matchAll(/\d+(?=d)/)].map((saikro) => saikoro[0])
+    const men = [...body.matchAll(/(?<=d)\d+/)].map((saikro) => saikoro[0])
     const number = Math.floor(Math.random() * 100) + 1;
     sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
