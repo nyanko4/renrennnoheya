@@ -95,8 +95,8 @@ app.post("/getchat", async (req, res) => {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
   if (body.match(/\messagecount/g)) {
-      roommessagecount(body, message, messageId, roomId, accountId);
-    }
+    messagecount(message, roomId);
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -225,28 +225,31 @@ async function getSenderName(accountId, roomId) {
 //管理者ですか？
 async function isUserAdmin(accountId, roomId) {
   try {
-    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}/members`, {
-      headers: {
-        'X-ChatWorkToken': CHATWORK_API_TOKEN
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
       }
-    });
-    const member = response.data.find(m => m.account_id === accountId);
+    );
+    const member = response.data.find((m) => m.account_id === accountId);
 
-    if (member && member.role === 'admin') {
+    if (member && member.role === "admin") {
       return true;
     } else {
       return false;
     }
   } catch (error) {
-    console.error('エラーが発生しました:', error);
+    console.error("エラーが発生しました:", error);
     return false;
   }
 }
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    console.log(roomId)
-    await axios.get(
+    console.log(roomId);
+    const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${roomId}`,
       {
         headers: {
@@ -254,12 +257,13 @@ async function messagecount(message, roomId) {
         },
       }
     );
+    const messagenumber = response.message_num;
+    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
     console.log("メッセージ数を送りました");
+    console.log(response)
+    return messagenumber;
   } catch (error) {
-    console.error(
-      "メッセージ数エラー:",
-      error.response?.data || error.message
-    );
+    console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
 }
 
@@ -427,30 +431,23 @@ async function Toomikuji(fromaccountId, messageId, roomId) {
     );
   }
 }
-async function sendenkinshi(
-  body, message, messageId, roomId, accountId
-) {
+async function sendenkinshi(body, message, messageId, roomId, accountId) {
   try {
     const members = await getChatworkMembers(roomId);
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
-      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`, roomId);
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`,
+        roomId
+      );
       return;
     } else {
-      console.log("管理者のため見逃されました")
+      console.log("管理者のため見逃されました");
     }
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
       error.response ? error.response.data : error.message
     );
-  }
-}
-async function roommessagecount(message,roomId,) {
-  try {
-    const messagenumber = await messagecount(message, messageId, roomId, accountId);
-    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
-  } catch (error) {
-    console.error("エラー", error);
   }
 }
