@@ -32,6 +32,7 @@ const PORT = 3000;
 app.use(express.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
+const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
 
 app.get("/", (req, res) => {
   res.sendStatus(200);
@@ -94,9 +95,6 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/padlet.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
-  if (body.match(/\messagecount/g)) {
-    messagecount(message, roomId);
-  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -117,6 +115,9 @@ app.post("/mention", async (req, res) => {
     }
     if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
+    }
+    if (body.match(/\[To:9587322]/g && /\messagecount/g)) {
+      messagecount(message, roomId);
     }
   }
 });
@@ -248,12 +249,14 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    const room = [...message.matchAll(/(?<=t\D+)(\d+)/g)].map((room) => room[0]);
+    const room = [...message.matchAll(/(?<=t\D+)(\d+)/g)].map(
+      (room) => room[0]
+    );
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
         headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
         },
       }
     );
