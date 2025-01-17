@@ -248,9 +248,9 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    console.log(roomId);
+    const room = [...message.matchAll(/(?<=t\D+)(\d+)/g)].map((room) => room[0]);
     const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/${roomId}`,
+      `https://api.chatwork.com/v2/rooms/${room}`,
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
@@ -258,8 +258,7 @@ async function messagecount(message, roomId) {
       }
     );
     const messagenumber = response.data.message_num;
-    //await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
-    console.log(messagenumber);
+    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
