@@ -134,17 +134,15 @@ app.post("/mention", async (req, res) => {
     );
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
-    sendchatwork("ぐー ちょき　ぱー　から選んでください");
-    const janken = getjanken;
+    const janken = getjanken();
     function getjanken() {
       const random = Math.random() * 100;
-      if (random < 33) return "ぐー"
-      else {}
+      if (random < 33) return "ぐー";
+      else if (random < 66) return "ちょき";
       else return "ぱー";
     }
-    if (body.match(/ぐー/)) {
-      console.log(janken);
-    }
+
+    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`, roomId);
   }
 });
 //メッセージ送信
