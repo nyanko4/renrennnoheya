@@ -8,6 +8,9 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
+const date = new Date().toLocaleString("ja-JP", {
+  timeZone: "Asia/Tokyo",
+});
 const cluster = require("cluster");
 const os = require("os");
 const numClusters = os.cpus().length;
@@ -19,15 +22,15 @@ if (cluster.isMaster) {
   cluster.on("exit", (worker, code, signal) => {
     cluster.fork();
   });
-    new CronJob(
-  "0 0 0 * * *",
-  async () => {
-    sendchatwork("日付変更", 374987857)
-  },
-  null,
-  true,
-  "Asia/Tokyo"
-);
+  new CronJob(
+    "0 0 0 * * *",
+    async () => {
+      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
+    },
+    null,
+    true,
+    "Asia/Tokyo"
+  );
 } else {
   app.use(compression());
   app.listen(3000, () => {
@@ -146,13 +149,16 @@ app.post("/mention", async (req, res) => {
     const janken = getjanken();
     function getjanken() {
       const random = Math.random() * 100;
-      console.log(random)
+      console.log(random);
       if (random < 33.333333333333333) return "ぐー";
       else if (random < 66.66666666666666) return "ちょき";
       else return "ぱー";
     }
 
-    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`, roomId);
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
+      roomId
+    );
   }
 });
 //メッセージ送信
