@@ -122,13 +122,16 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
     }
-    if (body.match(/\[To:9587322]/g && /\messagecount/g)) {
+    if (body.match(/[To:9587322]/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
   }
   if (body.match(/dice/gi)) {
     const number = Math.floor(Math.random()* 100) + 1;
     sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`, roomId);
+  }
+  if (body.match(/[To:9587322]/g && /じゃんけん/)) {
+    sendchatwork(ぐー　貯金)
   }
 });
 //メッセージ送信
