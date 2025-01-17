@@ -142,6 +142,7 @@ app.post("/mention", async (req, res) => {
     const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0])
     const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0])
     const number = Math.floor(Math.random() * men) + 1;
+    if (men == 0)
     sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
       roomId
