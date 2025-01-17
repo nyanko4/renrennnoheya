@@ -124,6 +124,9 @@ app.post("/mention", async (req, res) => {
       messagecount(message, roomId);
     }
   }
+  if (body.match(/^dice$/i)) {
+    const number = Math.ramdom
+  }
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
