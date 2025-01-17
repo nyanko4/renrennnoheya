@@ -95,6 +95,9 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/\https:\/\/padlet.com/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/\now/i)) {
+    const today = new Date()
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
