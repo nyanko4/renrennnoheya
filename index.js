@@ -517,14 +517,10 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
   }
 }
 async function main() {
-  const { data, error: insertError } = await supabase
+  const { data, error } = await supabase
     .from("発禁カウント")
-    .upsert({ accountId: 101010, 理由: "宣伝", カウント: 3 })
-    .order('101010')
-  console.log(data)
-  
-  if (insertError) {
-    console.log("error");
-  }
+    .select("*")
+    .order("101010");
+  console.log(data);
 }
 main();
