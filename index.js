@@ -257,8 +257,8 @@ async function messagecount(message, roomId) {
         },
       }
     );
-    const messagenumber = response.message_num;
-    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
+    const messagenumber = response.data.message_num;
+    //await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
     console.log(messagenumber);
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
