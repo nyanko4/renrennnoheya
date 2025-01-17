@@ -249,7 +249,7 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    const room = [...message.matchAll(/(?<=t\D+)(\d+)/g)].map(
+    const room = [...message.matchAll(/(?<=messagecount\D+)(\d+)/g)].map(
       (room) => room[0]
     );
     const response = await axios.get(
@@ -260,8 +260,7 @@ async function messagecount(message, roomId) {
         },
       }
     );
-    const messagenumber = response.data.message_num;
-    await sendchatwork(`メッセージ数: ${messagenumber}`, roomId);
+    await sendchatwork(`部屋名: ${} メッセージ数: ${resoponse}`, roomId);
   } catch (error) {
     console.error("メッセージ数エラー:", error.response?.data || error.message);
   }
