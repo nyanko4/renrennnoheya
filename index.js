@@ -513,8 +513,17 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
       else if (random < 66.66666666666666) return "ちょき";
       else return "ぱー";
     }
-
-    sendchatwork(
+  const jankennote = [
+    
+  ]
+  sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
       roomId
-    );}
+    );
+  if (body.includes(janken)) {
+    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nあいこ`)
+  }
+  if (body.includes(janken)) {
+    
+  }
+}
