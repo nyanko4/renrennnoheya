@@ -517,10 +517,14 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
   }
 }
 async function main() {
+  const abcd = 10101010
   const { data, error } = await supabase
     .from("発禁カウント")
     .select("*")
     .order("accountId");
-  console.log(data.101010);
+  console.log(data)
+  if(data.includes(abcd)) {
+    console.log("aaaa")
+  }
 }
 main();
