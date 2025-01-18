@@ -157,19 +157,7 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
-    const janken = getjanken();
-    function getjanken() {
-      const random = Math.random() * 100;
-      console.log(random);
-      if (random < 33.333333333333333) return "ぐー";
-      else if (random < 66.66666666666666) return "ちょき";
-      else return "ぱー";
-    }
-
-    sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
-      roomId
-    );
+    janken(body, message, messageId, roomId, fromaccountId)
   }
 });
 //メッセージ送信
@@ -516,13 +504,17 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
     );
   }
 }
-async function main() {
-  const abcd = 10101010
-  const { data, error } = await supabase
-    .from("発禁カウント")
-    .select("*")
-    .order("accountId");
-  console.log(data)
-  const aaaa = data.toString()
-}
-main();
+async function janken(body, message, messageId, roomId, fromaccountId) {
+  const janken = getjanken();
+    function getjanken() {
+      const random = Math.random() * 100;
+      console.log(random);
+      if (random < 33.333333333333333) return "ぐー";
+      else if (random < 66.66666666666666) return "ちょき";
+      else return "ぱー";
+    }
+
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
+      roomId
+    );}
