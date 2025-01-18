@@ -523,8 +523,6 @@ async function main() {
     .select("*")
     .order("accountId");
   console.log(data)
-  if(data.includes(abcd)) {
-    console.log("aaaa")
-  }
+  const aaaa = data.toString()
 }
 main();
