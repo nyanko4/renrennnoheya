@@ -521,9 +521,7 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
       roomId
     );
   if (body.includes(janken)) {
-    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nあいこ`)
+    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nあいこ, roomId`)
   }
-  if (body.includes(janken)) {
-    
-  }
+
 }
