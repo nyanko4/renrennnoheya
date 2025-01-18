@@ -139,7 +139,7 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    saikoro()
+    saikoro(body, message, messageId, roomId, fromaccountId)
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
     janken(body, message, messageId, roomId, fromaccountId)
