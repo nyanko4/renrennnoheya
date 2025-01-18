@@ -8,7 +8,8 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const date = new Date().toDateString("ja-JP");
+const date = new Date().toLocaleString("ja-JP");
+console.log(date)
 const cluster = require("cluster");
 const os = require("os");
 const numClusters = os.cpus().length;
