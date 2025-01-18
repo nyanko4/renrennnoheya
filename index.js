@@ -520,7 +520,7 @@ async function main() {
   const { data, error } = await supabase
     .from("発禁カウント")
     .select("*")
-    .order("101010");
-  console.log(data);
+    .order("accountId");
+  console.log(data.101010);
 }
 main();
