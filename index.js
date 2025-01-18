@@ -139,22 +139,7 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    const saikoro = [...body.matchAll(/\d+(?=d)/g)].map(
-      (saikoro) => saikoro[0]
-    );
-    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
-    const number = Math.floor(Math.random() * men) + 1;
-    if (men > 0) {
-      sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
-        roomId
-      );
-    } else {
-      sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nダイスの数と面の数を指定してください`,
-        roomId
-      );
-    }
+    saikoro()
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
     janken(body, message, messageId, roomId, fromaccountId)
@@ -513,15 +498,26 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
       else if (random < 66.66666666666666) return "ちょき";
       else return "ぱー";
     }
-  const jankente = [
-    "ぐー", "ちょき", "ぱー"
-  ]
   sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
       roomId
     );
-  if (body.includes(janken)) {
-    sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nあいこ, roomId`)
-  }
-
+}
+async function saikoro() {
+  const saikoro = [...body.matchAll(/\d+(?=d)/g)].map(
+      (saikoro) => saikoro[0]
+    );
+    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
+    const number = Math.floor(Math.random() * men) + 1;
+    if (men > 0) {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
+        roomId
+      );
+    } else {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nダイスの数と面の数を指定してください`,
+        roomId
+      );
+    }
 }
