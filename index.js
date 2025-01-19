@@ -508,10 +508,25 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
   for (let s = 0; s < saikoro; s++) {
     number.push(Math.floor(Math.random() * men) + 1);
   }
-
-  if (men > 0 && saikoro > 0) {
+  const sum = number.reduce((accumulator,currentValue) => {
+    return accumulator + currentValue
+  }, 0)
+  if(saikoro < 1) {
+    if (men > 0 && saikoro > 0) {
     sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
+      roomId
+    );
+  } else {
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\nダイスの数と面の数を指定してください`,
+      roomId
+    );
+  }
+  }
+  if (men > 0 && saikoro > 0) {
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${sum}`,
       roomId
     );
   } else {
