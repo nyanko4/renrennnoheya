@@ -503,13 +503,13 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
 }
 async function saikoro(body, message, messageId, roomId, fromaccountId) {
   const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
-    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
-  const number = []
-  for(let s = 0; s < saikoro; s++){
-      number.push(Math.floor(Math.random() * men) + 1)
+  const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
+  const number = [];
+  for (let s = 0; s < saikoro; s++) {
+    number.push(Math.floor(Math.random() * men) + 1);
   }
 
-  if (men > 0) {
+  if (men > 0 && saikoro > 0) {
     sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
       roomId
