@@ -471,11 +471,11 @@ async function sendenkinshi(body, message, messageId, roomId, accountId, sendern
       if (insertError) {
         const { error: insertError } = await supabase
           .from("発禁カウント")
-          .upsert({ accountId: accountId, 理由: "宣伝", カウント: 2 });
+          .insert({ accountId: accountId, 理由: "宣伝", カウント: 2 });
         if (insertError) {
           console.log("error");
         } else {
-          sendchatwork("3度目の宣伝のため発禁になります")
+          sendchatwork("3度目の宣伝のため発禁になります", roomId)
           blockMembers(body, message, messageId, roomId, accountId, sendername)
         }
       }
