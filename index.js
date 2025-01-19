@@ -137,10 +137,10 @@ app.post("/mention", async (req, res) => {
     }
   }
   if (body.match(/dice/gi)) {
-    saikoro(body, message, messageId, roomId, fromaccountId)
+    saikoro(body, message, messageId, roomId, fromaccountId);
   }
   if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
-    janken(body, message, messageId, roomId, fromaccountId)
+    janken(body, message, messageId, roomId, fromaccountId);
   }
 });
 //メッセージ送信
@@ -489,38 +489,39 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
 }
 async function janken(body, message, messageId, roomId, fromaccountId) {
   const janken = getjanken();
-    function getjanken() {
-      const random = Math.random() * 100;
-      console.log(random);
-      if (random < 33.333333333333333) return "ぐー";
-      else if (random < 66.66666666666666) return "ちょき";
-      else return "ぱー";
-    }
+  function getjanken() {
+    const random = Math.random() * 100;
+    console.log(random);
+    if (random < 33.333333333333333) return "ぐー";
+    else if (random < 66.66666666666666) return "ちょき";
+    else return "ぱー";
+  }
   sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
-      roomId
-    );
+    `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
+    roomId
+  );
 }
 async function saikoro(body, message, messageId, roomId, fromaccountId) {
-  const saikoro = [...body.matchAll(/\d+(?=d)/g)].map(
-      (saikoro) => saikoro[0]
-    );
-  console.log(saikoro)
-  let saikoronokazu = []
-  for (let i = 0; i == saikoro; i++) {
-  console.log(saikoro)
+  const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
+  console.log(typeof(saikoro));
+  const saikorokorokoro = saikoro.toString
+  console.log(typeof(saikorokorokoro))
+  let saikoronokazu = [];
+  for (let s = 0; s == saikoro; s++) {
+    saikoronokazu[s] = s
   }
-    const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
-    const number = Math.floor(Math.random() * men) + 1;
-    if (men > 0) {
-      sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
-        roomId
-      );
-    } else {
-      sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nダイスの数と面の数を指定してください`,
-        roomId
-      );
-    }
+  console.log(saikoronokazu)
+  const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
+  const number = Math.floor(Math.random() * men) + 1;
+  if (men > 0) {
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${number}`,
+      roomId
+    );
+  } else {
+    sendchatwork(
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\nダイスの数と面の数を指定してください`,
+      roomId
+    );
+  }
 }
