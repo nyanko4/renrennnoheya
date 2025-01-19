@@ -94,16 +94,16 @@ app.post("/getchat", async (req, res) => {
   }
   //宣伝感知
   if (body.match(/\https:\/\/www.chatwork.com/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId);
+    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\https:\/\/odaibako.net/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId);
+    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\https:\/\/scratch.mit.edu/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId);
+    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\https:\/\/padlet.com/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId);
+    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/^now$/i)) {
     const today = new Date().toLocaleString("ja-JP", {
@@ -456,7 +456,7 @@ async function Toomikuji(fromaccountId, messageId, roomId) {
     );
   }
 }
-async function sendenkinshi(body, message, messageId, roomId, accountId) {
+async function sendenkinshi(body, message, messageId, roomId, accountId, sendername) {
   try {
     const members = await getChatworkMembers(roomId);
     const isAdmin = await isUserAdmin(accountId, roomId);
@@ -475,7 +475,8 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
         if (insertError) {
           console.log("error");
         } else {
-          
+          sendchatwork("3度目の宣伝のため発禁になります")
+          blockMembers(body, message, messageId, roomId, accountId, sendername)
         }
       }
       return;
