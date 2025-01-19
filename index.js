@@ -503,6 +503,7 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
 }
 async function saikoro(body, message, messageId, roomId, fromaccountId) {
   const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
+  console.log(saikoro)
   const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
   const number = Math.floor(Math.random() * men) + 1;
   if (men > 0) {
