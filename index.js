@@ -501,7 +501,7 @@ async function janken(body, message, messageId, roomId, fromaccountId) {
       roomId
     );
 }
-async function saikoro() {
+async function saikoro(body, message, messageId, roomId, fromaccountId) {
   const saikoro = [...body.matchAll(/\d+(?=d)/g)].map(
       (saikoro) => saikoro[0]
     );
