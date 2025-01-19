@@ -139,9 +139,6 @@ app.post("/mention", async (req, res) => {
   if (body.match(/dice/gi)) {
     saikoro(body, message, messageId, roomId, fromaccountId);
   }
-  if (body.match(/[To:9587322]暇/g && /じゃんけん/g)) {
-    janken(body, message, messageId, roomId, fromaccountId);
-  }
 });
 //メッセージ送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -489,20 +486,6 @@ async function sendenkinshi(body, message, messageId, roomId, accountId, sendern
       error.response ? error.response.data : error.message
     );
   }
-}
-async function janken(body, message, messageId, roomId, fromaccountId) {
-  const janken = getjanken();
-  function getjanken() {
-    const random = Math.random() * 100;
-    console.log(random);
-    if (random < 33.333333333333333) return "ぐー";
-    else if (random < 66.66666666666666) return "ちょき";
-    else return "ぱー";
-  }
-  sendchatwork(
-    `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]\n${janken}`,
-    roomId
-  );
 }
 async function saikoro(body, message, messageId, roomId, fromaccountId) {
   const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
