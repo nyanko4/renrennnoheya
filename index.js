@@ -474,6 +474,8 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
           .upsert({ accountId: accountId, 理由: "宣伝", カウント: 2 });
         if (insertError) {
           console.log("error");
+        } else {
+          
         }
       }
       return;
