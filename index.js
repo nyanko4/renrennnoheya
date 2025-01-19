@@ -511,7 +511,7 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
   const sum = number.reduce((accumulator,currentValue) => {
     return accumulator + currentValue
   }, 0)
-  if(saikoro < 1) {
+  if(saikoro == 1) {
     if (men > 0 && saikoro > 0) {
     sendchatwork(
       `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
@@ -523,10 +523,10 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
       roomId
     );
   }
-  }
+  } else
   if (men > 0 && saikoro > 0) {
     sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${sum}`,
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${"合計値" + sum}`,
       roomId
     );
   } else {
@@ -535,4 +535,5 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
       roomId
     );
   }
+
 }
