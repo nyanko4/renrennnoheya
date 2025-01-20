@@ -140,9 +140,10 @@ app.post("/mention", async (req, res) => {
     if (body.match(/[To:9587322]暇/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
-  }
+  
   if (body.match(/dice/gi)) {
     saikoro(body, message, messageId, roomId, fromaccountId);
+  }
   }
 });
 //メッセージ送信
