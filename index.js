@@ -61,7 +61,8 @@ app.post("/getchat", async (req, res) => {
   const welcomeId = body.replace(/\D/g, "");
   //メッセージを保存
   const { data, error } = await supabase
-  .from("コメント")
+  .from("nyankoのへや")
+  .insert({ messageId: messageId, message: message, accountId: accountId, name:sendername})
   
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
@@ -375,7 +376,7 @@ async function omikuji(body, message, messageId, roomId, accountId) {
   try {
     const { error: insertError } = await supabase
       .from("おみくじ")
-      .insert({ aid_today: `${accountId}_${roomId}` });
+      .insert({ aid_roomId: `${accountId}_${roomId}` });
     if (insertError) {
       await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
