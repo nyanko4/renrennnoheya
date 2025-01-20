@@ -142,11 +142,11 @@ app.post("/mention", async (req, res) => {
     if (body.match(/\削除/)) {
       deletemessage(body, message, messageId, roomId, fromaccountId);
     }
-    if (body.match(/[To:9587322]暇/g && /\messagecount/g)) {
+    if (body.match(/[To:9587322]/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
 
-    if (body.match(/dice/gi)) {
+    if (body.match(/[To:9587322]/g && /dice/gi)) {
       saikoro(body, message, messageId, roomId, fromaccountId);
     }
   }
