@@ -61,9 +61,14 @@ app.post("/getchat", async (req, res) => {
   const welcomeId = body.replace(/\D/g, "");
   //メッセージを保存
   const { data, error } = await supabase
-  .from("nyankoのへや")
-  .insert({ messageId: messageId, message: message, accountId: accountId, name:sendername})
-  
+    .from("nyankoのへや")
+    .insert({
+      messageId: messageId,
+      message: message,
+      accountId: accountId,
+      name: sendername,
+    });
+
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
@@ -140,10 +145,10 @@ app.post("/mention", async (req, res) => {
     if (body.match(/[To:9587322]暇/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
-  
-  if (body.match(/dice/gi)) {
-    saikoro(body, message, messageId, roomId, fromaccountId);
-  }
+
+    if (body.match(/dice/gi)) {
+      saikoro(body, message, messageId, roomId, fromaccountId);
+    }
   }
 });
 //メッセージ送信
@@ -459,7 +464,14 @@ async function Toomikuji(fromaccountId, messageId, roomId) {
     );
   }
 }
-async function sendenkinshi(body, message, messageId, roomId, accountId, sendername) {
+async function sendenkinshi(
+  body,
+  message,
+  messageId,
+  roomId,
+  accountId,
+  sendername
+) {
   try {
     const members = await getChatworkMembers(roomId);
     const isAdmin = await isUserAdmin(accountId, roomId);
@@ -478,8 +490,8 @@ async function sendenkinshi(body, message, messageId, roomId, accountId, sendern
         if (insertError) {
           console.log("error");
         } else {
-          sendchatwork("3度目の宣伝のため発禁になります", roomId)
-          blockMembers(body, message, messageId, roomId, accountId, sendername)
+          sendchatwork("3度目の宣伝のため発禁になります", roomId);
+          blockMembers(body, message, messageId, roomId, accountId, sendername);
         }
       }
       return;
@@ -500,13 +512,26 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
   for (let s = 0; s < saikoro; s++) {
     number.push(Math.floor(Math.random() * men) + 1);
   }
-  const sum = number.reduce((accumulator,currentValue) => {
-    return accumulator + currentValue
-  }, 0)
-  if(saikoro == 1) {
+  const sum = number.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
+  if (saikoro == 1) {
     if (men > 0 && saikoro > 0) {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
+        roomId
+      );
+    } else {
+      sendchatwork(
+        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\nダイスの数と面の数を指定してください`,
+        roomId
+      );
+    }
+  } else if (men > 0 && saikoro > 0) {
     sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
+      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${
+        "合計値" + sum
+      }`,
       roomId
     );
   } else {
@@ -515,17 +540,4 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
       roomId
     );
   }
-  } else
-  if (men > 0 && saikoro > 0) {
-    sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${"合計値" + sum}`,
-      roomId
-    );
-  } else {
-    sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\nダイスの数と面の数を指定してください`,
-      roomId
-    );
-  }
-
 }
