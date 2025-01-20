@@ -426,7 +426,7 @@ new CronJob(
     const { data, error } = await supabase
       .from("おみくじ")
       .delete()
-      .neq("aid_today", "0");
+      .neq("aid_roomId", "0");
   },
   null,
   true,
@@ -482,7 +482,7 @@ async function sendenkinshi(
       );
       const { error: insertError } = await supabase
         .from("発禁カウント")
-        .insert({ accountId: accountId, 理由: "宣伝", カウント: 1 });
+        .insert({ accountId: accountId, 理由: "宣伝"});
       if (insertError) {
         const { error: insertError } = await supabase
           .from("発禁カウント")
