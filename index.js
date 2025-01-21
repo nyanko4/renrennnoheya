@@ -314,7 +314,8 @@ async function messagecount(message, roomId) {
       roomId
     );
   } catch (error) {
-    console.error("メッセージ数エラー:", error.response?.data || error.message);
+    console.error("error:", error)
+    await sendchatwork("エラーが起きました", roomId)
   }
 }
 
@@ -597,12 +598,10 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
   try {
     const proxyname = messagee;
     console.log(messagee)
-    if (messagee == "/proxyset/") {
+    if (messagee == "") {
       const { data, error } = await supabase
       .from("proxy")
       .select("proxyname")
-     // .eq("roomId", roomId);
-    console.log(data);
     if (error) {
       console.error("URL取得エラー:", error);
     } else {
