@@ -378,11 +378,13 @@ async function sankashita(
 }
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
+    const today = new Date().toLocaleDateString("ja-JP");
     const { data, error } = await supabase
       .from("おみくじ")
       .select("*")
       .eq("accountId", accountId)
       .eq("roomId", roomId)
+      .eq("today", today)
       .single();
 
     if (error) {
@@ -401,7 +403,7 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     const omikujiResult = getOmikujiResult();
     const { data: insertData, error: insertError } = await supabase
       .from("おみくじ")
-      .insert([{ accountId: accountId, roomId: roomId }]);
+      .insert([{ accountId: accountId, roomId: roomId, today: today }]);
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
       roomId
@@ -438,18 +440,6 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     );
   }
 }
-new CronJob(
-  "59 59 23 * * *",
-  async () => {
-    const { data, error } = await supabase
-      .from("おみくじ")
-      .delete()
-      .neq("aid_roomId", "0");
-  },
-  null,
-  true,
-  "Asia/Tokyo"
-);
 async function Toomikuji(fromaccountId, messageId, roomId) {
   try {
     const omikujiResult = getOmikujiResult();
