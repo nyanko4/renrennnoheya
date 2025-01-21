@@ -59,6 +59,7 @@ app.post("/getchat", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const sendername = await getSenderName(accountId, roomId);
   const welcomeId = body.replace(/\D/g, "");
+  const isAdmin = await isUserAdmin(accountId, roomId);
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
@@ -75,7 +76,6 @@ app.post("/getchat", async (req, res) => {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\[toall]/g)) {
-    const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       await blockMembers(
         body,
@@ -122,6 +122,14 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/proxyget/g)) {
     proxyget(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/proxyset/g)) {
+      if (!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId);
+      } else {
+        proxyset(body, message, messageId, roomId, accountId);
+      }
+    }
+
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -156,13 +164,6 @@ app.post("/mention", async (req, res) => {
         sendchatwork("管理者のみ使用可能です", roomId);
       } else {
         omikujihiitahito(body, message, messageId, roomId, accountId);
-      }
-    }
-    if (body.match(/To:9587322]/g && /proxy/g)) {
-      if (!isAdmin) {
-        sendchatwork("管理者のみ使用可能です", roomId);
-      } else {
-        proxyset(body, message, messageId, roomId, accountId);
       }
     }
   }
@@ -592,7 +593,8 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 }
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
-    const proxyname = [...body.matchAll(/(?<=proxyget\s)\D+/g)].map((proxyname) => proxyname[0]);
+    const proxyname = body.replace("proxyget ", "")
+    console.log(proxyname)
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
@@ -622,7 +624,9 @@ async function proxyget(body, message, messageId, roomId, accountId) {
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const match = message.match(/^([^(]+)"(.+)"/);
+    const messagereplace = message.replace("proxyset", "")
+    console.log(messagereplace)
+    const match = messagereplace.match(/^([^(]+)"(.+)"/);
     const proxyname = match[1];
     const proxyurl = match[2];
     console.log(proxyname, proxyurl)
