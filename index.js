@@ -481,18 +481,10 @@ async function sendenkinshi(
         roomId
       );
       const { error: insertError } = await supabase
-        .from("発禁カウント")
+        .from("宣伝した人")
         .insert({ accountId: accountId, 理由: "宣伝"});
       if (insertError) {
-        const { error: insertError } = await supabase
-          .from("発禁カウント")
-          .insert({ accountId: accountId, 理由: "宣伝", カウント: 2 });
-        if (insertError) {
-          console.log("error");
-        } else {
-          sendchatwork("3度目の宣伝のため発禁になります", roomId);
-          blockMembers(body, message, messageId, roomId, accountId, sendername);
-        }
+        
       }
       return;
     } else {
