@@ -598,8 +598,8 @@ async function proxyget(body, message, messageId, roomId, accountId) {
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
-      .eq("proxyname", proxyname);
-
+      .eq("proxyurl", proxyname);
+console.log(data)
     if (error) {
       console.error("URL取得エラー:", error);
     } else {
