@@ -592,38 +592,41 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 }
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
-  const { data, error } = await supabase
-    .from('proxy')
-    .select('proxyname, proxyurl')
-    .eq('roomId', roomId);
+    const { data, error } = await supabase
+      .from("proxy")
+      .select("proxyname, proxyurl")
+      .eq("roomId", roomId);
 
-  if (error) {
-    console.error('URL取得エラー:', error);
-  } else {
-    if (data.length === 0) {
-      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nこの保存されたURLはありません`, roomId);
+    if (error) {
+      console.error("URL取得エラー:", error);
     } else {
-      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
-      data.forEach(item => {
-        messageToSend += `${item.triggerMessage} - ${item.responseMessage}\n`;
-      });
-      
-      messageToSend += "[/info]"
-      await sendchatwork(messageToSend, roomId);
-    
-}
+      if (data.length === 0) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されたURLはありません`,
+          roomId
+        );
+      } else {
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
+        data.forEach((item) => {
+          messageToSend += `${item.proxyname} - ${item.proxyurl}\n`;
+        });
+
+        messageToSend += "[/info]";
+        await sendchatwork(messageToSend, roomId);
+      }
+    }
   } catch (error) {
     console.error("error", error);
   }
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const match = message.match(/^([^(]+)"(.+)"/)
-    const proxyname = match[1]
-    const proxyurl = match[2]
+    const match = message.match(/^([^(]+)"(.+)"/);
+    const proxyname = match[1];
+    const proxyurl = match[2];
     const { data, error } = await supabase
-    .from("proxy")
-    .insert([{ proxyname: proxyname, proxyurl: proxyurl}]);
+      .from("proxy")
+      .insert([{ proxyname: proxyname, proxyurl: proxyurl }]);
   } catch (error) {
     console.error("error", error);
   }
