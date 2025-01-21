@@ -381,7 +381,7 @@ async function sankashita(
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
-        .from('omikuji_log')
+        .from('おみくじ')
         .select('*')
         .eq('accountId', accountId)
         .eq('roomId', roomId)
@@ -392,25 +392,15 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     }
 
     if (data) {
-        const ms = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n今日はもうおみくじを引いています！明日また挑戦してね！`;
-        sendchatwork(ms, roomId);
-        return;
-    }
-    const { error: insertError } = await supabase
-      .from("おみくじ")
-      .insert({ aid_roomId: `${accountId}_${roomId}` });
-    if (insertError) {
-      await sendchatwork(
+        await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
         roomId
       );
+      console.log(data)
       return;
     }
+    
     const omikujiResult = getOmikujiResult();
-    await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
-      roomId
-    );
     function getOmikujiResult() {
       const random = Math.random() * 100;
       if (random < 5) return "大凶";
