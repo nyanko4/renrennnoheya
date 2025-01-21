@@ -54,7 +54,7 @@ app.post("/getchat", async (req, res) => {
 
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
-  const messagee = body.replace(/.*?/|\s+/g, "")
+  const messagee = body.replace(/\/.*?\/|\s+/g, "");
   const accountId = req.body.webhook_event.account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
@@ -120,14 +120,14 @@ app.post("/getchat", async (req, res) => {
     });
     sendchatwork(today, roomId);
   }
-  if (body.match(/proxyget/g)) {
-    proxyget(body, message, messageId, roomId, accountId);
+  if (body.includes("/proxyget/")) {
+    proxyget(body, messagee, messageId, roomId, accountId);
   }
-  if (body.match(/proxyset/g)) {
+  if (body.includes("/proxyset/")) {
     if (!isAdmin) {
       sendchatwork("管理者のみ使用可能です", roomId);
     } else {
-      proxyset(body, message, messageId, roomId, accountId);
+      proxyset(body, messagee, messageId, roomId, accountId);
     }
   }
 
@@ -592,7 +592,7 @@ async function saikoro(body, message, messageId, roomId, accountId) {
     );
   }
 }
-async function proxyget(body, message, messageId, roomId, accountId) {
+async function proxyget(body, messagee, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
       .from("proxy")
@@ -621,9 +621,10 @@ async function proxyget(body, message, messageId, roomId, accountId) {
     console.error("error", error);
   }
 }
-async function proxyset(body, message, messageId, roomId, accountId) {
+async function proxyset(body, messagee, messageId, roomId, accountId) {
   try {
-    const match = message.match(/^([^「]+)「(.+)」$/);
+    console.log(messagee)
+    const match = messagee.match(/^([^「]+)"(.+)"$/);
     const proxyname = match[1];
     const proxyurl = match[2];
     console.log(proxyname, proxyurl);
