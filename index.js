@@ -119,6 +119,9 @@ app.post("/getchat", async (req, res) => {
     });
     sendchatwork(today, roomId);
   }
+  if (body.match(/proxyget/g)) {
+    proxyget(body, message, messageId, roomId, accountId)
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -155,6 +158,13 @@ app.post("/mention", async (req, res) => {
         omikujihiitahito(body, message, messageId, roomId, accountId)
       }
       }
+    if (body.match(/To:9587322]/g && /proxy/g)) {
+                   if(!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId)
+      } else {
+        proxyset(body, message, messageId, roomId, accountId)
+      }
+                   }
   }
 });
 //メッセージ送信
