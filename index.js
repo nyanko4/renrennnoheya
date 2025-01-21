@@ -147,8 +147,8 @@ app.post("/mention", async (req, res) => {
     if (body.match(/[To:9587322]/g && /dice/gi)) {
       saikoro(body, message, messageId, roomId, fromaccountId);
     }
-    if (body.match(/[To:9587322]/g && body.includes(/omikuji/g))) {
-      
+    if (body.match(/[To:9587322]/g && body.includes("omikuji"))) {
+      omikujihiitahito(body, message, messageId, roomId, fromaccountId)
       }
   }
 });
@@ -441,6 +441,36 @@ async function omikuji(body, message, messageId, roomId, accountId) {
       "エラー:",
       error.response ? error.response.data : error.message
     );
+  }
+}
+async function omikujihiitahito(body, message, messageId, roomId, fromaccountId) {
+  try{
+    const { data, error } = await supabase
+    .from('text')
+    .select('accountId, roomId')
+    .eq('roomId', roomId);
+
+  if (error) {
+    console.error('設定取得エラー:', error);
+  } else {
+    if (data.length === 0) {
+      await sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]さん\nまだおみくじを引いた人はいません`, roomId);
+    } else {
+      let messageToSend = `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]さん[info][title]おみくじを引いた人[/title]`;
+      data.forEach(item => {
+        messageToSend += `${item.accountId} ${item.roomId} \n`;
+      });
+      
+      messageToSend += "[/info]"
+      await sendchatwork(messageToSend, roomId);
+    }
+  }
+
+  } catch(error) {
+    console.error(
+    "エラー:",
+      error.response ? error.response.data : error.message
+      )
   }
 }
 async function Toomikuji(fromaccountId, messageId, roomId) {
