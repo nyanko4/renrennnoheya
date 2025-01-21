@@ -663,12 +663,12 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
   }
 }
 //proxyを削除する
-async function deleteData(body, triggerMessage, messageId, roomId, accountId) {
+async function deleteData(body, proxyurl, messageId, roomId, accountId) {
   const { data, error } = await supabase
     .from('text')
     .delete()
     .eq('roomId', roomId)
-    .eq('prox', triggerMessage);
+    .eq('proxyurl', proxyurl);
 
   if (error) {
     await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`, roomId);
