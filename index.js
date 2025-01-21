@@ -598,7 +598,12 @@ async function proxyget(body, message, messageId, roomId, accountId) {
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    //const { data, error } = await supabase.from("proxy").insert([{ proxyname:}]);
+    const match = message.match(/^([^(]+)"(.+)"/)
+    const proxyname = match[1]
+    const proxyurl = match[2]
+    const { data, error } = await supabase
+    .from("proxy")
+    .insert([{ proxyname: proxyname, proxyurl: proxyurl}]);
   } catch (error) {
     console.error("error", error);
   }
