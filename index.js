@@ -103,7 +103,7 @@ app.post("/getchat", async (req, res) => {
     await omikuji(body, message, messageId, roomId, accountId);
   }
   //宣伝感知
-  if (body.match(/\https:\/\/www.chatwork.com/g)) {
+  if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\https:\/\/odaibako.net/g)) {
@@ -380,6 +380,22 @@ async function sankashita(
 }
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
+    const { data, error } = await supabase
+        .from('omikuji_log')
+        .select('*')
+        .eq('accountId', accountId)
+        .eq('roomId', roomId)
+        .single();
+
+    if (error) {
+        console.error('Supabaseエラー:', error);
+    }
+
+    if (data) {
+        const ms = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n今日はもうおみくじを引いています！明日また挑戦してね！`;
+        sendchatwork(ms, roomId);
+        return;
+    }
     const { error: insertError } = await supabase
       .from("おみくじ")
       .insert({ aid_roomId: `${accountId}_${roomId}` });
@@ -481,7 +497,7 @@ async function sendenkinshi(
         roomId
       );
       const { error: insertError } = await supabase
-        .from("宣伝した人")
+        .from("発禁者")
         .insert({ accountId: accountId, 理由: "宣伝"});
       if (insertError) {
         
