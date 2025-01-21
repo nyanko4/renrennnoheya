@@ -595,28 +595,55 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 //proxyを表示する
 async function proxyget(body, messagee, messageId, roomId, accountId) {
   try {
-    const proxyname = messagee
-    const { data, error } = await supabase
+    const proxyname = messagee;
+    console.log(messagee)
+    if (messagee == "/proxyset/") {
+      const { data, error } = await supabase
       .from("proxy")
-      .select("proxyname, proxyurl")
-      .eq("proxyname", proxyname);
+      .select("proxyname")
+     // .eq("roomId", roomId);
     console.log(data);
     if (error) {
       console.error("URL取得エラー:", error);
     } else {
       if (data.length === 0) {
         await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されたURLはありません`,
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されされているproxyはありません`,
           roomId
         );
       } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているproxy[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.proxyname} - ${item.proxyurl}\n`;
+          messageToSend += `${item.proxyname}\n`;
         });
 
         messageToSend += "[/info]";
         await sendchatwork(messageToSend, roomId);
+      }
+    }
+    } else {
+      const { data, error } = await supabase
+        .from("proxy")
+        .select("proxyname, proxyurl")
+        .eq("proxyname", proxyname);
+      console.log(data);
+      if (error) {
+        console.error("URL取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されたURLはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.proxyname} - ${item.proxyurl}\n`;
+          });
+
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
       }
     }
   } catch (error) {
@@ -626,7 +653,7 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
 //proxyを設定する
 async function proxyset(body, messagee, messageId, roomId, accountId) {
   try {
-    console.log(messagee)
+    console.log(messagee);
     const match = messagee.match(/^([^「]+)"(.+)"$/);
     const proxyname = match[1];
     const proxyurl = match[2];
@@ -639,19 +666,14 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
       return;
     }
     const { data, error } = await supabase
-    .from('proxy')
-    .insert([
-      { roomId: roomId,
-        proxyname: proxyname,
-        proxyurl: proxyurl 
-      }
-    ]);
+      .from("proxy")
+      .insert([{ roomId: roomId, proxyname: proxyname, proxyurl: proxyurl }]);
     if (error) {
       await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
         roomId
       );
-      console.error(error)
+      console.error(error);
     } else {
       await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
@@ -665,14 +687,20 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
 //proxyを削除する
 async function deleteData(body, proxyurl, messageId, roomId, accountId) {
   const { data, error } = await supabase
-    .from('text')
+    .from("text")
     .delete()
-    .eq('roomId', roomId)
-    .eq('proxyurl', proxyurl);
+    .eq("roomId", roomId)
+    .eq("proxyurl", proxyurl);
 
   if (error) {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`, roomId);
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`,
+      roomId
+    );
   } else {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`, roomId);
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`,
+      roomId
+    );
   }
 }
