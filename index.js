@@ -622,9 +622,7 @@ async function proxyget(body, message, messageId, roomId, accountId) {
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const messagereplace = message.replace("proxyset", "");
-    console.log(messagereplace);
-    const match = messagereplace.match(/^([^(]+)"(.+)"/);
+    const match = message.match(/^([^「]+)"(.+)"$/);
     const proxyname = match[1];
     const proxyurl = match[2];
     console.log(proxyname, proxyurl);
