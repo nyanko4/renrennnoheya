@@ -622,13 +622,25 @@ async function proxyget(body, message, messageId, roomId, accountId) {
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const match = message.match(/^([^「]+)"(.+)"$/);
+    const match = message.match(/^([^「]+)「(.+)」$/);
     const proxyname = match[1];
     const proxyurl = match[2];
     console.log(proxyname, proxyurl);
+    if (!match) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n構文エラー`,
+        roomId
+      );
+      return;
+    }
     const { data, error } = await supabase
-      .from("proxy")
-      .insert([{ roomId: roomId, proxyurl: proxyurl, proxyname: proxyname }]);
+    .from('proxy')
+    .insert([
+      { roomId: roomId,
+        proxyname: proxyname,
+        proxyurl: proxyurl 
+      }
+    ]);
     if (error) {
       await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
