@@ -125,30 +125,35 @@ app.post("/getchat", async (req, res) => {
 app.post("/mention", async (req, res) => {
   console.log(req.body);
 
-  const fromaccountId = req.body.webhook_event.from_account_id;
+  const accountId = req.body.webhook_event.from_account_id;
   const toaccountId = req.body.webhook_event.to_account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
+  const isAdmin = await isUserAdmin(accountId, roomId)
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
     if (body.match(/\[To:9587322]/g) && body.match(/\おみくじ/)) {
-      Toomikuji(fromaccountId, messageId, roomId);
+      Toomikuji(accountId, messageId, roomId);
       return;
     }
     if (body.match(/\削除/)) {
-      deletemessage(body, message, messageId, roomId, fromaccountId);
+      deletemessage(body, message, messageId, roomId, accountId);
     }
     if (body.match(/[To:9587322]/g && /\messagecount/g)) {
       messagecount(message, roomId);
     }
 
     if (body.match(/[To:9587322]/g && /dice/gi)) {
-      saikoro(body, message, messageId, roomId, fromaccountId);
+      saikoro(body, message, messageId, roomId, accountId);
     }
     if (body.match(/[To:9587322]/g && body.includes("omikuji"))) {
-      omikujihiitahito(body, message, messageId, roomId, fromaccountId)
+      if(!isAdmin) {
+        console
+      } else {
+        omikujihiitahito(body, message, messageId, roomId, accountId)
+      }
       }
   }
 });
@@ -169,13 +174,14 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     console.log("メッセージ送信成功");
   } catch (error) {
     console.error(
+    
       "Chatworkへのメッセージ送信エラー:",
       error.response?.data || error.message
     );
   }
 }
 //メッセージを削除する
-async function deletemessage(body, message, messageId, roomId, fromaccountId) {
+async function deletemessage(body, message, messageId, roomId, accountId) {
   const dlmessageIds = [...message.matchAll(/(?<=to=\d+-)(\d+)/g)].map(
     (match) => match[0]
   );
@@ -443,22 +449,22 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     );
   }
 }
-async function omikujihiitahito(body, message, messageId, roomId, fromaccountId) {
+async function omikujihiitahito(body, message, messageId, roomId, accountId) {
   try{
     const { data, error } = await supabase
     .from('text')
-    .select('accountId, roomId')
+    .select('accountId, roomId, today')
     .eq('roomId', roomId);
 
   if (error) {
-    console.error('設定取得エラー:', error);
+    console.error('おみくじ取得エラー:', error);
   } else {
     if (data.length === 0) {
-      await sendchatwork(`[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]さん\nまだおみくじを引いた人はいません`, roomId);
+      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`, roomId);
     } else {
-      let messageToSend = `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}]さん[info][title]おみくじを引いた人[/title]`;
+      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
       data.forEach(item => {
-        messageToSend += `${item.accountId} ${item.roomId} \n`;
+        messageToSend += `[piconname:${item.accountId}] ${item.roomId} ${item.today}\n`;
       });
       
       messageToSend += "[/info]"
@@ -473,11 +479,11 @@ async function omikujihiitahito(body, message, messageId, roomId, fromaccountId)
       )
   }
 }
-async function Toomikuji(fromaccountId, messageId, roomId) {
+async function Toomikuji(accountId, messageId, roomId) {
   try {
     const omikujiResult = getOmikujiResult();
     await sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
       roomId
     );
     function getOmikujiResult() {
@@ -537,7 +543,7 @@ async function sendenkinshi(
     );
   }
 }
-async function saikoro(body, message, messageId, roomId, fromaccountId) {
+async function saikoro(body, message, messageId, roomId, accountId) {
   const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
   const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
   const number = [];
@@ -550,25 +556,25 @@ async function saikoro(body, message, messageId, roomId, fromaccountId) {
   if (saikoro == 1) {
     if (men > 0 && saikoro > 0) {
       sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number}`,
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number}`,
         roomId
       );
     } else {
       sendchatwork(
-        `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\nダイスの数と面の数を指定してください`,
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
         roomId
       );
     }
   } else if (men > 0 && saikoro > 0) {
     sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\n${number} ${
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number} ${
         "合計値" + sum
       }`,
       roomId
     );
   } else {
     sendchatwork(
-      `[rp aid=${fromaccountId} to=${roomId}-${messageId}][pname:${fromaccountId}] さん\nダイスの数と面の数を指定してください`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
       roomId
     );
   }
