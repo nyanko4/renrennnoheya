@@ -147,6 +147,9 @@ app.post("/mention", async (req, res) => {
     if (body.match(/[To:9587322]/g && /dice/gi)) {
       saikoro(body, message, messageId, roomId, fromaccountId);
     }
+    if (body.match(/[To:9587322]/g && body.includes(/omikuji/g))) {
+      
+      }
   }
 });
 //メッセージ送信
