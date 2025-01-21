@@ -148,9 +148,9 @@ app.post("/mention", async (req, res) => {
     if (body.match(/[To:9587322]/g && /dice/gi)) {
       saikoro(body, message, messageId, roomId, accountId);
     }
-    if (body.match(/[To:9587322]/g && body.includes("omikuji"))) {
+    if (body.match(/[To:9587322]/g && /omikuji/g)) {
       if(!isAdmin) {
-        console
+        sendchatwork("管理者のみ使用可能です", roomId)
       } else {
         omikujihiitahito(body, message, messageId, roomId, accountId)
       }
@@ -452,7 +452,7 @@ async function omikuji(body, message, messageId, roomId, accountId) {
 async function omikujihiitahito(body, message, messageId, roomId, accountId) {
   try{
     const { data, error } = await supabase
-    .from('text')
+    .from('おみくじ')
     .select('accountId, roomId, today')
     .eq('roomId', roomId);
 
@@ -464,7 +464,7 @@ async function omikujihiitahito(body, message, messageId, roomId, accountId) {
     } else {
       let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
       data.forEach(item => {
-        messageToSend += `[piconname:${item.accountId}] ${item.roomId} ${item.today}\n`;
+        messageToSend += `${item.roomId} [piconname:${item.accountId}]\n`;
       });
       
       messageToSend += "[/info]"
