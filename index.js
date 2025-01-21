@@ -54,6 +54,7 @@ app.post("/getchat", async (req, res) => {
 
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
+  const messagee = body.replace(/.*?/|\s+/g, "")
   const accountId = req.body.webhook_event.account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
