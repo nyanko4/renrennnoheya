@@ -120,7 +120,7 @@ app.post("/getchat", async (req, res) => {
     sendchatwork(today, roomId);
   }
   if (body.match(/proxyget/g)) {
-    proxyget(body, message, messageId, roomId, accountId)
+    proxyget(body, message, messageId, roomId, accountId);
   }
   res.sendStatus(200);
 });
@@ -134,7 +134,7 @@ app.post("/mention", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
-  const isAdmin = await isUserAdmin(accountId, roomId)
+  const isAdmin = await isUserAdmin(accountId, roomId);
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
     if (body.match(/\[To:9587322]/g) && body.match(/\おみくじ/)) {
@@ -152,19 +152,19 @@ app.post("/mention", async (req, res) => {
       saikoro(body, message, messageId, roomId, accountId);
     }
     if (body.match(/[To:9587322]/g && /omikuji/g)) {
-      if(!isAdmin) {
-        sendchatwork("管理者のみ使用可能です", roomId)
+      if (!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId);
       } else {
-        omikujihiitahito(body, message, messageId, roomId, accountId)
+        omikujihiitahito(body, message, messageId, roomId, accountId);
       }
-      }
+    }
     if (body.match(/To:9587322]/g && /proxy/g)) {
-                   if(!isAdmin) {
-        sendchatwork("管理者のみ使用可能です", roomId)
+      if (!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId);
       } else {
-        proxyset(body, message, messageId, roomId, accountId)
+        proxyset(body, message, messageId, roomId, accountId);
       }
-                   }
+    }
   }
 });
 //メッセージ送信
@@ -184,7 +184,6 @@ async function sendchatwork(ms, CHATWORK_ROOM_ID) {
     console.log("メッセージ送信成功");
   } catch (error) {
     console.error(
-    
       "Chatworkへのメッセージ送信エラー:",
       error.response?.data || error.message
     );
@@ -460,33 +459,35 @@ async function omikuji(body, message, messageId, roomId, accountId) {
   }
 }
 async function omikujihiitahito(body, message, messageId, roomId, accountId) {
-  try{
+  try {
     const { data, error } = await supabase
-    .from('おみくじ')
-    .select('accountId, roomId, today')
-    .eq('roomId', roomId);
+      .from("おみくじ")
+      .select("accountId, roomId, today")
+      .eq("roomId", roomId);
 
-  if (error) {
-    console.error('おみくじ取得エラー:', error);
-  } else {
-    if (data.length === 0) {
-      await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`, roomId);
+    if (error) {
+      console.error("おみくじ取得エラー:", error);
     } else {
-      let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
-      data.forEach(item => {
-        messageToSend += `${item.roomId} [piconname:${item.accountId}]\n`;
-      });
-      
-      messageToSend += "[/info]"
-      await sendchatwork(messageToSend, roomId);
-    }
-  }
+      if (data.length === 0) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+          roomId
+        );
+      } else {
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+        data.forEach((item) => {
+          messageToSend += `${item.roomId} [piconname:${item.accountId}]\n`;
+        });
 
-  } catch(error) {
+        messageToSend += "[/info]";
+        await sendchatwork(messageToSend, roomId);
+      }
+    }
+  } catch (error) {
     console.error(
-    "エラー:",
+      "エラー:",
       error.response ? error.response.data : error.message
-      )
+    );
   }
 }
 async function Toomikuji(accountId, messageId, roomId) {
@@ -587,5 +588,18 @@ async function saikoro(body, message, messageId, roomId, accountId) {
       `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
       roomId
     );
+  }
+}
+async function proxyget(body, message, messageId, roomId, accountId) {
+  try {
+  } catch (error) {
+    console.error("error", error);
+  }
+}
+async function proxyset(body, message, messageId, roomId, accountId) {
+  try {
+    //const { data, error } = await supabase.from("proxy").insert([{ proxyname:}]);
+  } catch (error) {
+    console.error("error", error);
   }
 }
