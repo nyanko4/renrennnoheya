@@ -592,10 +592,11 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 }
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
+    const proxyname = [...body.matchAll(/(?<=proxyget)\D+/g)].map((proxyname) => proxyname[0]);
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
-      .eq("roomId", roomId);
+      .eq("proxyname", proxyname);
 
     if (error) {
       console.error("URL取得エラー:", error);
