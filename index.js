@@ -8,7 +8,9 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const date = new Date().toLocaleDateString("ja-JP");
+const date = new Date().toLocaleDateString("ja-JP", {
+  timeZone: "Asia/Tokyo",
+});
 const cluster = require("cluster");
 const os = require("os");
 const numClusters = os.cpus().length;
@@ -314,8 +316,8 @@ async function messagecount(message, roomId) {
       roomId
     );
   } catch (error) {
-    console.error("error:", error)
-    await sendchatwork("エラーが起きました", roomId)
+    console.error("error:", error);
+    await sendchatwork("エラーが起きました", roomId);
   }
 }
 
@@ -399,7 +401,9 @@ async function sankashita(
 }
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
-    const today = new Date().toLocaleDateString("ja-JP");
+    const today = new Date().toLocaleDateString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+    });
     const { data, error } = await supabase
       .from("おみくじ")
       .select("*")
@@ -597,29 +601,27 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 async function proxyget(body, messagee, messageId, roomId, accountId) {
   try {
     const proxyname = messagee;
-    console.log(messagee)
+    console.log(messagee);
     if (messagee == "") {
-      const { data, error } = await supabase
-      .from("proxy")
-      .select("proxyname")
-    if (error) {
-      console.error("URL取得エラー:", error);
-    } else {
-      if (data.length === 0) {
-        await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されされているproxyはありません`,
-          roomId
-        );
+      const { data, error } = await supabase.from("proxy").select("proxyname");
+      if (error) {
+        console.error("URL取得エラー:", error);
       } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているproxy[/title]`;
-        data.forEach((item) => {
-          messageToSend += `${item.proxyname}\n`;
-        });
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されされているproxyはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているproxy[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.proxyname}\n`;
+          });
 
-        messageToSend += "[/info]";
-        await sendchatwork(messageToSend, roomId);
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
       }
-    }
     } else {
       const { data, error } = await supabase
         .from("proxy")
@@ -686,7 +688,7 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
 //proxyを削除する
 async function deleteData(body, proxyurl, messageId, roomId, accountId) {
   const { data, error } = await supabase
-    .from("text")
+    .from("proxy")
     .delete()
     .eq("roomId", roomId)
     .eq("proxyurl", proxyurl);
