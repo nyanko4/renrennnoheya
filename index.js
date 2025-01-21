@@ -592,7 +592,7 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 }
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
-    const proxyname = [...body.matchAll(/(?<=proxyget)\D+/g)].map((proxyname) => proxyname[0]);
+    const proxyname = [...body.matchAll(/(?<=proxyget\s)\D+/g)].map((proxyname) => proxyname[0]);
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
@@ -625,9 +625,15 @@ async function proxyset(body, message, messageId, roomId, accountId) {
     const match = message.match(/^([^(]+)"(.+)"/);
     const proxyname = match[1];
     const proxyurl = match[2];
+    console.log(proxyname, proxyurl)
     const { data, error } = await supabase
       .from("proxy")
       .insert([{ proxyname: proxyname, proxyurl: proxyurl }]);
+    if (error) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`, roomId);
+  } else {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`, roomId);
+  }
   } catch (error) {
     console.error("error", error);
   }
