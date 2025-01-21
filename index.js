@@ -60,14 +60,12 @@ app.post("/getchat", async (req, res) => {
   const sendername = await getSenderName(accountId, roomId);
   const welcomeId = body.replace(/\D/g, "");
   //メッセージを保存
-  const { data, error } = await supabase
-    .from("nyankoのへや")
-    .insert({
-      messageId: messageId,
-      message: message,
-      accountId: accountId,
-      name: sendername,
-    });
+  const { data, error } = await supabase.from("nyankoのへや").insert({
+    messageId: messageId,
+    message: message,
+    accountId: accountId,
+    name: sendername,
+  });
 
   //ここに荒らしだと思われるメッセージの検出
   if ((body.match(/\)/g) || []).length >= 20) {
@@ -381,26 +379,39 @@ async function sankashita(
 async function omikuji(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
-        .from('おみくじ')
-        .select('*')
-        .eq('accountId', accountId)
-        .eq('roomId', roomId)
-        .single();
+      .from("おみくじ")
+      .select("*")
+      .eq("accountId", accountId)
+      .eq("roomId", roomId)
+      .single();
 
     if (error) {
-        console.error('Supabaseエラー:', error);
+      console.error("Supabaseエラー:", error);
     }
 
     if (data) {
-        await sendchatwork(
+      await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
         roomId
       );
-      console.log(data)
+      console.log(data);
       return;
     }
-    
+
     const omikujiResult = getOmikujiResult();
+    const { data: insertData, error: insertError } = await supabase
+      .from("おみくじ")
+      .insert([{ accountId: accountId, roomId: roomId }]);
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
+      roomId
+    );
+
+    if (insertError) {
+      console.error("Supabase保存エラー:", insertError);
+    } else {
+      console.log("おみくじ結果が保存されました:", insertData);
+    }
     function getOmikujiResult() {
       const random = Math.random() * 100;
       if (random < 5) return "大凶";
@@ -417,7 +428,8 @@ async function omikuji(body, message, messageId, roomId, accountId) {
       //15
       else if (random < 87.6) return "願い事叶えたるよ(できることだけ)";
       //0.3
-      else return "大吉"; //12.4
+      else return "大吉";
+      //12.4
     }
   } catch (error) {
     console.error(
@@ -488,9 +500,8 @@ async function sendenkinshi(
       );
       const { error: insertError } = await supabase
         .from("発禁者")
-        .insert({ accountId: accountId, 理由: "宣伝"});
+        .insert({ accountId: accountId, 理由: "宣伝" });
       if (insertError) {
-        
       }
       return;
     } else {
