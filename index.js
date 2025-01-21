@@ -592,12 +592,14 @@ async function saikoro(body, message, messageId, roomId, accountId) {
     );
   }
 }
+//proxyを表示する
 async function proxyget(body, messagee, messageId, roomId, accountId) {
   try {
+    const proxyname = messagee
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
-      .eq("roomId", roomId);
+      .eq("proxyname", proxyname);
     console.log(data);
     if (error) {
       console.error("URL取得エラー:", error);
@@ -621,6 +623,7 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
     console.error("error", error);
   }
 }
+//proxyを設定する
 async function proxyset(body, messagee, messageId, roomId, accountId) {
   try {
     console.log(messagee)
@@ -657,5 +660,19 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
     }
   } catch (error) {
     console.error("error", error);
+  }
+}
+//proxyを削除する
+async function deleteData(body, triggerMessage, messageId, roomId, accountId) {
+  const { data, error } = await supabase
+    .from('text')
+    .delete()
+    .eq('roomId', roomId)
+    .eq('prox', triggerMessage);
+
+  if (error) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`, roomId);
+  } else {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`, roomId);
   }
 }
