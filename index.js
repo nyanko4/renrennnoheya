@@ -648,6 +648,7 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
         roomId
       );
+      console.error(error)
     } else {
       await sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
