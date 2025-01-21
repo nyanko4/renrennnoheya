@@ -123,12 +123,12 @@ app.post("/getchat", async (req, res) => {
     proxyget(body, message, messageId, roomId, accountId);
   }
   if (body.match(/proxyset/g)) {
-      if (!isAdmin) {
-        sendchatwork("管理者のみ使用可能です", roomId);
-      } else {
-        proxyset(body, message, messageId, roomId, accountId);
-      }
+    if (!isAdmin) {
+      sendchatwork("管理者のみ使用可能です", roomId);
+    } else {
+      proxyset(body, message, messageId, roomId, accountId);
     }
+  }
 
   res.sendStatus(200);
 });
@@ -593,13 +593,11 @@ async function saikoro(body, message, messageId, roomId, accountId) {
 }
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
-    const proxyname = body.replace("proxyget ", "")
-    console.log(proxyname)
     const { data, error } = await supabase
       .from("proxy")
       .select("proxyname, proxyurl")
-      .eq("proxyurl", proxyname);
-console.log(data)
+      .eq("roomId", roomId);
+    console.log(data);
     if (error) {
       console.error("URL取得エラー:", error);
     } else {
@@ -624,20 +622,26 @@ console.log(data)
 }
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const messagereplace = message.replace("proxyset", "")
-    console.log(messagereplace)
+    const messagereplace = message.replace("proxyset", "");
+    console.log(messagereplace);
     const match = messagereplace.match(/^([^(]+)"(.+)"/);
     const proxyname = match[1];
     const proxyurl = match[2];
-    console.log(proxyname, proxyurl)
+    console.log(proxyname, proxyurl);
     const { data, error } = await supabase
       .from("proxy")
-      .insert([{ proxyname: proxyname, proxyurl: proxyurl }]);
+      .insert([{ roomId: roomId, proxyurl: proxyurl, proxyname: proxyname }]);
     if (error) {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`, roomId);
-  } else {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`, roomId);
-  }
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
+        roomId
+      );
+    } else {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
+        roomId
+      );
+    }
   } catch (error) {
     console.error("error", error);
   }
