@@ -132,7 +132,9 @@ app.post("/getchat", async (req, res) => {
       proxyset(body, messagee, messageId, roomId, accountId);
     }
   }
-if (body.includes("/proxydelete"))
+if (body.includes("/proxydelete/")) {
+  deleteproxy(body, messagee, messageId, roomId, accountId)
+}
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -639,7 +641,7 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
         } else {
           let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
           data.forEach((item) => {
-            messageToSend += `${item.proxyname} - ${item.proxyurl}\n`;
+            messageToSend += `${item.proxyname} - https://${item.proxyurl}\n`;
           });
 
           messageToSend += "[/info]";
@@ -687,12 +689,17 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
 }
 //proxyを削除する
 async function deleteproxy(body, messagee, messageId, roomId, accountId) {
-  const proxyurl = messagee
+  const match = messagee.match(/^([^「]+)"(.+)"$/);
+  const proxyname = match[1]
+  const proxyurl = match[2]
+  console.log(proxyname)
+  console.log(proxyurl)
   const { data, error } = await supabase
     .from("proxy")
     .delete()
+    .eq("proxyurl", proxyurl)
     .eq("roomId", roomId)
-    .eq("proxyurl", proxyurl);
+    .eq("proxyname", proxyname)
 
   if (error) {
     await sendchatwork(
