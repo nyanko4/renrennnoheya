@@ -434,7 +434,7 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     const omikujiResult = getOmikujiResult();
     const { data: insertData, error: insertError } = await supabase
       .from("おみくじ")
-      .insert([{ accountId: accountId, roomId: roomId, today: today }]);
+      .insert([{ accountId: accountId, roomId: roomId, today: today, 結果: omikujiResult}]);
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
       roomId
