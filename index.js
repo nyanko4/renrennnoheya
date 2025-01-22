@@ -143,7 +143,9 @@ app.post("/getchat", async (req, res) => {
       deleteproxy(body, messagee, messageId, roomId, accountId);
     }
   }
-  if (body.match(/bot/))
+  if (body.match(/bot/)) {
+    sendchatwork("[code][To:9587322]\na[/code]", roomId)
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
