@@ -133,7 +133,11 @@ app.post("/getchat", async (req, res) => {
     }
   }
 if (body.includes("/proxydelete/")) {
+  if (!isAdmin) {
+      sendchatwork("管理者のみ使用可能です", roomId);
+    } else {
   deleteproxy(body, messagee, messageId, roomId, accountId)
+    }
 }
   res.sendStatus(200);
 });
