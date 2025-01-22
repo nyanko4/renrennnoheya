@@ -475,7 +475,7 @@ async function omikujihiitahito(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
       .from("おみくじ")
-      .select("accountId, roomId, today")
+      .select("accountId, roomId, today, 結果")
       .eq("roomId", roomId);
 
     if (error) {
@@ -489,7 +489,7 @@ async function omikujihiitahito(body, message, messageId, roomId, accountId) {
       } else {
         let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.roomId} [piconname:${item.accountId}]\n`;
+          messageToSend += `${item.roomId} [piconname:${item.accountId}]\n${item.結果}\n`;
         });
 
         messageToSend += "[/info]";
