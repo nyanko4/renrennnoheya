@@ -29,7 +29,7 @@ if (cluster.isMaster) {
       const { data, error } = await supabase
       .from("おみくじ")
       .delete()
-      .neq("today", date);
+      .neq("accountId", 0);
     },
     null,
     true,
