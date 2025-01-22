@@ -82,7 +82,7 @@ app.post("/getchat", async (req, res) => {
   if ((body.match(/\*/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
-  if ((body.match(/\[To:\d+]/g) || []).length >= 20) {
+  if ((body.match(/\[To:\d+]/g) || []).length >= 15) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\[toall]/g)) {
@@ -103,7 +103,7 @@ app.post("/getchat", async (req, res) => {
     }
   }
   //参加
-  if (body.match(/\[dtext:chatroom_added]/g)) {
+  if (body.match(/\[dtext:chatroom_member_is][piconname:\d+][dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
   //おみくじ
