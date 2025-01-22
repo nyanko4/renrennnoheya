@@ -27,9 +27,9 @@ if (cluster.isMaster) {
     async () => {
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
       const { data, error } = await supabase
-      .from("おみくじ")
-      .delete()
-      .neq("accountId", 0);
+        .from("おみくじ")
+        .delete()
+        .neq("accountId", 0);
     },
     null,
     true,
@@ -144,7 +144,7 @@ app.post("/getchat", async (req, res) => {
     }
   }
   if (body.match(/bot/)) {
-    sendchatwork("[code][To:9587322]\na[/code]", roomId)
+    sendchatwork("[code][To:9587322]\na[/code]", roomId);
   }
   res.sendStatus(200);
 });
@@ -166,7 +166,11 @@ app.post("/mention", async (req, res) => {
       return;
     }
     if (body.match(/\削除/)) {
-      deletemessage(body, message, messageId, roomId, accountId);
+      if (!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId);
+      } else {
+        deletemessage(body, message, messageId, roomId, accountId);
+      }
     }
     if (body.match(/[To:9587322]/g && /\messagecount/g)) {
       messagecount(message, roomId);
