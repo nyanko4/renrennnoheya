@@ -79,7 +79,10 @@ app.post("/getchat", async (req, res) => {
   if ((body.match(/\)/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
-  if ((body.match(/\:/g) || []).length >= 20) {
+  if ((body.match(/\*/g) || []).length >= 20) {
+    await blockMembers(body, message, messageId, roomId, accountId, sendername);
+  }
+  if ((body.match(/\[To:\d+]/g) || []).length >= 20) {
     await blockMembers(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/\[toall]/g)) {
