@@ -500,7 +500,7 @@ async function omikujihiitahito(body, message, messageId, roomId, accountId) {
       } else {
         let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.roomId} [piconname:${item.accountId}] ${item.結果}\n`;
+          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
         });
 
         messageToSend += "[/info]";
