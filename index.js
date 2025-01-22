@@ -26,6 +26,10 @@ if (cluster.isMaster) {
     "0 0 0 * * *",
     async () => {
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
+      const { data, error } = await supabase
+      .from("おみくじ")
+      .delete()
+      .neq("today", date);
     },
     null,
     true,
@@ -132,13 +136,13 @@ app.post("/getchat", async (req, res) => {
       proxyset(body, messagee, messageId, roomId, accountId);
     }
   }
-if (body.includes("/proxydelete/")) {
-  if (!isAdmin) {
+  if (body.includes("/proxydelete/")) {
+    if (!isAdmin) {
       sendchatwork("管理者のみ使用可能です", roomId);
     } else {
-  deleteproxy(body, messagee, messageId, roomId, accountId)
+      deleteproxy(body, messagee, messageId, roomId, accountId);
     }
-}
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -434,7 +438,14 @@ async function omikuji(body, message, messageId, roomId, accountId) {
     const omikujiResult = getOmikujiResult();
     const { data: insertData, error: insertError } = await supabase
       .from("おみくじ")
-      .insert([{ accountId: accountId, roomId: roomId, today: today, 結果: omikujiResult}]);
+      .insert([
+        {
+          accountId: accountId,
+          roomId: roomId,
+          today: today,
+          結果: omikujiResult,
+        },
+      ]);
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
       roomId
@@ -489,7 +500,7 @@ async function omikujihiitahito(body, message, messageId, roomId, accountId) {
       } else {
         let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.roomId} [piconname:${item.accountId}]\n${item.結果}\n`;
+          messageToSend += `${item.roomId} [piconname:${item.accountId}] ${item.結果}\n`;
         });
 
         messageToSend += "[/info]";
@@ -694,16 +705,16 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
 //proxyを削除する
 async function deleteproxy(body, messagee, messageId, roomId, accountId) {
   const match = messagee.match(/^([^「]+)"(.+)"$/);
-  const proxyname = match[1]
-  const proxyurl = match[2]
-  console.log(proxyname)
-  console.log(proxyurl)
+  const proxyname = match[1];
+  const proxyurl = match[2];
+  console.log(proxyname);
+  console.log(proxyurl);
   const { data, error } = await supabase
     .from("proxy")
     .delete()
     .eq("proxyurl", proxyurl)
     .eq("roomId", roomId)
-    .eq("proxyname", proxyname)
+    .eq("proxyname", proxyname);
 
   if (error) {
     await sendchatwork(
