@@ -132,7 +132,7 @@ app.post("/getchat", async (req, res) => {
       proxyset(body, messagee, messageId, roomId, accountId);
     }
   }
-
+if (body.includes("/proxydelete"))
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -686,7 +686,8 @@ async function proxyset(body, messagee, messageId, roomId, accountId) {
   }
 }
 //proxyを削除する
-async function deleteData(body, proxyurl, messageId, roomId, accountId) {
+async function deleteproxy(body, messagee, messageId, roomId, accountId) {
+  const proxyurl = messagee
   const { data, error } = await supabase
     .from("proxy")
     .delete()
