@@ -367,7 +367,7 @@ async function messagelink(message, roomId) {
       }
     );
     if (response) {
-      const messageId = 
+      response.data.message_id.map((messageId) => messageId[0])
       await sendchatwork(
         `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_id}`,
         roomId
