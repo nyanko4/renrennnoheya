@@ -366,16 +366,8 @@ async function messagelink(message, roomId) {
         },
       }
     );
-    let messageId = []
-    for(let id = 0; id > 100; id++) {
-      messageId.push()
-    }
     await sendchatwork(
-      `部屋名: ${
-        name.data.name
-      } メッセージリンク: https://www.chatwork.com/#rid${room}-${Math.max(
-        messageId
-      )}`,
+      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${Math.max(response.data.message_id)}`,
       roomId
     );
   } catch (error) {
