@@ -369,7 +369,7 @@ async function messagelink(message, roomId) {
     const messageId = response.data.slice().reverse().find((messageid) => messageid.message_id > 0)
     console.log(messageId.message_id)
     await sendchatwork(
-      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${messageId.message_id}`,
+      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#!rid${room}-${messageId.message_id}`,
       roomId
     );
   } catch (error) {
