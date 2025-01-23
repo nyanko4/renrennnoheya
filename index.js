@@ -773,3 +773,36 @@ async function deleteproxy(body, messagee, messageId, roomId, accountId) {
     );
   }
 }
+//メッセージ履歴を表示させる
+async function messagerireki(body, message, messageId, roomId, accountId) {
+  try {
+    const { data, error } = await supabase
+      .from("nyankoのへや")
+      .select("accountId, roomId, today, 結果")
+      .eq("roomId", roomId);
+
+    if (error) {
+      console.error("おみくじ取得エラー:", error);
+    } else {
+      if (data.length === 0) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+          roomId
+        );
+      } else {
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+        data.forEach((item) => {
+          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+        });
+
+        messageToSend += "[/info]";
+        await sendchatwork(messageToSend, roomId);
+      }
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
