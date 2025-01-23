@@ -149,6 +149,11 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/^bot$/)) {
     sendchatwork("[code][To:9587322]\na[/code]", roomId);
   }
+  if (roomId == 367747947) {
+    if (body.includes("/履歴/")) {
+      messagerireki(body, message, messagee, messageId, roomId, accountId);
+    }
+  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -774,30 +779,40 @@ async function deleteproxy(body, messagee, messageId, roomId, accountId) {
   }
 }
 //メッセージ履歴を表示させる
-async function messagerireki(body, message, messagee, messageId, roomId, accountId) {
+async function messagerireki(
+  body,
+  message,
+  messagee,
+  messageId,
+  roomId,
+  accountId
+) {
   try {
     const kijun = messagee.match(/^([^「]+)"(.+)"$/);
-    const { data, error } = await supabase
-      .from("nyankoのへや")
-      .select("messageId, message, accountId, name")
-      .eq(kijun[1], kijun[2])
-
-    if (error) {
-      console.error("メッセージ取得エラー:", error);
+    if (kijun == "") {
     } else {
-      if (data.length === 0) {
-        await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
-          roomId
-        );
-      } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
-        data.forEach((item) => {
-          messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
-        });
+      const { data, error } = await supabase
+        .from("nyankoのへや")
+        .select("messageId, message, accountId, name")
+        .eq(kijun[1], kijun[2]);
 
-        messageToSend += "[/info]";
-        await sendchatwork(messageToSend, roomId);
+      if (error) {
+        console.error("メッセージ取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
+          });
+
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
       }
     }
   } catch (error) {
