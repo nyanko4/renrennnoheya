@@ -776,7 +776,7 @@ async function deleteproxy(body, messagee, messageId, roomId, accountId) {
 //メッセージ履歴を表示させる
 async function messagerireki(body, message, messagee, messageId, roomId, accountId) {
   try {
-    const kijun = 0
+    const kijun = messagee.match(/^([^「]+)"(.+)"$/);
     const { data, error } = await supabase
       .from("nyankoのへや")
       .select("messageId, message, accountId, name")
@@ -793,7 +793,7 @@ async function messagerireki(body, message, messagee, messageId, roomId, account
       } else {
         let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+          messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
         });
 
         messageToSend += "[/info]";
