@@ -774,7 +774,7 @@ async function deleteproxy(body, messagee, messageId, roomId, accountId) {
   }
 }
 //メッセージ履歴を表示させる
-async function messagerireki(body, message, messageId, roomId, accountId) {
+async function messagerireki(body, message, messagee, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
       .from("nyankoのへや")
