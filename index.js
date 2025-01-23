@@ -353,8 +353,16 @@ async function messagelink(message, roomId) {
     const room = [...message.matchAll(/(?<=messagelink\D+)(\d+)/g)].map(
       (room) => room[0]
     );
+    const name = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${room}`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
+        },
+      }
+    );
     const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/{room}/messages?force=1`,
+      `https://api.chatwork.com/v2/rooms/${room}/messages?force=1`,
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
@@ -363,7 +371,7 @@ async function messagelink(message, roomId) {
     );
     console.log(response.data.message_Id);
     await sendchatwork(
-      `部屋名: ${response.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_Id}`,
+      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_Id}`,
       roomId
     );
   } catch (error) {
