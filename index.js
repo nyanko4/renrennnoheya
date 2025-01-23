@@ -790,35 +790,11 @@ async function messagerireki(
 ) {
   try {
     const kijun = messagee.match(/^([^「]+)"(.+)"$/);
-    console.log(kijun)
-    if (kijun == null) {
-      const { data, error } = await supabase
-        .from("nyankoのへや")
-        .select("messageId, message, accountId, name")
-        .neq("accountId", 0);
-      if (error) {
-        console.error("メッセージ取得エラー:", error);
-      } else {
-        if (data.length === 0) {
-          await sendchatwork(
-            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されているコメントはありません`,
-            roomId
-          );
-        } else {
-          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title][code]`;
-          data.for(let m = 0; m >100) {
-            messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
-          });
 
-          messageToSend += "[/code][/info]";
-          await sendchatwork(messageToSend, roomId);
-        }
-      }
-    
-    } else {
+    {
       const { data, error } = await supabase
         .from("nyankoのへや")
-        .select("messageId, message, accountId, name")
+        .select("messageId, message, accountId, name, date")
         .eq(kijun[1], kijun[2]);
 
       if (error) {
@@ -830,12 +806,12 @@ async function messagerireki(
             roomId
           );
         } else {
-          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title][code]`;
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]メッセージ[/title]`;
           data.forEach((item) => {
-            messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
+            messageToSend += `[code]${item.messageId} ${item.message} [piconname:${item.accountId}] ${item.date}[/code]\n`;
           });
 
-          messageToSend += "[/code][/info]";
+          messageToSend += "[/info]";
           await sendchatwork(messageToSend, roomId);
         }
       }
