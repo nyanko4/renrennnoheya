@@ -192,9 +192,9 @@ app.post("/mention", async (req, res) => {
       } else {
         omikujihiitahito(body, message, messageId, roomId, accountId);
       }
-      if (body.match(/[To:9587322]/g && /\messagelink/g)) {
-        messagelink(message, roomId);
-      }
+    }
+    if (body.match(/[To:9587322]/g && /\messagelink/g)) {
+      messagelink(message, roomId);
     }
   }
 });
@@ -350,19 +350,18 @@ async function messagecount(message, roomId) {
 //メッセージの最新リンクを取得する
 async function messagelink(message, roomId) {
   try {
-    const room = [...message.matchAll(/(?<=messagecount\D+)(\d+)/g)].map(
+    const room = [...message.matchAll(/(?<=messagelink\D+)(\d+)/g)].map(
       (room) => room[0]
     );
     const response = await axios.get(
-      `https://api.chatwork.com/v2/rooms/{room}/messages`,
+      `https://api.chatwork.com/v2/rooms/{room}/messages?force=1`,
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
         },
       }
     );
-    console.log(response.data.message_Id)
-    return
+    console.log(response.data.message_Id);
     await sendchatwork(
       `部屋名: ${response.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_Id}`,
       roomId
