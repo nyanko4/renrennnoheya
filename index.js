@@ -103,11 +103,7 @@ app.post("/getchat", async (req, res) => {
     }
   }
   //参加
-  if (
-    body.match(
-      /\[dtext:chatroom_member_is][piconname:\d+][dtext:chatroom_added]/g
-    )
-  ) {
+  if (body.match(/\[dtext:chatroom_added]/g)) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
   //おみくじ
@@ -366,8 +362,11 @@ async function messagelink(message, roomId) {
         },
       }
     );
-    const messageId = response.data.slice().reverse().find((messageid) => messageid.message_id > 0)
-    console.log(messageId.message_id)
+    const messageId = response.data
+      .slice()
+      .reverse()
+      .find((messageid) => messageid.message_id > 0);
+    console.log(messageId.message_id);
     await sendchatwork(
       `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#!rid${room}-${messageId.message_id}`,
       roomId
