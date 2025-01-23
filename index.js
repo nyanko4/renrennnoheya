@@ -366,13 +366,18 @@ async function messagelink(message, roomId) {
         },
       }
     );
-    if (response) {
-      response.data.message_id.map((messageId) => messageId[0])
-      await sendchatwork(
-        `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_id}`,
-        roomId
-      );
+    let messageId = []
+    for(let id = 0; id > 100; id++) {
+      messageId.push()
     }
+    await sendchatwork(
+      `部屋名: ${
+        name.data.name
+      } メッセージリンク: https://www.chatwork.com/#rid${room}-${Math.max(
+        messageId
+      )}`,
+      roomId
+    );
   } catch (error) {
     console.error("error:", error);
     await sendchatwork("エラーが起きました", roomId);
