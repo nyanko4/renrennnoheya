@@ -149,11 +149,6 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/^bot$/)) {
     sendchatwork("[code][To:9587322]\na[/code]", roomId);
   }
-  if (roomId == 367747947) {
-    if (body.includes("/履歴/")) {
-      messagerireki(body, message, messagee, messageId, roomId, accountId);
-    }
-  }
   res.sendStatus(200);
 });
 //メンションされたら起動する
@@ -166,6 +161,7 @@ app.post("/mention", async (req, res) => {
   const messageId = req.body.webhook_event.message_id;
   const body = req.body.webhook_event.body;
   const message = req.body.webhook_event.body;
+  const messagee = body.replace(/\/.*?\/|\s+/g, "");
   const isAdmin = await isUserAdmin(accountId, roomId);
   await messageread(messageId, roomId);
   if (roomId == 374987857) {
@@ -196,6 +192,11 @@ app.post("/mention", async (req, res) => {
     }
     if (body.match(/[To:9587322]/g && /\messagelink/g)) {
       messagelink(message, roomId);
+    }
+  }
+  if (roomId == 367747947) {
+    if (body.includes("/履歴/")) {
+      messagerireki(body, message, messagee, messageId, roomId, accountId);
     }
   }
 });
@@ -789,7 +790,31 @@ async function messagerireki(
 ) {
   try {
     const kijun = messagee.match(/^([^「]+)"(.+)"$/);
-    if (kijun == "") {
+    console.log(kijun)
+    if (kijun == null) {
+      const { data, error } = await supabase
+        .from("nyankoのへや")
+        .select("messageId, message, accountId, name")
+        .neq("accountId", 0);
+      if (error) {
+        console.error("メッセージ取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されているコメントはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title][code]`;
+          data.for(let m = 0; m >100) {
+            messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
+          });
+
+          messageToSend += "[/code][/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
+      }
+    
     } else {
       const { data, error } = await supabase
         .from("nyankoのへや")
@@ -801,16 +826,16 @@ async function messagerireki(
       } else {
         if (data.length === 0) {
           await sendchatwork(
-            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されているコメントはありません`,
             roomId
           );
         } else {
-          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title][code]`;
           data.forEach((item) => {
             messageToSend += `${item.messageId} ${item.message} [piconname:${item.accountId}]\n`;
           });
 
-          messageToSend += "[/info]";
+          messageToSend += "[/code][/info]";
           await sendchatwork(messageToSend, roomId);
         }
       }
