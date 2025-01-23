@@ -73,6 +73,7 @@ app.post("/getchat", async (req, res) => {
     message: message,
     accountId: accountId,
     name: sendername,
+    date: date
   });
 
   //ここに荒らしだと思われるメッセージの検出
