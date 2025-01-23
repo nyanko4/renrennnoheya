@@ -103,7 +103,11 @@ app.post("/getchat", async (req, res) => {
     }
   }
   //参加
-  if (body.match(/\[dtext:chatroom_member_is][piconname:\d+][dtext:chatroom_added]/g)) {
+  if (
+    body.match(
+      /\[dtext:chatroom_member_is][piconname:\d+][dtext:chatroom_added]/g
+    )
+  ) {
     await sankashita(body, message, messageId, roomId, welcomeId, sendername);
   }
   //おみくじ
@@ -187,6 +191,9 @@ app.post("/mention", async (req, res) => {
         sendchatwork("管理者のみ使用可能です", roomId);
       } else {
         omikujihiitahito(body, message, messageId, roomId, accountId);
+      }
+      if (body.match(/[To:9587322]/g && /\messagelink/g)) {
+        messagelink(message, roomId);
       }
     }
   }
@@ -340,7 +347,31 @@ async function messagecount(message, roomId) {
     await sendchatwork("エラーが起きました", roomId);
   }
 }
-
+//メッセージの最新リンクを取得する
+async function messagelink(message, roomId) {
+  try {
+    const room = [...message.matchAll(/(?<=messagecount\D+)(\d+)/g)].map(
+      (room) => room[0]
+    );
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/{room}/messages`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
+        },
+      }
+    );
+    console.log(response.data.message_Id)
+    return
+    await sendchatwork(
+      `部屋名: ${response.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${response.data.message_Id}`,
+      roomId
+    );
+  } catch (error) {
+    console.error("error:", error);
+    await sendchatwork("エラーが起きました", roomId);
+  }
+}
 //荒らし対策
 async function blockMembers(
   body,
