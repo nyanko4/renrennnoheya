@@ -778,8 +778,8 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
       .from("nyankoのへや")
-      .select("accountId, roomId, today, 結果")
-      .eq("roomId", roomId);
+      .select("messageId, message, accountId, name")
+      .eq()
 
     if (error) {
       console.error("おみくじ取得エラー:", error);
