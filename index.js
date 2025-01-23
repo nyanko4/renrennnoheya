@@ -366,8 +366,9 @@ async function messagelink(message, roomId) {
         },
       }
     );
+    const messageId = response.data.massege_id.find((messageid) => messageid.data.message_id)
     await sendchatwork(
-      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${Math.max(response.data.message_id)}`,
+      `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#rid${room}-${""}`,
       roomId
     );
   } catch (error) {
