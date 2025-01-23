@@ -776,13 +776,14 @@ async function deleteproxy(body, messagee, messageId, roomId, accountId) {
 //メッセージ履歴を表示させる
 async function messagerireki(body, message, messagee, messageId, roomId, accountId) {
   try {
+    const kijun = 0
     const { data, error } = await supabase
       .from("nyankoのへや")
       .select("messageId, message, accountId, name")
-      .eq()
+      .eq(kijun[1], kijun[2])
 
     if (error) {
-      console.error("おみくじ取得エラー:", error);
+      console.error("メッセージ取得エラー:", error);
     } else {
       if (data.length === 0) {
         await sendchatwork(
