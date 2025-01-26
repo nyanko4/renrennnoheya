@@ -828,34 +828,3 @@ async function messagerireki(
     );
   }
 }
-const iconv = require('iconv-lite');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-app.get('/mozi', (req, res) => {
-    res.send(`
-        <form action="/convert" method="post">
-            <textarea name="inputText" rows="10" cols="30" placeholder="文字化けしたテキストを入力してください"></textarea><br>
-            <select name="encoding">
-                <option value="utf-8">UTF-8</option>
-                <option value="shift_jis">Shift JIS</option>
-                <option value="euc-jp">EUC-JP</option>
-            </select><br>
-            <button type="submit">変換</button>
-        </form>
-    `);
-});
-
-app.post('/convert', (req, res) => {
-    const { inputText, encoding } = req.body;
-
-    // 文字エンコーディングを変換
-    const buffer = Buffer.from(inputText, 'binary');
-    const convertedText = iconv.decode(buffer, encoding);
-
-    res.send(`
-        <h3>変換結果:</h3>
-        <p>${convertedText}</p>
-        <a href="/">戻る</a>
-    `);
-});
