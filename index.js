@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const app = express();
+const bodyparser = require("body-parser")
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { createClient } = require("@supabase/supabase-js");
@@ -45,7 +46,7 @@ if (cluster.isMaster) {
 const axios = require("axios");
 const PORT = 3000;
 
-app.use(express.json());
+app.use(bodyparser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
@@ -827,3 +828,28 @@ async function messagerireki(
     );
   }
 }
+
+// ボディパーサーの設定
+app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
+
+// 文字化け変換のエンドポイント
+app.post('/convert', (req, res) => {
+    const { text } = req.body;
+
+    // ここで文字化けの変換処理を行います
+    // 例: UTF-8からSJISに変換する場合
+    const convertedText = Buffer.from(text, 'utf-8').toString('sjis');
+
+    res.send({ convertedText });
+});
+
+// ホームページ
+app.get('/mozi', (req, res) => {
+    res.send(`
+        <form action="/convert" method="post">
+            <textarea name="text" rows="10" cols="30"></textarea><br>
+            <input type="submit" value="変換">
+        </form>
+    `);
+});
