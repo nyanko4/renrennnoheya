@@ -8,9 +8,6 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const date = new Date().toLocaleDateString("ja-JP", {
-  timeZone: "Asia/Tokyo",
-});
 const cluster = require("cluster");
 const os = require("os");
 const numClusters = os.cpus().length;
@@ -25,7 +22,10 @@ if (cluster.isMaster) {
   new CronJob(
     "0 0 0 * * *",
     async () => {
-      sendchatwork(`日付変更　今日は${date + 1}日です`, 374987857);
+      const date = new Date().toLocaleDateString("ja-JP", {
+  timeZone: "Asia/Tokyo",
+});
+      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
       const { data, error } = await supabase
         .from("おみくじ")
         .delete()
@@ -67,13 +67,16 @@ app.post("/getchat", async (req, res) => {
   const sendername = await getSenderName(accountId, roomId);
   const welcomeId = body.replace(/\D/g, "");
   const isAdmin = await isUserAdmin(accountId, roomId);
+  const today = new Date().toLocaleDateString("ja-JP", {
+  timeZone: "Asia/Tokyo",
+});
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
     message: message,
     accountId: accountId,
     name: sendername,
-    date: date
+    date: today
   });
 
   //ここに荒らしだと思われるメッセージの検出
@@ -125,10 +128,10 @@ app.post("/getchat", async (req, res) => {
     await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
   }
   if (body.match(/^now$/i)) {
-    const today = new Date().toLocaleString("ja-JP", {
+    const now = new Date().toLocaleString("ja-JP", {
       timeZone: "Asia/Tokyo",
     });
-    sendchatwork(today, roomId);
+    sendchatwork(now, roomId);
   }
   if (body.includes("/proxyget/")) {
     proxyget(body, messagee, messageId, roomId, accountId);
