@@ -6,9 +6,9 @@
   "dependencies": {
     "express": "^5.0.1",
     "axios": "latest",
-    "compression": "^1.7.4",
-    "cron": "^3.3.2",
-    "@supabase/supabase-js": "^2.47.11"
+    "compression": "^1.7.5",
+    "cron": "^3.5.0",
+    "@supabase/supabase-js": "^2.48.0"
   },
   "engines": {
     "node": "16.x"

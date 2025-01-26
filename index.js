@@ -827,14 +827,3 @@ async function messagerireki(
     );
   }
 }
-var jschardet = require('jschardet');
-var Iconv = require('iconv').Iconv;
-
-var notUtf8String = /* どこかから持ってきたUTF-8じゃなさそうな文字列 */;
-
-//文字コード判定
-var detectResult = jschardet.detect(notUtf8String);
-
-//判定した文字コードからUTF-8に変換
-var iconv = new Iconv(detectResult.encoding,'UTF-8//TRANSLIT//IGNORE');
-var convertedString = iconv.convert(notUtf8String).toString();
