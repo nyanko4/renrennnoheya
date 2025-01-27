@@ -195,6 +195,13 @@ app.post("/mention", async (req, res) => {
         omikujihiitahito(body, message, messageId, roomId, accountId);
       }
     }
+    if (body.match(/[To:9587322]/g && /list/g)) {
+      if (!isAdmin) {
+        sendchatwork("管理者のみ使用可能です", roomId);
+      } else {
+        hakkinsya(body, message, messageId, roomId, accountId);
+      }
+    }
     if (body.match(/[To:9587322]/g && /\messagelink/g)) {
       messagelink(message, roomId);
     }
@@ -635,7 +642,7 @@ async function sendenkinshi(
       } else {
         const { error } = await supabase
           .from("発禁者")
-          .upsert([{ accountId: accountId, reason: "宣伝", count: 3 }]);
+          .upsert([{ accountId: accountId, reason: "宣伝", count: 3, roomId: roomId }]);
         if(error) {
           console.error(error)
         }
@@ -650,27 +657,26 @@ async function sendenkinshi(
     );
   }
 }
-async function sendenshitahito(body, message, messageId, roomId, accountId) {
+async function hakkinsya(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
-      .from("おみくじ")
-      .select("accountId, roomId, today, 結果")
+      .from("発禁者")
+      .select("accountId, reason, count, roomId")
       .eq("roomId", roomId);
 
     if (error) {
-      console.error("おみくじ取得エラー:", error);
+      console.error("発禁者取得エラー:", error);
     } else {
       if (data.length === 0) {
         await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだブラックリスト入りしてる人はいません`,
           roomId
         );
       } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]ブラックリスト[/title]`;
         data.forEach((item) => {
-          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+          messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
         });
-
         messageToSend += "[/info]";
         await sendchatwork(messageToSend, roomId);
       }
