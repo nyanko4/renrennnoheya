@@ -634,6 +634,7 @@ async function sendenkinshi(
        count += number.count;
       });
       console.log(count)
+      const count1 = Number(count) + 1
       if (count == 3) {
         sendchatwork("3度目の宣伝となりますので発禁になります", roomId);
         await blockMembers(
@@ -648,7 +649,7 @@ async function sendenkinshi(
         const { error } = await supabase
           .from("発禁者")
           .upsert([
-            { accountId: accountId, reason: "宣伝", count: 3, roomId: roomId },
+            { accountId: accountId, reason: "宣伝", count: count1, roomId: roomId },
           ]);
         if (error) {
           console.error(error);
