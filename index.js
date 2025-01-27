@@ -618,12 +618,11 @@ async function sendenkinshi(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`,
         roomId
       );
-      const { data, error: insertError } = await supabase
+      const { data } = await supabase
         .from("発禁者")
-        .upsert({ accountId: accountId, reason: "宣伝", count: 1 });
-      if (insertError) {
-      }
-      return;
+        .select("accountId, reason, count")
+        .eq("accountId", accountId)
+      
     } else {
       console.log("管理者のため見逃されました");
     }
