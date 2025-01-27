@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { createClient } = require("@supabase/supabase-js");
@@ -24,8 +24,8 @@ if (cluster.isMaster) {
     "0 0 0 * * *",
     async () => {
       const date = new Date().toLocaleDateString("ja-JP", {
-  timeZone: "Asia/Tokyo",
-});
+        timeZone: "Asia/Tokyo",
+      });
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
       const { data, error } = await supabase
         .from("おみくじ")
@@ -69,15 +69,15 @@ app.post("/getchat", async (req, res) => {
   const welcomeId = body.replace(/\D/g, "");
   const isAdmin = await isUserAdmin(accountId, roomId);
   const today = new Date().toLocaleDateString("ja-JP", {
-  timeZone: "Asia/Tokyo",
-});
+    timeZone: "Asia/Tokyo",
+  });
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
     message: message,
     accountId: accountId,
     name: sendername,
-    date: today
+    date: today,
   });
 
   //ここに荒らしだと思われるメッセージの検出
@@ -621,15 +621,21 @@ async function sendenkinshi(
       const { data } = await supabase
         .from("発禁者")
         .select("accountId, reason, count")
-        .eq("accountId", accountId)
-      const count = data.count
-      if (count == 3) {
-        sendchatwork("3度目の宣伝となりますので発禁になります", roomId)
-        await blockMembers(body, message, messageId, roomId, accountId, sendername);
+        .eq("accountId", accountId);
+      if (data.count == 3) {
+        sendchatwork("3度目の宣伝となりますので発禁になります", roomId);
+        await blockMembers(
+          body,
+          message,
+          messageId,
+          roomId,
+          accountId,
+          sendername
+        );
       } else {
-      const { error: inserterror } = await supabase
-      .from("発禁者")
-      .upsert({ accountId: accountId, reason: "宣伝", count: count });
+        const { error: inserterror } = await supabase
+          .from("発禁者")
+          .upsert([{ accountId: accountId, reason: "宣伝", count: 3 }]);
       }
     } else {
       console.log("管理者のため見逃されました");
@@ -707,7 +713,6 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
         .from("proxy")
         .select("proxyname, proxyurl")
         .eq("proxyname", proxyname);
-      console.log(data);
       if (error) {
         console.error("URL取得エラー:", error);
       } else {
@@ -721,7 +726,6 @@ async function proxyget(body, messagee, messageId, roomId, accountId) {
           data.forEach((item) => {
             messageToSend += `${item.proxyname} - https://${item.proxyurl}\n`;
           });
-
           messageToSend += "[/info]";
           await sendchatwork(messageToSend, roomId);
         }
