@@ -629,7 +629,7 @@ async function sendenkinshi(
       } else {
       const { error: inserterror } = await supabase
       .from("発禁者")
-      .upsert({ accountId: accountId, reason: "宣伝", count: count + 1 });
+      .upsert({ accountId: accountId, reason: "宣伝", count: count });
       }
     } else {
       console.log("管理者のため見逃されました");
