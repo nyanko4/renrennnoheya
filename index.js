@@ -622,7 +622,15 @@ async function sendenkinshi(
         .from("発禁者")
         .select("accountId, reason, count")
         .eq("accountId", accountId)
-      
+      const count = data.count
+      if (count == 3) {
+        sendchatwork("3度目の宣伝となりますので発禁になります", roomId)
+        await blockMembers(body, message, messageId, roomId, accountId, sendername);
+      } else {
+      const { error: inserterror } = await supabase
+      .from("発禁者")
+      .upsert({ accountId: accountId, reason: "宣伝", count: count + 1 });
+      }
     } else {
       console.log("管理者のため見逃されました");
     }
