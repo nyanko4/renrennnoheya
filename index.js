@@ -633,9 +633,12 @@ async function sendenkinshi(
           sendername
         );
       } else {
-        const { error: inserterror } = await supabase
+        const { error } = await supabase
           .from("発禁者")
           .upsert([{ accountId: accountId, reason: "宣伝", count: 3 }]);
+        if(error) {
+          console.error(error)
+        }
       }
     } else {
       console.log("管理者のため見逃されました");
@@ -643,6 +646,38 @@ async function sendenkinshi(
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+async function sendenshitahito(body, message, messageId, roomId, accountId) {
+  try {
+    const { data, error } = await supabase
+      .from("おみくじ")
+      .select("accountId, roomId, today, 結果")
+      .eq("roomId", roomId);
+
+    if (error) {
+      console.error("おみくじ取得エラー:", error);
+    } else {
+      if (data.length === 0) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+          roomId
+        );
+      } else {
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]おみくじを引いた人[/title]`;
+        data.forEach((item) => {
+          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+        });
+
+        messageToSend += "[/info]";
+        await sendchatwork(messageToSend, roomId);
+      }
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
       error.response ? error.response.data : error.message
     );
   }
