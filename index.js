@@ -629,7 +629,12 @@ async function sendenkinshi(
         .from("発禁者")
         .select("accountId, reason, count")
         .eq("accountId", accountId);
-      if (data.count == 3) {
+      let count = "";
+      data.forEach((number) => {
+       count += number.count;
+      });
+      console.log(count)
+      if (count == 3) {
         sendchatwork("3度目の宣伝となりますので発禁になります", roomId);
         await blockMembers(
           body,
@@ -642,9 +647,11 @@ async function sendenkinshi(
       } else {
         const { error } = await supabase
           .from("発禁者")
-          .upsert([{ accountId: accountId, reason: "宣伝", count: 3, roomId: roomId }]);
-        if(error) {
-          console.error(error)
+          .upsert([
+            { accountId: accountId, reason: "宣伝", count: 3, roomId: roomId },
+          ]);
+        if (error) {
+          console.error(error);
         }
       }
     } else {
@@ -657,13 +664,13 @@ async function sendenkinshi(
     );
   }
 }
+
 async function hakkinsya(body, message, messageId, roomId, accountId) {
   try {
     const { data, error } = await supabase
       .from("発禁者")
       .select("accountId, reason, count, roomId")
       .eq("roomId", roomId);
-
     if (error) {
       console.error("発禁者取得エラー:", error);
     } else {
