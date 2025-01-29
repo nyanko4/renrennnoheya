@@ -533,10 +533,10 @@ async function omikuji(body, message, messageId, roomId, accountId) {
       //15
       else if (random < 87.3) return "凶";
       //15
-      else if (random < 87.6) return "願い事叶えたるよ(できることだけ)";
-      //0.3
+      else if (random < 87.4) return "願い事叶えたるよ(できることだけ)";
+      //0.1
       else return "大吉";
-      //12.4
+      //12.6
     }
   } catch (error) {
     console.error(
@@ -598,9 +598,9 @@ async function Toomikuji(accountId, messageId, roomId) {
       //15
       else if (random < 87.3) return "凶";
       //15
-      else if (random < 87.6) return "シークレット";
-      //0.3
-      else return "大吉"; //12.4
+      else if (random < 87.4) return "シークレット";
+      //0.1
+      else return "大吉"; //12.6
     }
   } catch (error) {
     console.error(
