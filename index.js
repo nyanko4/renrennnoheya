@@ -168,7 +168,7 @@ app.post("/mention", async (req, res) => {
   const message = req.body.webhook_event.body;
   const messagee = body.replace(/\/.*?\/|\s+/g, "");
   const isAdmin = await isUserAdmin(accountId, roomId);
-  //await messageread(messageId, roomId);
+  await messageread(messageId, roomId);
   if (roomId == 374987857) {
     if (body.match(/\[To:9587322]/g) && body.match(/\おみくじ/)) {
       Toomikuji(accountId, messageId, roomId);
