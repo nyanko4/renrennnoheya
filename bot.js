@@ -66,7 +66,6 @@ app.get("/", (req, res) => {
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
   console.log(req.body);
-
   const body = req.body.webhook_event.body;
   const message = body.replace(/\/.*?\/|\s+/g, "");
   const accountId = req.body.webhook_event.account_id;
@@ -83,28 +82,21 @@ app.post("/getchat", async (req, res) => {
     name: sendername,
     date: today,
   });
-  const command = getCommand(body);
-  if (command && commands[command]) {
-    await commands[command](body, message, messageId, roomId, accountId);
-  } else if (command) {
-    await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n存在しないコマンドです`,
-      roomId
-    );
-  }
-  //ここに荒らしだと思われるメッセージの検出
+  if (accountId == 9587322) {
+    res.sendStatus(200);
+  } else {
+    const command = getCommand(body);
+    if (command && commands[command]) {
+      await commands[command](body, message, messageId, roomId, accountId);
+    } else if (command) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n存在しないコマンドです`,
+        roomId
+      );
+    }
+    //ここに荒らしだと思われるメッセージの検出
 
-  if ((body.match(/\)/g) || []).length >= 20) {
-    await blockMembers(body, message, messageId, roomId, accountId, sendername);
-  }
-  if ((body.match(/\*/g) || []).length >= 20) {
-    await blockMembers(body, message, messageId, roomId, accountId, sendername);
-  }
-  if ((body.match(/\[To:\d+\]/g) || []).length >= 15) {
-    await blockMembers(body, message, messageId, roomId, accountId, sendername);
-  }
-  if (body.match(/\[toall\]/g)) {
-    if (!isAdmin) {
+    if ((body.match(/\)/g) || []).length >= 20) {
       await blockMembers(
         body,
         message,
@@ -113,43 +105,104 @@ app.post("/getchat", async (req, res) => {
         accountId,
         sendername
       );
-    } else {
-      sendchatwork(
-        "管理者がtoallを使用しました。見逃してあげてください()",
-        roomId
+    }
+    if ((body.match(/\*/g) || []).length >= 20) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
       );
     }
+    if ((body.match(/\[To:\d+\]/g) || []).length >= 15) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    if (body.match(/\[toall\]/g)) {
+      if (!isAdmin) {
+        await blockMembers(
+          body,
+          message,
+          messageId,
+          roomId,
+          accountId,
+          sendername
+        );
+      } else {
+        sendchatwork(
+          "管理者がtoallを使用しました。見逃してあげてください()",
+          roomId
+        );
+      }
+    }
+    //参加
+    if (
+      body.match(
+        /^\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]$/
+      )
+    ) {
+      await welcome(body, message, messageId, roomId, sendername);
+    }
+    //おみくじ
+    if (body.match(/^おみくじ$/)) {
+      await omikuji(body, message, messageId, roomId, accountId);
+    }
+    if (body.match(/^now$/i)) {
+      await displaynow(body, message, messageId, roomId, accountId);
+    }
+    //宣伝感知
+    if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
+      await sendenkinshi(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    if (body.match(/\https:\/\/odaibako.net/g)) {
+      await sendenkinshi(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    if (body.match(/\https:\/\/scratch.mit.edu/g)) {
+      await sendenkinshi(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    if (body.match(/\https:\/\/padlet.com/g)) {
+      await sendenkinshi(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    res.sendStatus(200);
   }
-  //参加
-  if (
-    body.match(
-      /^\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]$/
-    )
-  ) {
-    await welcome(body, message, messageId, roomId, sendername);
-  }
-  //おみくじ
-  if (body.match(/^おみくじ$/)) {
-    await omikuji(body, message, messageId, roomId, accountId);
-  }
-  if (body.match(/^now$/i)) {
-    await displaynow(body, message, messageId, roomId, accountId);
-  }
-  //宣伝感知
-  if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
-  }
-  if (body.match(/\https:\/\/odaibako.net/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
-  }
-  if (body.match(/\https:\/\/scratch.mit.edu/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
-  }
-  if (body.match(/\https:\/\/padlet.com/g)) {
-    await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
-  }
-  res.sendStatus(200);
 });
+
 function getCommand(body) {
   const pattern = /\/(.*?)\//;
   const match = body.match(pattern);
@@ -320,7 +373,7 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(body, message, messageId, roomId, accountId) {
   try {
-    const room = message.match(/\d+/g)
+    const room = message.match(/\d+/g);
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
@@ -341,7 +394,7 @@ async function messagecount(body, message, messageId, roomId, accountId) {
 //最新メッセージのリンクを取得する
 async function messagelink(body, message, messageId, roomId, accountId) {
   try {
-    const room = message.match(/\d+/g)
+    const room = message.match(/\d+/g);
     const name = await axios.get(`https://api.chatwork.com/v2/rooms/${room}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
