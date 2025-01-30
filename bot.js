@@ -320,9 +320,10 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    const room = [...message.matchAll(/(?<=messagecount\D+)(\d+)/g)].map(
+    const room = [...message.matchAll(/\d+/g)].map(
       (room) => room[0]
     );
+    console.log(room)
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
