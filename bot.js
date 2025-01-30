@@ -87,7 +87,6 @@ app.post("/getchat", async (req, res) => {
   const command = getCommand(body);
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, accountId);
-
   } else if (command) {
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n存在しないコマンドです`,
@@ -128,7 +127,7 @@ app.post("/getchat", async (req, res) => {
       /^\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]$/
     )
   ) {
-    await welcome(body, message, messageId, roomId, welcomeId, sendername);
+    await welcome(body, message, messageId, roomId, sendername);
   }
   //おみくじ
   if (body.match(/^おみくじ$/)) {
@@ -166,12 +165,13 @@ app.post("/mention", async (req, res) => {
   const isAdmin = await isUserAdmin(accountId, roomId);
   await messageread(messageId, roomId);
   if (body.includes("/削除/")) {
-if (!isAdmin) {
-sendchatwork("管理者のみ利用可能です", roomId)
-} else {
-    await deletemessage(body, message, messageId, roomId, accountId);
-    return res.sendStatus(200);
-  }}
+    if (!isAdmin) {
+      sendchatwork("管理者のみ利用可能です", roomId);
+    } else {
+      await deletemessage(body, message, messageId, roomId, accountId);
+      return res.sendStatus(200);
+    }
+  }
   if (body.includes("[rp aid=9587322")) {
     return res.sendStatus(200);
   }
@@ -183,8 +183,10 @@ sendchatwork("管理者のみ利用可能です", roomId)
 });
 //現在の時間を取得
 async function displaynow(body, message, messageId, roomId, accountId) {
-const today = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy/MM/dd hh:mm:ss");
-sendchatwork(today, roomId)
+  const today = DateTime.now()
+    .setZone("Asia/Tokyo")
+    .toFormat("yyyy/MM/dd hh:mm:ss");
+  sendchatwork(today, roomId);
 }
 //メッセージを送信
 async function sendchatwork(ms, CHATWORK_ROOM_ID) {
@@ -370,14 +372,7 @@ async function messagelink(message, roomId) {
   }
 }
 //部屋に参加したらメッセージを送る
-async function welcome(
-  body,
-  message,
-  messageId,
-  roomId,
-  welcomeId,
-  sendername
-) {
+async function welcome(body, message, messageId, roomId, sendername) {
   try {
     const members = await getChatworkMembers(roomId);
     const welcomeId = (message.match(/\[piconname:(\d+)\]/) || [])[1];
@@ -645,6 +640,222 @@ async function sendenkinshi(
   } catch (error) {
     console.error(
       "宣伝禁止エラー",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+//ブラックリストを表示する
+async function blacklist(body, message, messageId, roomId, accountId) {
+  try {
+    const { data, error } = await supabase
+      .from("発禁者")
+      .select("accountId, reason, count, roomId")
+      .eq("roomId", roomId);
+    if (error) {
+      console.error("発禁者取得エラー:", error);
+    } else {
+      if (data.length === 0) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだブラックリスト入りしてる人はいません`,
+          roomId
+        );
+      } else {
+        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]ブラックリスト[/title]`;
+        data.forEach((item) => {
+          messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
+        });
+        messageToSend += "[/info]";
+        await sendchatwork(messageToSend, roomId);
+      }
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
+      error.response ? error.response.data : error.message
+    );
+  }
+}
+//サイコロを振る
+async function diceroll(body, message, messageId, roomId, accountId) {
+  const saikoro = [...body.matchAll(/\d+(?=d)/g)].map((saikoro) => saikoro[0]);
+  const men = [...body.matchAll(/(?<=d)\d+/g)].map((men) => men[0]);
+  const number = [];
+  for (let s = 0; s < saikoro; s++) {
+    number.push(Math.floor(Math.random() * men) + 1);
+  }
+  const sum = number.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
+  if (saikoro == 1) {
+    if (men > 0 && saikoro > 0) {
+      sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number}`,
+        roomId
+      );
+    } else {
+      sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
+        roomId
+      );
+    }
+  } else if (men > 0 && saikoro > 0) {
+    sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number} ${
+        "合計値" + sum
+      }`,
+      roomId
+    );
+  } else {
+    sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
+      roomId
+    );
+  }
+}
+//proxyを設定する
+async function proxyset(body, message, messageId, roomId, accountId) {
+  try {
+    const match = message.match(/^([^「]+)"(.+)"$/);
+    const proxyname = match[1];
+    const proxyurl = match[2];
+    console.log(proxyname, proxyurl);
+    if (!match) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n構文エラー`,
+        roomId
+      );
+      return;
+    }
+    const { data, error } = await supabase
+      .from("proxy")
+      .insert([{ roomId: roomId, proxyname: proxyname, proxyurl: proxyurl }]);
+    if (error) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
+        roomId
+      );
+      console.error(error);
+    } else {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
+        roomId
+      );
+    }
+  } catch (error) {
+    console.error("error", error);
+  }
+}
+//proxyを表示する
+async function proxyget(body, message, messageId, roomId, accountId) {
+  try {
+    const proxyname = message;
+    if (message == "") {
+      const { data, error } = await supabase.from("proxy").select("proxyname");
+      if (error) {
+        console.error("URL取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されされているproxyはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているproxy[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.proxyname}\n`;
+          });
+
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("proxy")
+        .select("proxyname, proxyurl")
+        .eq("proxyname", proxyname);
+      if (error) {
+        console.error("URL取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されたURLはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているURL[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.proxyname} - https://${item.proxyurl}\n`;
+          });
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("error", error);
+  }
+}
+//proxyを削除する
+async function proxydelete(body, message, messageId, roomId, accountId) {
+  const match = message.match(/^([^「]+)"(.+)"$/);
+  const proxyname = match[1];
+  const proxyurl = match[2];
+  console.log(proxyname);
+  console.log(proxyurl);
+  const { data, error } = await supabase
+    .from("proxy")
+    .delete()
+    .eq("proxyurl", proxyurl)
+    .eq("roomId", roomId)
+    .eq("proxyname", proxyname);
+
+  if (error) {
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`,
+      roomId
+    );
+  } else {
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`,
+      roomId
+    );
+  }
+}
+
+//メッセージ履歴を表示させる
+async function messagerireki(body, message, messageId, roomId, accountId) {
+  try {
+    const kijun = message.match(/^([^「]+)"(.+)"$/);
+
+    {
+      const { data, error } = await supabase
+        .from("nyankoのへや")
+        .select("messageId, message, accountId, name, date")
+        .eq(kijun[1], kijun[2]);
+
+      if (error) {
+        console.error("メッセージ取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されているコメントはありません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]メッセージ[/title]`;
+          data.forEach((item) => {
+            messageToSend += `[code]${item.messageId} ${item.message} [piconname:${item.accountId}] ${item.date}[/code]\n`;
+          });
+
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
+      }
+    }
+  } catch (error) {
+    console.error(
+      "エラー:",
       error.response ? error.response.data : error.message
     );
   }
