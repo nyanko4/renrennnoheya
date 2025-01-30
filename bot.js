@@ -59,7 +59,6 @@ const commands = {
   proxyget: proxyget,
   proxyset: proxyset,
   proxydelete: proxydelete,
-  now: displaynow,
 };
 app.get("/", (req, res) => {
   res.sendStatus(200);
@@ -133,6 +132,9 @@ app.post("/getchat", async (req, res) => {
   if (body.match(/^おみくじ$/)) {
     await omikuji(body, message, messageId, roomId, accountId);
   }
+  if (body.match(/^now$/i)) {
+      await displaynow(body, message, messageId, roomId, accountId)
+  }
   //宣伝感知
   if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
     await sendenkinshi(body, message, messageId, roomId, accountId, sendername);
@@ -164,7 +166,7 @@ app.post("/mention", async (req, res) => {
   const message = req.body.webhook_event.body;
   const isAdmin = await isUserAdmin(accountId, roomId);
   await messageread(messageId, roomId);
-  if (body.includes("/削除/")) {
+  if (body.includes("削除")) {
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
     } else {
