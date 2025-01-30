@@ -318,9 +318,9 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 //メッセージ数を表示する
-async function messagecount(message, roomId) {
+async function messagecount(body, message, messageId, roomId, accountId) {
   try {
-    const room = message.match(/\d+/g);
+    const room = message.match(/\d+/g)
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
@@ -339,11 +339,9 @@ async function messagecount(message, roomId) {
   }
 }
 //最新メッセージのリンクを取得する
-async function messagelink(message, roomId) {
+async function messagelink(body, message, messageId, roomId, accountId) {
   try {
-    const room = [...message.matchAll(/(?<=messagelink\D+)(\d+)/g)].map(
-      (room) => room[0]
-    );
+    const room = message.match(/\d+/g)
     const name = await axios.get(`https://api.chatwork.com/v2/rooms/${room}`, {
       headers: {
         "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
