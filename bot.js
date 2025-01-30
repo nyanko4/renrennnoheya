@@ -133,7 +133,7 @@ app.post("/getchat", async (req, res) => {
     await omikuji(body, message, messageId, roomId, accountId);
   }
   if (body.match(/^now$/i)) {
-      await displaynow(body, message, messageId, roomId, accountId)
+    await displaynow(body, message, messageId, roomId, accountId);
   }
   //宣伝感知
   if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
@@ -191,10 +191,10 @@ async function displaynow(body, message, messageId, roomId, accountId) {
   sendchatwork(today, roomId);
 }
 //メッセージを送信
-async function sendchatwork(ms, CHATWORK_ROOM_ID) {
+async function sendchatwork(ms, roomId) {
   try {
     await axios.post(
-      `https://api.chatwork.com/v2/rooms/${CHATWORK_ROOM_ID}/messages`,
+      `https://api.chatwork.com/v2/rooms/${roomId}/messages`,
       new URLSearchParams({ body: ms }),
       {
         headers: {
@@ -320,10 +320,7 @@ async function isUserAdmin(accountId, roomId) {
 //メッセージ数を表示する
 async function messagecount(message, roomId) {
   try {
-    const room = [...message.matchAll(/\d+/g)].map(
-      (room) => room[0]
-    );
-    console.log(room)
+    const room = message.match(/\d+/g);
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
