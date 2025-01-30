@@ -185,7 +185,7 @@ app.post("/mention", async (req, res) => {
 async function displaynow(body, message, messageId, roomId, accountId) {
   const today = DateTime.now()
     .setZone("Asia/Tokyo")
-    .toFormat("yyyy/MM/dd hh:mm:ss");
+    .toFormat("yyyy-MM-dd hh:mm:ss");
   sendchatwork(today, roomId);
 }
 //メッセージを送信
@@ -523,7 +523,7 @@ async function Toomikuji(body, message, messageId, roomId, accountId) {
   try {
     const omikujiResult = getOmikujiResult();
     await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult} ※To`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult} ※`,
       roomId
     );
     function getOmikujiResult() {
