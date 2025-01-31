@@ -18,7 +18,7 @@ if (cluster.isMaster) {
   new CronJob(
     "0 0 0 * * *",
     async () => {
-      const date = DateTime.now().setZone("Asia/Tokyo").toFormat("dd");
+      const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
       const { data, error } = await supabase
         .from("おみくじ")
@@ -240,7 +240,7 @@ app.post("/mention", async (req, res) => {
 async function displaynow(body, message, messageId, roomId, accountId) {
   const today = DateTime.now()
     .setZone("Asia/Tokyo")
-    .toFormat("yyyy-MM-dd hh:mm:ss");
+    .toFormat("hh:mm:ss");
   sendchatwork(today, roomId);
 }
 //メッセージを送信
