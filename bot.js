@@ -968,7 +968,7 @@ async function poker(body, message, messageId, roomId, accountId) {
       const marks = ["♣️", "♦️", "❤️", "♠️"];
       const suuzi = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
       const poker = getRandomItems(suuzi, marks);
-      sendchatwork(poker, roomId);
+      sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`, roomId);
     }
   } catch (error) {
     console.error(error);
