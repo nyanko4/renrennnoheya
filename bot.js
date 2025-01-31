@@ -18,7 +18,9 @@ if (cluster.isMaster) {
   new CronJob(
     "0 0 0 * * *",
     async () => {
-      const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
+      const date = DateTime.now()
+        .setZone("Asia/Tokyo")
+        .toFormat("yyyy年MM月dd");
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
       const { data, error } = await supabase
         .from("おみくじ")
@@ -238,9 +240,7 @@ app.post("/mention", async (req, res) => {
 });
 //現在の時間を取得
 async function displaynow(body, message, messageId, roomId, accountId) {
-  const today = DateTime.now()
-    .setZone("Asia/Tokyo")
-    .toFormat("MM/dd hh:mm:ss");
+  const today = DateTime.now().setZone("Asia/Tokyo").toFormat("MM/dd hh:mm:ss");
   sendchatwork(today, roomId);
 }
 //メッセージを送信
@@ -422,11 +422,17 @@ async function messagelink(body, message, messageId, roomId, accountId) {
     await sendchatwork("エラーが起きました", roomId);
   }
 }
-async function displaysay (body, message, messageId, roomId, accountId) {
+//say
+async function displaysay(body, message, messageId, roomId, accountId) {
   try {
-    sendchatwork(message, roomId)
-  } catch(error) {
-    console.error("errorが発生しました",error)
+    const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
+      sendchatwork("管理者のみ利用可能です", roomId);
+    } else {
+      sendchatwork(message, roomId);
+    }
+  } catch (error) {
+    console.error("errorが発生しました", error);
   }
 }
 //部屋に参加したらメッセージを送る
@@ -745,34 +751,37 @@ async function diceroll(body, message, messageId, roomId, accountId) {
     return accumulator + currentValue;
   }, 0);
   if (saikoro <= 100) {
-    if (men <= )
-  if (saikoro == 1) {
-    if (men > 0 && saikoro > 0) {
-      sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number}`,
-        roomId
-      );
+    if (men <= 100) {
+      if (saikoro == 1) {
+        if (men > 0 && saikoro > 0) {
+          sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number}`,
+            roomId
+          );
+        } else {
+          sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
+            roomId
+          );
+        }
+      } else if (men > 0 && saikoro > 0) {
+        sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number} ${
+            "合計値" + sum
+          }`,
+          roomId
+        );
+      } else {
+        sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
+          roomId
+        );
+      }
     } else {
-      sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
-        roomId
-      );
+      sendchatwork("面の数が多すぎます(1~100)", roomId);
     }
-  } else if (men > 0 && saikoro > 0) {
-    sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${number} ${
-        "合計値" + sum
-      }`,
-      roomId
-    );
   } else {
-    sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
-      roomId
-    );
-  }
-  } else {
-    sendchatwork("サイコロの数が多すぎます(1〜100)", roomId)
+    sendchatwork("サイコロの数が多すぎます(1~100)", roomId);
   }
 }
 //proxyを設定する
