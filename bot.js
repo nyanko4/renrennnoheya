@@ -50,7 +50,8 @@ app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
-
+const zalgo =
+  /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
   おみくじ: Toomikuji,
   messagecount: messagecount,
@@ -127,6 +128,18 @@ app.post("/getchat", async (req, res) => {
         accountId,
         sendername
       );
+    }
+    const zalgoCount = (body.match(zalgo) || []).length;
+    if (zalgoCount >= 18) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+      return res.sendStatus(200);
     }
     if (body.match(/\[toall\]/g)) {
       if (!isAdmin) {
@@ -425,6 +438,7 @@ async function messagelink(body, message, messageId, roomId, accountId) {
 //say
 async function displaysay(body, message, messageId, roomId, accountId) {
   try {
+    console.log(body)
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
