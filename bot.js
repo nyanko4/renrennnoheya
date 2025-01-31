@@ -93,11 +93,7 @@ app.post("/getchat", async (req, res) => {
     if (command && commands[command]) {
       await commands[command](body, message, messageId, roomId, accountId);
     } else if (command) {
-      console.log(command)
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n存在しないコマンドです`,
-        roomId
-      );
+      return res.sendStatus(200)
     }
     //ここに荒らしだと思われるメッセージの検出
     if ((body.match(/\)/g) || []).length >= 20) {
