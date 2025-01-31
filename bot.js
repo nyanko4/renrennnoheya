@@ -943,7 +943,7 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
 }
 async function poker(body, message, messageId, roomId, accountId) {
   try {
-    const marks = "♣️♦️❤️♠️";
+    const marks = ["♣️","♦️","❤️","♠️"]
     const suuzi = [1,2,3,4,5,6,7,8,9,10,11,12,13];
     const poker = getRandomItems(suuzi, marks);
     sendchatwork(poker, roomId)
@@ -959,7 +959,7 @@ function getRandomItems(suuzi, marks) {
         const randomIndex = suuzi[Math.floor(Math.random() * suuzi.length)]
         itemCounts[randomIndex] = (itemCounts[randomIndex] || 0) + 1;
         if (itemCounts[randomIndex] <= 4) {
-            result.push(randomIndex);
+            result.push(`${mark}${randomIndex}`)
         }
     }
 
