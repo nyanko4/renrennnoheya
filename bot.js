@@ -54,6 +54,7 @@ const commands = {
   messagecount: messagecount,
   messagelink: messagelink,
   dice: diceroll,
+  say: displaysay,
   omikuji: omikujiresult,
   list: blacklist,
   proxyget: proxyget,
@@ -95,7 +96,6 @@ app.post("/getchat", async (req, res) => {
       );
     }
     //ここに荒らしだと思われるメッセージの検出
-
     if ((body.match(/\)/g) || []).length >= 20) {
       await blockMembers(
         body,
@@ -240,7 +240,7 @@ app.post("/mention", async (req, res) => {
 async function displaynow(body, message, messageId, roomId, accountId) {
   const today = DateTime.now()
     .setZone("Asia/Tokyo")
-    .toFormat("hh:mm:ss");
+    .toFormat("MM/dd hh:mm:ss");
   sendchatwork(today, roomId);
 }
 //メッセージを送信
@@ -420,6 +420,13 @@ async function messagelink(body, message, messageId, roomId, accountId) {
   } catch (error) {
     console.error("error:", error);
     await sendchatwork("エラーが起きました", roomId);
+  }
+}
+async function displaysay (body, message, messageId, roomId, accountId) {
+  try {
+    sendchatwork(message, roomId)
+  } catch(error) {
+    console.error("errorが発生しました",error)
   }
 }
 //部屋に参加したらメッセージを送る
