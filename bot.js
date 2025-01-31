@@ -438,12 +438,13 @@ async function messagelink(body, message, messageId, roomId, accountId) {
 //say
 async function displaysay(body, message, messageId, roomId, accountId) {
   try {
-    console.log(body)
+    const m = 
+    console.log(m)
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
     } else {
-      sendchatwork(message, roomId);
+      sendchatwork(m, roomId);
     }
   } catch (error) {
     console.error("errorが発生しました", error);
