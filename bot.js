@@ -627,6 +627,8 @@ async function Toomikuji(body, message, messageId, roomId, accountId) {
 //おみくじの結果を表示する
 async function omikujiresult(body, message, messageId, roomId, accountId) {
   try {
+    const isAdmin = await isUserAdmin(accountId, roomId)
+    if (!is)
     const { data, error } = await supabase
       .from("おみくじ")
       .select("accountId, roomId, today, 結果")
