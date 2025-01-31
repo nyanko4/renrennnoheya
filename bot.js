@@ -947,3 +947,10 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
     );
   }
 }
+async function poker (body, message, messageId, roomId, accountId) {
+  try {
+    
+  } catch (error) {
+    console.error(error)
+  }
+}
