@@ -627,29 +627,32 @@ async function Toomikuji(body, message, messageId, roomId, accountId) {
 //おみくじの結果を表示する
 async function omikujiresult(body, message, messageId, roomId, accountId) {
   try {
-    const isAdmin = await isUserAdmin(accountId, roomId)
-    if (!is)
-    const { data, error } = await supabase
-      .from("おみくじ")
-      .select("accountId, roomId, today, 結果")
-      .eq("roomId", roomId);
-
-    if (error) {
-      console.error("おみくじ取得エラー:", error);
+    const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
+      sendchatwork("管理者のみ利用可能です", roomId);
     } else {
-      if (data.length === 0) {
-        await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
-          roomId
-        );
-      } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん[info][title]おみくじを引いた人[/title]`;
-        data.forEach((item) => {
-          messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
-        });
+      const { data, error } = await supabase
+        .from("おみくじ")
+        .select("accountId, roomId, today, 結果")
+        .eq("roomId", roomId);
 
-        messageToSend += "[/info]";
-        await sendchatwork(messageToSend, roomId);
+      if (error) {
+        console.error("おみくじ取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだおみくじを引いた人はいません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん[info][title]おみくじを引いた人[/title]`;
+          data.forEach((item) => {
+            messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+          });
+
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
       }
     }
   } catch (error) {
@@ -722,25 +725,30 @@ async function sendenkinshi(
 //ブラックリストを表示する
 async function blacklist(body, message, messageId, roomId, accountId) {
   try {
-    const { data, error } = await supabase
-      .from("発禁者")
-      .select("accountId, reason, count, roomId")
-      .eq("roomId", roomId);
-    if (error) {
-      console.error("発禁者取得エラー:", error);
+    const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
+      sendchatwork("管理者のみ利用可能です", roomId);
     } else {
-      if (data.length === 0) {
-        await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだブラックリスト入りしてる人はいません`,
-          roomId
-        );
+      const { data, error } = await supabase
+        .from("発禁者")
+        .select("accountId, reason, count, roomId")
+        .eq("roomId", roomId);
+      if (error) {
+        console.error("発禁者取得エラー:", error);
       } else {
-        let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]ブラックリスト[/title]`;
-        data.forEach((item) => {
-          messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
-        });
-        messageToSend += "[/info]";
-        await sendchatwork(messageToSend, roomId);
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nまだブラックリスト入りしてる人はいません`,
+            roomId
+          );
+        } else {
+          let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]ブラックリスト[/title]`;
+          data.forEach((item) => {
+            messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
+          });
+          messageToSend += "[/info]";
+          await sendchatwork(messageToSend, roomId);
+        }
       }
     }
   } catch (error) {
@@ -798,31 +806,36 @@ async function diceroll(body, message, messageId, roomId, accountId) {
 //proxyを設定する
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
-    const match = message.match(/^([^「]+)"(.+)"$/);
-    const proxyname = match[1];
-    const proxyurl = match[2];
-    console.log(proxyname, proxyurl);
-    if (!match) {
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n構文エラー`,
-        roomId
-      );
-      return;
-    }
-    const { data, error } = await supabase
-      .from("proxy")
-      .insert([{ roomId: roomId, proxyname: proxyname, proxyurl: proxyurl }]);
-    if (error) {
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
-        roomId
-      );
-      console.error(error);
+    const isAdmin = await isUserAdmin(accountId, roomId);
+    if (!isAdmin) {
+      sendchatwork("管理者のみ利用可能です", roomId);
     } else {
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
-        roomId
-      );
+      const match = message.match(/^([^「]+)"(.+)"$/);
+      const proxyname = match[1];
+      const proxyurl = match[2];
+      console.log(proxyname, proxyurl);
+      if (!match) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n構文エラー`,
+          roomId
+        );
+        return;
+      }
+      const { data, error } = await supabase
+        .from("proxy")
+        .insert([{ roomId: roomId, proxyname: proxyname, proxyurl: proxyurl }]);
+      if (error) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存できませんでした`,
+          roomId
+        );
+        console.error(error);
+      } else {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nデータを保存しました！`,
+          roomId
+        );
+      }
     }
   } catch (error) {
     console.error("error", error);
@@ -881,28 +894,33 @@ async function proxyget(body, message, messageId, roomId, accountId) {
 }
 //proxyを削除する
 async function proxydelete(body, message, messageId, roomId, accountId) {
-  const match = message.match(/^([^「]+)"(.+)"$/);
-  const proxyname = match[1];
-  const proxyurl = match[2];
-  console.log(proxyname);
-  console.log(proxyurl);
-  const { data, error } = await supabase
-    .from("proxy")
-    .delete()
-    .eq("proxyurl", proxyurl)
-    .eq("roomId", roomId)
-    .eq("proxyname", proxyname);
-
-  if (error) {
-    await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`,
-      roomId
-    );
+  const isAdmin = await isUserAdmin(accountId, roomId);
+  if (!isAdmin) {
+    sendchatwork("管理者のみ利用可能です", roomId);
   } else {
-    await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`,
-      roomId
-    );
+    const match = message.match(/^([^「]+)"(.+)"$/);
+    const proxyname = match[1];
+    const proxyurl = match[2];
+    console.log(proxyname);
+    console.log(proxyurl);
+    const { data, error } = await supabase
+      .from("proxy")
+      .delete()
+      .eq("proxyurl", proxyurl)
+      .eq("roomId", roomId)
+      .eq("proxyname", proxyname);
+
+    if (error) {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しようとしているURLが見つかりません。。`,
+        roomId
+      );
+    } else {
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n削除しました`,
+        roomId
+      );
+    }
   }
 }
 
@@ -946,28 +964,28 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
 async function poker(body, message, messageId, roomId, accountId) {
   try {
     if (message.match(/^役$/)) {
-      sendchatwork("[preview id=1668054600 ht=250]", roomId)
-    }else {
-    const marks = ["♣️","♦️","❤️","♠️"]
-    const suuzi = [1,2,3,4,5,6,7,8,9,10,11,12,13];
-    const poker = getRandomItems(suuzi, marks);
-    sendchatwork(poker, roomId)
+      sendchatwork("[preview id=1668054600 ht=250]", roomId);
+    } else {
+      const marks = ["♣️", "♦️", "❤️", "♠️"];
+      const suuzi = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+      const poker = getRandomItems(suuzi, marks);
+      sendchatwork(poker, roomId);
     }
   } catch (error) {
     console.error(error);
   }
 }
 function getRandomItems(suuzi, marks) {
-    const result = [];
-    const itemCounts = {};
-    while (result.length < 5) {
-        const mark = marks[Math.floor(Math.random() * marks.length)];
-        const randomIndex = suuzi[Math.floor(Math.random() * suuzi.length)]
-        itemCounts[randomIndex] = (itemCounts[randomIndex] || 0) + 1;
-        if (itemCounts[randomIndex] <= 4) {
-            result.push(`${mark}${randomIndex}`)
-        }
+  const result = [];
+  const itemCounts = {};
+  while (result.length < 5) {
+    const mark = marks[Math.floor(Math.random() * marks.length)];
+    const randomIndex = suuzi[Math.floor(Math.random() * suuzi.length)];
+    itemCounts[randomIndex] = (itemCounts[randomIndex] || 0) + 1;
+    if (itemCounts[randomIndex] <= 4) {
+      result.push(`${mark}${randomIndex}`);
     }
+  }
 
-    return result;
+  return result;
 }
