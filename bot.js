@@ -943,10 +943,14 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
 }
 async function poker(body, message, messageId, roomId, accountId) {
   try {
+    if (message.match(/^役$/)) {
+      sendchatwork("[preview id=1668054600 ht=150]", roomId)
+    }else {
     const marks = ["♣️","♦️","❤️","♠️"]
     const suuzi = [1,2,3,4,5,6,7,8,9,10,11,12,13];
     const poker = getRandomItems(suuzi, marks);
     sendchatwork(poker, roomId)
+    }
   } catch (error) {
     console.error(error);
   }
