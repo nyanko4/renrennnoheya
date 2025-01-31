@@ -949,7 +949,9 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
 }
 async function poker (body, message, messageId, roomId, accountId) {
   try {
-    
+    const marks = "♣️♦️❤️♠️"
+    const suuzi = []
+    let mark = marks[Math.floor(Math.random() * marks.length)]
   } catch (error) {
     console.error(error)
   }
