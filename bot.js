@@ -744,6 +744,8 @@ async function diceroll(body, message, messageId, roomId, accountId) {
   const sum = number.reduce((accumulator, currentValue) => {
     return accumulator + currentValue;
   }, 0);
+  if (saikoro <= 100) {
+    if (men <= )
   if (saikoro == 1) {
     if (men > 0 && saikoro > 0) {
       sendchatwork(
@@ -768,6 +770,9 @@ async function diceroll(body, message, messageId, roomId, accountId) {
       `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nダイスの数と面の数を指定してください`,
       roomId
     );
+  }
+  } else {
+    sendchatwork("サイコロの数が多すぎます(1〜100)", roomId)
   }
 }
 //proxyを設定する
