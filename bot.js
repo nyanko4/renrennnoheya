@@ -93,7 +93,7 @@ app.post("/getchat", async (req, res) => {
     if (command && commands[command]) {
       await commands[command](body, message, messageId, roomId, accountId);
     } else if (command) {
-      return res.sendStatus(200)
+      return res.sendStatus(200);
     }
     //ここに荒らしだと思われるメッセージの検出
     if ((body.match(/\)/g) || []).length >= 20) {
@@ -156,11 +156,7 @@ app.post("/getchat", async (req, res) => {
       }
     }
     //参加
-    if (
-      body.match(
-        /^\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]$/
-      )
-    ) {
+    if (body.match(/\[dtext:chatroom_added]/g)) {
       await welcome(body, message, messageId, roomId, sendername);
     }
     //おみくじ
@@ -944,12 +940,12 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
     );
   }
 }
-async function poker (body, message, messageId, roomId, accountId) {
+async function poker(body, message, messageId, roomId, accountId) {
   try {
-    const marks = "♣️♦️❤️♠️"
-    const suuzi = []
-    let mark = marks[Math.floor(Math.random() * marks.length)]
+    const marks = "♣️♦️❤️♠️";
+    const suuzi = [];
+    let mark = marks[Math.floor(Math.random() * marks.length)];
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
