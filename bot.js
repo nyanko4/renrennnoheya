@@ -509,6 +509,29 @@ async function blockMembers(
       `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
       roomId
     );
+    const { data } = await supabase
+        .from("発禁者")
+        .select("accountId, reason, count")
+        .eq("accountId", accountIdToBlock);
+      let count = "";
+      let reason = "";
+      data.forEach((person) => {
+        count += person.count;
+        reason += person.reason
+      });
+      const arashi = Number(count) + "1";
+      const reasona = reason + "荒らし"
+    const { error } = await supabase.from("発禁者").upsert([
+          {
+            accountId: accountIdToBlock,
+            reason: reason,
+            count: arashi,
+            roomId: roomId,
+          },
+        ]);
+        if (error) {
+          console.error(error);
+        }
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
@@ -686,7 +709,6 @@ async function sendenkinshi(
       data.forEach((number) => {
         count += number.count;
       });
-      console.log(count);
       const count1 = Number(count) + 1;
       if (count == 3) {
         sendchatwork("3度目の宣伝となりますので発禁になります", roomId);
