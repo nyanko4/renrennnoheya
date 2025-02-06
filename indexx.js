@@ -1,6 +1,10 @@
 "use strict";
 const express = require("express");
 const app = express();
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
@@ -64,8 +68,8 @@ const commands = {
   proxyset: proxyset,
   proxydelete: proxydelete,
 };
-app.get("/", (req, res) => {
-  res.sendStatus(200);
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
 });
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
