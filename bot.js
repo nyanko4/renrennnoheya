@@ -235,6 +235,7 @@ app.post("/mention", async (req, res) => {
       return res.sendStatus(200);
     }
   }
+  if (body.includes("履歴"))
   if (body.includes("[rp aid=9587322")) {
     return res.sendStatus(200);
   }
