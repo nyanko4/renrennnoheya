@@ -8,39 +8,6 @@ const io = socketIo(server);
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
-const cluster = require("cluster");
-const os = require("os");
-const numClusters = os.cpus().length;
-if (cluster.isMaster) {
-  for (let i = 0; i < numClusters; i++) {
-    cluster.fork();
-  }
-
-  cluster.on("exit", (worker, code, signal) => {
-    cluster.fork();
-  });
-  new CronJob(
-    "0 0 0 * * *",
-    async () => {
-      const date = DateTime.now()
-        .setZone("Asia/Tokyo")
-        .toFormat("yyyy年MM月dd");
-      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
-      const { data, error } = await supabase
-        .from("おみくじ")
-        .delete()
-        .neq("accountId", 0);
-    },
-    null,
-    true,
-    "Asia/Tokyo"
-  );
-} else {
-  app.use(compression());
-  app.listen(3000, () => {
-    console.log(`Worker ${process.pid} started`);
-  });
-}
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const { createClient } = require("@supabase/supabase-js");

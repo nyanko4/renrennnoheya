@@ -1,15 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <title>Socket.IO Chat</title>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO チャットアプリ</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        /* 簡単なスタイルを追加 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+      <div id="messages"></div>
+    <input id="messageInput" autocomplete="off" /><button id="sendButton">送信</button>
+      <script>
+        const socket = io(); // Socket.IOのインスタンスを作成
 
-    function sendMessage() {
-      var message = document.getElementById('message').value;
-      socket.emit('chat message', message);
-      document.getElementById('message').value = '';
-      return false;
-    }
+        // メッセージを受信したときの処理
+        socket.on('chat message', function(msg) {
+            const item = document.createElement('div');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        // 送信ボタンがクリックされたときの処理
+       // document.getElementById('sendButton').onclick = function
   </script>
+  </body>
+</html>
