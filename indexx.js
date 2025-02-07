@@ -71,6 +71,20 @@ const commands = {
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
   console.log(req.body);

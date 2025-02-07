@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Chat</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    function sendMessage() {
+      var message = document.getElementById('message').value;
+      socket.emit('chat message', message);
+      document.getElementById('message').value = '';
+      return false;
+    }
+  </script>
