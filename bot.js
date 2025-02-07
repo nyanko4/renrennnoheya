@@ -235,6 +235,9 @@ app.post("/mention", async (req, res) => {
       return res.sendStatus(200);
     }
   }
+  if (body.includes("member")) {
+    await randommember(body, message, messageId, roomId, accountId);
+  }
 if (body.includes("[rp aid=9587322")) {
     return res.sendStatus(200);
   }
@@ -1009,4 +1012,21 @@ function getRandomItems(suuzi, marks) {
   }
 
   return result;
+}
+
+async function randommember(body, message, messageId, roomId, accountId) {
+  try {
+    const members = await getChatworkMembers(roomId);
+
+    if (!members || members.length === 0) {
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * members.length);
+    const randomMember = members[randomIndex];
+
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n[piconname:${randomMember.account_id}]さんが選ばれました！`, roomId);
+  } catch (error) {
+    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー。あらら`, roomId);
+  }
 }
