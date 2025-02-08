@@ -59,8 +59,8 @@ async function rennyan(ms, roomId) {
       "Chatworkへのメッセージ送信エラー:",
       error.response?.data || error.message
     );
-  
-  rennyan(374987857)
+  }}
+  rennyan("別部屋のroomId送られてもコメント見れやん(",374987857)
 
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
