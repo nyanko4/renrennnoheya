@@ -6,6 +6,16 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
+const axios = require("axios");
+const bodyParser = require("body-parser");
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+const PORT = 3000;
+app.use(bodyParser.json());
+
 app.listen(3000, () => {
   console.log(`Worker ${process.pid} started`);
 });
@@ -30,16 +40,6 @@ new CronJob(
   true,
   "Asia/Tokyo"
 );
-const axios = require("axios");
-const bodyParser = require("body-parser");
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-const PORT = 3000;
-app.use(bodyParser.json());
-
 async function rennyan(ms, roomId) {
   try {
     await axios.post(
@@ -60,7 +60,7 @@ async function rennyan(ms, roomId) {
       error.response?.data || error.message
     );
   }}
-  //rennyan("それは",374987857)
+//rennyan("",374987857)
 
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
