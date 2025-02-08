@@ -59,8 +59,9 @@ async function rennyan(ms, roomId) {
       "Chatworkへのメッセージ送信エラー:",
       error.response?.data || error.message
     );
-  }
-}
+  
+  rennyan(374987857)
+
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
@@ -81,7 +82,6 @@ app.get("/", (req, res) => {
 });
 //全てのメッセージを受け取ります
 app.post("/getchat", async (req, res) => {
-  console.log(req.body);
   const body = req.body.webhook_event.body;
   const message = body.replace(/\/.*?\/|\s+/g, "");
   const accountId = req.body.webhook_event.account_id;
@@ -90,6 +90,8 @@ app.post("/getchat", async (req, res) => {
   const sendername = await getSenderName(accountId, roomId);
   const isAdmin = await isUserAdmin(accountId, roomId);
   const today = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy-MM-dd");
+  console.log(req.body);
+  console.log(sendername)
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
@@ -735,7 +737,7 @@ async function sendenkinshi(
           accountId,
           sendername
         );
-      } else if (count1 <= 4) {
+      } else if (count1 >= 4) {
         sendchatwork("4度目の概要違反となりますので発禁になります", roomId);
         await blockMembers(
           body,
