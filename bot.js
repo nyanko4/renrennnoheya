@@ -714,7 +714,7 @@ async function sendenkinshi(
       });
       const count1 = Number(count) + 1;
       if (count1 == 3) {
-        sendchatwork("3度目のとなりますので発禁になります", roomId);
+        sendchatwork("3度目の概要違反となりますので発禁になります", roomId);
         await blockMembers(
           body,
           message,
