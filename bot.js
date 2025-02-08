@@ -4,29 +4,32 @@ const app = express();
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
-  app.listen(3000, () => {
-    console.log(`Worker ${process.pid} started`);
-  });
+const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
+const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
+app.listen(3000, () => {
+  console.log(`Worker ${process.pid} started`);
+});
 new CronJob(
-    "0 0 0 * * *",
-    async () => {
-      const date = DateTime.now()
-        .setZone("Asia/Tokyo")
-        .toFormat("yyyy年MM月dd");
-      rennyan(`
+  "0 0 0 * * *",
+  async () => {
+    const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
+    rennyan(
+      `
       れんにゃん誕生日おめでとう！/n
-      日付変更　今日は${date}日です`, 374987857);
-      rennyan("れんにゃん誕生日おめでとう！",364321548);
-      rennyan("れんにゃん誕生日おめでとう！",364295891)
-      const { data, error } = await supabase
-        .from("おみくじ")
-        .delete()
-        .neq("accountId", 0);
-    },
-    null,
-    true,
-    "Asia/Tokyo"
-  );
+      日付変更　今日は${date}日です`,
+      374987857
+    );
+    rennyan("れんにゃん誕生日おめでとう！", 364321548);
+    rennyan("れんにゃん誕生日おめでとう！", 364295891);
+    const { data, error } = await supabase
+      .from("おみくじ")
+      .delete()
+      .neq("accountId", 0);
+  },
+  null,
+  true,
+  "Asia/Tokyo"
+);
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const { createClient } = require("@supabase/supabase-js");
@@ -35,11 +38,8 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 const PORT = 3000;
-
 app.use(bodyParser.json());
 
-const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
-const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
 async function rennyan(ms, roomId) {
   try {
     await axios.post(
@@ -61,7 +61,8 @@ async function rennyan(ms, roomId) {
     );
   }
 }
-const zalgo = /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
+const zalgo =
+  /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
   おみくじ: Toomikuji,
   messagecount: messagecount,
@@ -249,7 +250,7 @@ app.post("/mention", async (req, res) => {
   if (body.includes("member")) {
     await randommember(body, message, messageId, roomId, accountId);
   }
-if (body.includes("[rp aid=9587322")) {
+  if (body.includes("[rp aid=9587322")) {
     return res.sendStatus(200);
   }
 
@@ -524,28 +525,28 @@ async function blockMembers(
       roomId
     );
     const { data } = await supabase
-        .from("発禁者")
-        .select("accountId, reason, count")
-        .eq("accountId", accountIdToBlock);
-      let count = "";
-      let reason = "";
-      data.forEach((person) => {
-        count += person.count;
-        reason += person.reason
-      });
-      const arashi = Number(count) + "1";
-      const reasona = reason + "荒らし"
+      .from("発禁者")
+      .select("accountId, reason, count")
+      .eq("accountId", accountIdToBlock);
+    let count = "";
+    let reason = "";
+    data.forEach((person) => {
+      count += person.count;
+      reason += person.reason;
+    });
+    const arashi = Number(count) + "1";
+    const reasona = reason + "荒らし";
     const { error } = await supabase.from("発禁者").upsert([
-          {
-            accountId: accountIdToBlock,
-            reason: reason,
-            count: arashi,
-            roomId: roomId,
-          },
-        ]);
-        if (error) {
-          console.error(error);
-        }
+      {
+        accountId: accountIdToBlock,
+        reason: reason,
+        count: arashi,
+        roomId: roomId,
+      },
+    ]);
+    if (error) {
+      console.error(error);
+    }
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
@@ -1014,7 +1015,10 @@ async function poker(body, message, messageId, roomId, accountId) {
       const marks = ["♣️", "♦️", "❤️", "♠️"];
       const suuzi = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
       const poker = getRandomItems(suuzi, marks);
-      sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`, roomId);
+      sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`,
+        roomId
+      );
     }
   } catch (error) {
     console.error(error);
@@ -1046,8 +1050,14 @@ async function randommember(body, message, messageId, roomId, accountId) {
     const randomIndex = Math.floor(Math.random() * members.length);
     const randomMember = members[randomIndex];
 
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n[piconname:${randomMember.account_id}]さんが選ばれました！`, roomId);
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n[piconname:${randomMember.account_id}]さんが選ばれました！`,
+      roomId
+    );
   } catch (error) {
-    await sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー。あらら`, roomId);
+    await sendchatwork(
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー。あらら`,
+      roomId
+    );
   }
 }
