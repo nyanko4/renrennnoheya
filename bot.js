@@ -4,27 +4,20 @@ const app = express();
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
-const https = require("http")
-const cluster = require("cluster");
-const os = require("os");
-const numClusters = os.cpus().length;
-if (cluster.isMaster) {
-  for (let i = 0; i < numClusters; i++) {
-    cluster.fork();
-  }
-
-  cluster.on("exit", (worker, code, signal) => {
-    cluster.fork();
+  app.listen(3000, () => {
+    console.log(`Worker ${process.pid} started`);
   });
-  new CronJob(
+new CronJob(
     "0 0 0 * * *",
     async () => {
       const date = DateTime.now()
         .setZone("Asia/Tokyo")
         .toFormat("yyyy年MM月dd");
-      sendchatwork(`
+      rennyan(`
       れんにゃん誕生日おめでとう！/n
       日付変更　今日は${date}日です`, 374987857);
+      rennyan("れんにゃん誕生日おめでとう！",364321548);
+      rennyan("れんにゃん誕生日おめでとう！",364295891)
       const { data, error } = await supabase
         .from("おみくじ")
         .delete()
@@ -34,12 +27,6 @@ if (cluster.isMaster) {
     true,
     "Asia/Tokyo"
   );
-} else {
- app.use(compression());
-  app.listen(3000, () => {
-    console.log(`Worker ${process.pid} started`);
-  });
-}
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const { createClient } = require("@supabase/supabase-js");
@@ -53,6 +40,27 @@ app.use(bodyParser.json());
 
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const CHATWORK_API_TOKEN_N = process.env.CHATWORK_API_TOKEN_N;
+async function rennyan(ms, roomId) {
+  try {
+    await axios.post(
+      `https://api.chatwork.com/v2/rooms/${roomId}/messages`,
+      new URLSearchParams({ body: ms }),
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    console.log("メッセージ送信成功");
+  } catch (error) {
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
+  }
+}
 const zalgo = /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
   おみくじ: Toomikuji,
