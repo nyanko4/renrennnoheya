@@ -60,7 +60,7 @@ async function rennyan(ms, roomId) {
       error.response?.data || error.message
     );
   }}
-  rennyan("別部屋のroomId送られてもコメント見れやん(",374987857)
+  //rennyan("それは",374987857)
 
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
@@ -233,7 +233,6 @@ function getCommand(body) {
 //メンションされたら起動する
 app.post("/mention", async (req, res) => {
   console.log(req.body);
-
   const accountId = req.body.webhook_event.from_account_id;
   const roomId = req.body.webhook_event.room_id;
   const messageId = req.body.webhook_event.message_id;
