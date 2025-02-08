@@ -25,12 +25,9 @@ new CronJob(
     const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
     rennyan(
       `
-      れんにゃん誕生日おめでとう！/n
       日付変更　今日は${date}日です`,
       374987857
     );
-    rennyan("れんにゃん誕生日おめでとう！", 364321548);
-    rennyan("れんにゃん誕生日おめでとう！", 364295891);
     const { data, error } = await supabase
       .from("おみくじ")
       .delete()
@@ -60,7 +57,6 @@ async function rennyan(ms, roomId) {
       error.response?.data || error.message
     );
   }};
-  //rennyan("日付が変わったらbotが3箇所に飛びます(",374987857)
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
