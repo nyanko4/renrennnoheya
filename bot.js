@@ -713,8 +713,18 @@ async function sendenkinshi(
         count += number.count;
       });
       const count1 = Number(count) + 1;
-      if (count == 2) {
-        sendchatwork("3度目の宣伝となりますので発禁になります", roomId);
+      if (count1 == 3) {
+        sendchatwork("3度目のとなりますので発禁になります", roomId);
+        await blockMembers(
+          body,
+          message,
+          messageId,
+          roomId,
+          accountId,
+          sendername
+        );
+      } else if (count1 <= 4) {
+        sendchatwork("4度目の概要違反となりますので発禁になります", roomId);
         await blockMembers(
           body,
           message,
