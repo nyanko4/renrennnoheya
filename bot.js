@@ -4,6 +4,7 @@ const app = express();
 const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
+const https = require("http")
 const cluster = require("cluster");
 const os = require("os");
 const numClusters = os.cpus().length;
@@ -34,7 +35,7 @@ if (cluster.isMaster) {
     "Asia/Tokyo"
   );
 } else {
-  app.use(compression());
+ app.use(compression());
   app.listen(3000, () => {
     console.log(`Worker ${process.pid} started`);
   });
