@@ -979,6 +979,7 @@ async function messagerireki(body, message, messageId, roomId, accountId) {
     );
   }
 }
+//poker
 async function poker(body, message, messageId, roomId, accountId) {
   try {
     if (message.match(/^役$/)) {
@@ -1028,7 +1029,7 @@ async function randommember(body, message, messageId, roomId, accountId) {
     );
   } catch (error) {
     await sendchatwork(
-      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー。あらら`,
+      `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー`,
       roomId
     );
   }
