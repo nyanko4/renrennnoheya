@@ -23,11 +23,7 @@ new CronJob(
   "0 0 0 * * *",
   async () => {
     const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
-    sendchatwork(
-      `
-      日付変更　今日は${date}日です`,
-      374987857
-    );
+    sendchatwork(`日付変更　今日は${date}日です`, 374987857);
     const { data, error } = await supabase
       .from("おみくじ")
       .delete()
