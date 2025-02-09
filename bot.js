@@ -23,7 +23,7 @@ new CronJob(
   "0 0 0 * * *",
   async () => {
     const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
-    rennyan(
+    sendchatwork(
       `
       日付変更　今日は${date}日です`,
       374987857
@@ -37,26 +37,6 @@ new CronJob(
   true,
   "Asia/Tokyo"
 );
-async function rennyan(ms, roomId) {
-  try {
-    await axios.post(
-      `https://api.chatwork.com/v2/rooms/${roomId}/messages`,
-      new URLSearchParams({ body: ms }),
-      {
-        headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-
-    console.log("メッセージ送信成功");
-  } catch (error) {
-    console.error(
-      "Chatworkへのメッセージ送信エラー:",
-      error.response?.data || error.message
-    );
-  }};
 const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
@@ -86,7 +66,7 @@ app.post("/getchat", async (req, res) => {
   const isAdmin = await isUserAdmin(accountId, roomId);
   const today = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy-MM-dd");
   console.log(req.body);
-  console.log(sendername)
+  console.log(sendername);
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
