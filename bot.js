@@ -986,10 +986,14 @@ async function poker(body, message, messageId, roomId, accountId) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
       let card = [];
-      for (let i = 0; i <= 13; i++) {
+      let poker = [];
+      for (let i = 1; i < 13; i++) {
         card.push(`♣️${i}`, `♦️${i}`, `❤️${i}`, `♠️${i}`)
       }
-      poker += card(Math.rondom)
+      for (let p = 0; p < 5; p++) {
+      poker += card[Math.floor(Math.random() * card.length)]
+      }
+      sendchatwork(poker, roomId)
     }
   } catch (error) {
     console.error(error);
