@@ -985,32 +985,11 @@ async function poker(body, message, messageId, roomId, accountId) {
     if (message.match(/^役$/)) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
-      const marks = ["♣️", "♦️", "❤️", "♠️"];
-      const suuzi = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-      const poker = getRandomItems(suuzi, marks);
-      sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`,
-        roomId
-      );
+      
     }
   } catch (error) {
-    console.error(error);
-  }
-}
-function getRandomItems(suuzi, marks) {
-  const result = [];
-  const itemCounts = {};
-  while (result.length < 5) {
-    const mark = marks[Math.floor(Math.random() * marks.length)];
-    const randomIndex = suuzi[Math.floor(Math.random() * suuzi.length)];
-    itemCounts[randomIndex] = (itemCounts[randomIndex] || 0) + 1;
-    if (itemCounts[randomIndex] <= 4) {
-      result.push(`${mark}${randomIndex}`);
-    }
-  }
-
-  return result;
-}
+    console.error(error)
+  }}
 
 async function randommember(body, message, messageId, roomId, accountId) {
   try {
