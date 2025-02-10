@@ -991,9 +991,9 @@ async function poker(body, message, messageId, roomId, accountId) {
         card.push(`♣️${i}`, `♦️${i}`, `❤️${i}`, `♠️${i}`)
       }
       for (let p = 0; p < 5; p++) {
-      poker += card[Math.floor(Math.random() * card.length)]
+      poker += card[Math.floor(Math.random() * card.length)] + " "
       }
-      sendchatwork(poker, roomId)
+      sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`, roomId)
     }
   } catch (error) {
     console.error(error);
