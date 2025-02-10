@@ -985,13 +985,19 @@ async function poker(body, message, messageId, roomId, accountId) {
     if (message.match(/^役$/)) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
+      let card = []
       let clover = "♣️"
       let diamond = "♦️"
       let heart = "❤️"
       let spade = "♠️"
       for (let c = 0; c == 13; c++) {
-        clover += c
+        clover += new c
+        diamond += new c
+        heart += new c
+        spade += new c 
+        card.push(clover,diamond,heart,spade)
       }
+      console.log(card)
     }
   } catch (error) {
     console.error(error)
