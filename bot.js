@@ -990,9 +990,14 @@ async function poker(body, message, messageId, roomId, accountId) {
       for (let i = 1; i < 13; i++) {
         card.push(`♣️${i}`, `♦️${i}`, `❤️${i}`, `♠️${i}`)
       }
-      for (let p = 0; p < 5; p++) {
-      poker += card[Math.floor(Math.random() * card.length)] + " "
-      }
+      function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+      shuffle(card);
+      poker = card.slice(0, 5);
       sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n${poker}`, roomId)
     }
   } catch (error) {
