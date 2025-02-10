@@ -985,15 +985,16 @@ async function poker(body, message, messageId, roomId, accountId) {
     if (message.match(/^役$/)) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
-      let card = []
-      for (let c = 0; c == 13; c++) {
-        card.push("♣️"[c],"♦️"[c],"❤️"[c],"♠️"[c])
+      let card = [];
+      for (let i = 0; i <= 13; i++) {
+        card.push(`♣️${i}`, "♦️", "❤️", "♠️")
       }
-      console.log(card)
+      console.log(card);
     }
   } catch (error) {
-    console.error(error)
-  }}
+    console.error(error);
+  }
+}
 
 async function randommember(body, message, messageId, roomId, accountId) {
   try {
