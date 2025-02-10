@@ -986,16 +986,8 @@ async function poker(body, message, messageId, roomId, accountId) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
       let card = []
-      let clover = "♣️"
-      let diamond = "♦️"
-      let heart = "❤️"
-      let spade = "♠️"
       for (let c = 0; c == 13; c++) {
-        clover += new c
-        diamond += new c
-        heart += new c
-        spade += new c 
-        card.push(clover,diamond,heart,spade)
+        card.push("♣️"[c],"♦️"[c],"❤️"[c],"♠️"[c])
       }
       console.log(card)
     }
