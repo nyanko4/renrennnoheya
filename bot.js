@@ -987,9 +987,9 @@ async function poker(body, message, messageId, roomId, accountId) {
     } else {
       let card = [];
       for (let i = 0; i <= 13; i++) {
-        card.push(`♣️${i}`, "♦️", "❤️", "♠️")
+        card.push(`♣️${i}`, `♦️${i}`, `❤️${i}`, `♠️${i}`)
       }
-      console.log(card);
+      poker += card(Math.rondom)
     }
   } catch (error) {
     console.error(error);
