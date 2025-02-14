@@ -111,9 +111,6 @@ app.post("/getchat", async (req, res) => {
         sendername
       );
     }
-    if (body.match(/\[p\D+\d+\]/g) {
-        console.log("a")
-        }
     if ((body.match(/\[p\D+\d+\]/g) || []).length >= 15) {
       await blockMembers(
         body,
@@ -524,7 +521,7 @@ async function blockMembers(
     const { error } = await supabase.from("発禁者").upsert([
       {
         accountId: accountIdToBlock,
-        reason: reason,
+        reason: reasona,
         count: arashi,
         roomId: roomId,
       },
