@@ -111,6 +111,19 @@ app.post("/getchat", async (req, res) => {
         sendername
       );
     }
+    if (body.match(/\[p\D+\d+\]/g) {
+        console.log("a")
+        }
+    if ((body.match(/\[p\D+\d+\]/g) || []).length >= 15) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
     const zalgoCount = (body.match(zalgo) || []).length;
     if (zalgoCount >= 18) {
       await blockMembers(
