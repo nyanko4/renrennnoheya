@@ -555,6 +555,7 @@ async function blockMembers(
     if (error) {
       console.error(error);
     }
+    return;
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
