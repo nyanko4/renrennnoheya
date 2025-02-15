@@ -427,7 +427,7 @@ async function messagelink(body, message, messageId, roomId, accountId) {
 //say
 async function displaysay(body, message, messageId, roomId, accountId) {
   try {
-    const m = body.replace("/say/", "")
+    const m = body.replace("/say/", "");
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
@@ -443,6 +443,26 @@ async function welcome(body, message, messageId, roomId, sendername) {
   try {
     const members = await getChatworkMembers(roomId);
     const welcomeId = (message.match(/\[piconname:(\d+)\]/) || [])[1];
+    const { data } = await supabase
+      .from("発禁者")
+      .select("accountId, reason, count")
+      .eq("accountId", welcomeId);
+    let reason = "";
+    let count = "";
+    data.forEach((person) => {
+      reason += person.reason;
+      count += person.count;
+    });
+    if (reason.includes("荒らし") || count >= 4) {
+      await blockMembers(
+        body,
+        message,
+        messageId,
+        roomId,
+        welcomeId,
+        sendername
+      );
+    }
     await sendchatwork(
       `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
       roomId
