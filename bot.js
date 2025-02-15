@@ -47,6 +47,7 @@ const commands = {
   proxyget: proxyget,
   proxyset: proxyset,
   proxydelete: proxydelete,
+  member: randommember,
 };
 app.get("/", (req, res) => {
   res.sendStatus(200);
@@ -228,9 +229,6 @@ app.post("/mention", async (req, res) => {
       await deletemessage(body, message, messageId, roomId, accountId);
       return res.sendStatus(200);
     }
-  }
-  if (body.includes("member")) {
-    await randommember(body, message, messageId, roomId, accountId);
   }
   if (body.includes("[rp aid=9587322")) {
     return res.sendStatus(200);
