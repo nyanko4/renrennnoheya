@@ -173,7 +173,17 @@ app.post("/getchat", async (req, res) => {
         sendername
       );
     }
-    if (body.match(/\https:\/\/odaibako.net/g)) {
+    if (body.match(/\www.chatwork.com\/#!join/g)) {
+      await sendenkinshi(
+        body,
+        message,
+        messageId,
+        roomId,
+        accountId,
+        sendername
+      );
+    }
+    if (body.match(/\https:\/\/odaibako.net\/u/g)) {
       await sendenkinshi(
         body,
         message,
