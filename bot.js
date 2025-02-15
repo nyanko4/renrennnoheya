@@ -162,7 +162,7 @@ app.post("/getchat", async (req, res) => {
       await displaynow(body, message, messageId, roomId, accountId);
     }
     //宣伝感知
-    if (body.match(/\https:\/\/www.chatwork.com\/g/g)) {
+    if (body.match(/\www.chatwork.com\/g/g)) {
       await sendenkinshi(
         body,
         message,
@@ -415,7 +415,6 @@ async function messagelink(body, message, messageId, roomId, accountId) {
       .slice()
       .reverse()
       .find((messageid) => messageid.message_id > 0);
-    console.log(messageId.message_id);
     await sendchatwork(
       `部屋名: ${name.data.name} メッセージリンク: https://www.chatwork.com/#!rid${room}-${messageId.message_id}`,
       roomId
@@ -428,8 +427,7 @@ async function messagelink(body, message, messageId, roomId, accountId) {
 //say
 async function displaysay(body, message, messageId, roomId, accountId) {
   try {
-    const m = body.replace("/say/", "");
-    console.log(m);
+    const m = body.replace("/say/", "")
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
