@@ -67,7 +67,7 @@ app.post("/getchat", async (req, res) => {
   //メッセージを保存
   const { data, error } = await supabase.from("nyankoのへや").insert({
     messageId: messageId,
-    message: message,
+    message: body,
     accountId: accountId,
     name: sendername,
     date: today,
