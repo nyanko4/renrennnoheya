@@ -617,14 +617,14 @@ async function omikuji(body, message, messageId, roomId, accountId) {
       //5
       else if (random < 25) return "小吉";
       //20
-      else if (random < 37.3) return "末吉";
-      //12.3
-      else if (random < 57.3) return "吉";
+      else if (random < 42.3) return "末吉";
+      //17.3
+      else if (random < 62.3) return "吉";
       //20
-      else if (random < 72.3) return "中吉";
+      else if (random < 77.3) return "中吉";
       //15
       else if (random < 87.3) return "凶";
-      //15
+      //10
       else if (random < 87.4) return "願い事叶えたるよ(できることだけ)";
       //0.1
       else return "大吉";
@@ -651,11 +651,11 @@ async function Toomikuji(body, message, messageId, roomId, accountId) {
       //5
       else if (random < 25) return "小吉";
       //20
-      else if (random < 37.3) return "末吉";
-      //12.3
-      else if (random < 57.3) return "吉";
+      else if (random < 42.3) return "末吉";
+      //17.3
+      else if (random < 62.3) return "吉";
       //20
-      else if (random < 72.3) return "中吉";
+      else if (random < 77.3) return "中吉";
       //15
       else if (random < 87.3) return "凶";
       //15
