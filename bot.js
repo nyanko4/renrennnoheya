@@ -658,7 +658,7 @@ async function Toomikuji(body, message, messageId, roomId, accountId) {
       else if (random < 77.3) return "中吉";
       //15
       else if (random < 87.3) return "凶";
-      //15
+      //10
       else if (random < 87.4) return "シークレット";
       //0.1
       else return "大吉"; //12.6
