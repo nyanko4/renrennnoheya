@@ -508,6 +508,8 @@ async function blockMembers(
 
     if (!readonlyIds.includes(accountIdToBlock)) {
       readonlyIds.push(accountIdToBlock);
+    } else {
+      readonlyIds = readonlyIds.filter(id => id !== accountIdToBlock);
     }
 
     adminIds = adminIds.filter((id) => id !== accountIdToBlock);
