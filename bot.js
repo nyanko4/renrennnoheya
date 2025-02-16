@@ -78,8 +78,6 @@ app.post("/getchat", async (req, res) => {
     const command = getCommand(body);
     if (command && commands[command]) {
       await commands[command](body, message, messageId, roomId, accountId);
-    } else if (command) {
-      return res.sendStatus(200);
     }
     //ここに荒らしだと思われるメッセージの検出
     if ((body.match(/\)/g) || []).length >= 20) {
