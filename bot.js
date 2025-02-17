@@ -120,8 +120,14 @@ app.post("/getchat", async (req, res) => {
         sendername
       );
     }
-    const zalgoCount = (body.match(zalgo) || []).length;
-    if (zalgoCount >= 18) {
+    let zalgoCount = 0;
+
+    for (let char of body) {
+      if (zalgo.test(char)) {
+        zalgoCount++;
+      }
+    }
+    if (zalgoCount >= 500) {
       await blockMembers(
         body,
         message,
@@ -130,7 +136,7 @@ app.post("/getchat", async (req, res) => {
         accountId,
         sendername
       );
-      return res.sendStatus(200);
+      return "ok";
     }
     if (body.match(/\[toall\]/g)) {
       if (!isAdmin) {
