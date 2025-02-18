@@ -37,7 +37,7 @@ const zalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 const commands = {
   おみくじ: Toomikuji,
-  messagecount: messagecount,
+  roominfo: roominfo,
   messagelink: messagelink,
   dice: diceroll,
   say: displaysay,
@@ -386,26 +386,39 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 //メッセージ数を表示する
-async function messagecount(body, message, messageId, roomId, accountId) {
+async function roominfo(body, message, messageId, roomId, accountId) {
   try {
     const room = message.match(/\d+/g);
+    const members = await getChatworkMembers(room);
+    let admin = [];
+    members.forEach((member) => {
+      if (member.role === "admin") {
+        admin.push(`[picon:${member.account_id}]`);
+      }
+    });
+    let admins = admin.join("");
     const response = await axios.get(
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
         headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
         },
       }
     );
+    if(response.data.type === "group") {
     await sendchatwork(
-      `部屋名: ${response.data.name} メッセージ数: ${response.data.message_num}`,
+      `[info][title]room情報[/title]部屋名: ${response.data.name}\nメンバー数: ${members.length}人\nメッセージ数: ${response.data.message_num}件\nファイル数: ${response.data.file_num}個\n[info][title]管理者[/title]${admins}[/info][/info]`,
       roomId
     );
-  } catch (error) {
+    } else {
+      sendchatwork("エラーが発生しました", roomId)
+    }
+    } catch (error) {
     console.error("error:", error);
-    await sendchatwork("エラーが起きました", roomId);
+    await sendchatwork(`エラーが発生しました: ${error}`,  roomId);
   }
 }
+
 //最新メッセージのリンクを取得する
 async function messagelink(body, message, messageId, roomId, accountId) {
   try {
