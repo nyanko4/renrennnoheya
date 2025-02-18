@@ -401,7 +401,7 @@ async function roominfo(body, message, messageId, roomId, accountId) {
       `https://api.chatwork.com/v2/rooms/${room}`,
       {
         headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
         },
       }
     );
