@@ -1,5 +1,7 @@
 const reqcheck = require('../middleware/sign');
 
+const arashi = require('../module/arashi');
+const command = require("../module/command")
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -14,13 +16,13 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  //const handlers = [emoji, mention, zalgo, pp];
+  const handlers = [arashi, command];
 
-  //for (const handler of handlers) {
-    //if (await handler(body, roomId, accountId) === "ok") {
-    //  return res.sendStatus(200);
-   // }
- // }
+  for (const handler of handlers) {
+    if (await handler(body, roomId, accountId) === "ok") {
+      return res.sendStatus(200);
+    }
+  }
 
   res.sendStatus(200);
 }
