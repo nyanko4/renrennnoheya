@@ -47,6 +47,7 @@ const commands = {
   proxyset: proxyset,
   proxydelete: proxydelete,
   member: randommember,
+  
 };
 app.get("/", (req, res) => {
   res.sendStatus(200);

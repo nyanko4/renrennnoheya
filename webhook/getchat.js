@@ -8,6 +8,7 @@ const reqcheck = require("../middleware/sign");
 const sendername = require("../ctr/cwdata").sendername;
 const arashi = require("../module/arashi");
 const command = require("../module/command")
+const omikuji = require("../module/omikuji")
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -36,7 +37,7 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi.emoji, arashi.to, arashi.tag, arashi.zalgo, command];
+  const handlers = [arashi.emoji, arashi.to, arashi.tag, arashi.zalgo, command, omikuji];
 
   for (const handler of handlers) {
     if ((await handler(body, roomId, accountId)) === "ok") {
