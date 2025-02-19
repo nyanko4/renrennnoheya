@@ -7,10 +7,10 @@ const m = [
   "(clap)", "(bow)", "(roger)", "(flex)", "(dance)", "(:/)", "(gogo)", 
   "(think)", "(please)", "(quick)", "(anger)", "(devil)", "(lightbulb)", 
   "(*)", "(h)", "(F)", "(cracker)", "(eat)", "(^)", "(coffee)", "(beer)", 
-  "(handshake)", "(y)"
+  "(handshake)", "(y)", /\[p\D+\d+\]/, ")", /\[toall\]/, /\[to:\d+\]/
 ];
 //絵文字に対して反応します
-async function emoji(body, roomId, accountId) {
+async function arashi(body, roomId, accountId) {
     let count = 0;
     const bodyChars = [...body];
 
@@ -24,26 +24,9 @@ async function emoji(body, roomId, accountId) {
         block.blockMember(roomId, accountId);
         return "ok";
     } 
-    if ((body.match(/\)/g) || []).length >= 30) {
-      block.blockMember(roomId, accountId);
-      return "ok";
-    }
-    
+
   return;
 }
-//メンションに対して反応します
-async function to(body, roomId, accountId) {
-  if ((body.match(/toall/g) || []).length >= 10) {
-    await block.blockMember(roomId, accountId);
-    return "ok";
-  }
-  if ((body.match(/To:/g) || []).length >= 35) {
-     await block.blockMember(roomId, accountId);
-     return "ok";
-  }
-  return;
-};
 module.exports = {
-  emoji,
-  to
+  arashi
 };
