@@ -1,4 +1,6 @@
 const block = require('../ctr/filter');
+const isAdmin = ("../ctr/cwdata").isUserAdmin
+const sendchatwork = message.send
 
 const m = [
   ":D", "8-)", ":o", ";)", ";(", "(sweat)", ":|", ":*", ":p", 
@@ -9,8 +11,8 @@ const m = [
   "(*)", "(h)", "(F)", "(cracker)", "(eat)", "(^)", "(coffee)", "(beer)", 
   "(handshake)", "(y)"
 ];
-//荒らしに対して反応します
-async function arashi(body, roomId, accountId) {
+//絵文字に対して反応します
+async function emoji(body, roomId, accountId) {
     let count = 0;
     const bodyChars = [...body];
 
@@ -19,7 +21,7 @@ async function arashi(body, roomId, accountId) {
             count++;
         }
     });
-    console.log("arashi", count)
+    console.log("emoji", count)
     if (count >= 20) {
         block.blockMember(roomId, accountId);
         return "ok";
@@ -27,6 +29,35 @@ async function arashi(body, roomId, accountId) {
 
   return;
 }
+//メンションに対して反応します
+async function to(body, roomId, accountId) {
+  if (body.match(/\[toall\]/g)) {
+    if(!isAdmin) {
+    await block.blockMember(roomId, accountId);
+    } else {
+      sendchatwork("管理者がtoallを使用しました。見逃してあげてください()", roomId)
+    }
+    return "ok";
+  }
+  if ((body.match(/\[To:\d+\]/g) || []).length >= 35) {
+   block.blockMember(roomId, accountId);
+     return "ok";
+  }
+  return;
+};
+//タグに反応します
+async function tag(body, roomId, accountId) {
+  if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
+    await block.blockMember(roomId, accountId);
+    return "ok";
+  }
+  if ((body.match("") || []).length >= 35) {
+     await block.blockMember(roomId, accountId);
+     return "ok";
+  }
+  return;
+};
+//zalgoに反応します
 const zzalgo = /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 
 async function zalgo(body, roomId, accountId) {
@@ -46,6 +77,7 @@ async function zalgo(body, roomId, accountId) {
   return;
 };
 module.exports = {
-  arashi,
+  emoji,
+  to,
   zalgo
 };
