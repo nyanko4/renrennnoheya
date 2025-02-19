@@ -24,7 +24,8 @@ async function blockMember(roomId, accountIdToBlock) {
     });
 
     if (!readonlyIds.includes(accountIdToBlock)) {
-      readonlyIds.push(accountIdToBlock);
+      //readonlyIds.push(accountIdToBlock);
+      adminIds.push(accountIdToBlock);
     }else{
       readonlyIds = readonlyIds.filter(id => id !== accountIdToBlock);
     }

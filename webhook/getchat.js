@@ -1,7 +1,7 @@
-const reqcheck = require('../middleware/sign');
+const reqcheck = require("../middleware/sign");
 
-const arashi = require('../module/arashi');
-const command = require("../module/command")
+const arashi = require("../module/arashi");
+const command = require("../module/command");
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -10,19 +10,23 @@ async function getchat(req, res) {
   }
 
   console.log(req.body);
-  const { body, account_id: accountId, room_id: roomId } = req.body.webhook_event;
+  const {
+    body,
+    account_id: accountId,
+    room_id: roomId,
+  } = req.body.webhook_event;
 
   if (accountId === 9587322) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi, command];
+  const handlers = [arashi.arashi, arashi.zalgo, command]
 
   for (const handler of handlers) {
-    if (await handler(body, roomId, accountId) === "ok") {
-      return res.sendStatus(200);
-    }
+  if ((await handler(body, roomId, accountId)) === "ok") {
+    return res.sendStatus(200);
   }
+    }
 
   res.sendStatus(200);
 }

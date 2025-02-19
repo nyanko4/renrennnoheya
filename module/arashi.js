@@ -7,7 +7,7 @@ const m = [
   "(clap)", "(bow)", "(roger)", "(flex)", "(dance)", "(:/)", "(gogo)", 
   "(think)", "(please)", "(quick)", "(anger)", "(devil)", "(lightbulb)", 
   "(*)", "(h)", "(F)", "(cracker)", "(eat)", "(^)", "(coffee)", "(beer)", 
-  "(handshake)", "(y)", /\[p\D+\d+\]/, ")", /\[toall\]/, /\[to:\d+\]/
+  "(handshake)", "(y)"
 ];
 //荒らしに対して反応します
 async function arashi(body, roomId, accountId) {
@@ -20,7 +20,7 @@ async function arashi(body, roomId, accountId) {
         }
     });
     console.log("arashi", count)
-    if (count >= 30) {
+    if (count >= 20) {
         block.blockMember(roomId, accountId);
         return "ok";
     } 
