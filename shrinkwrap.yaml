@@ -3,7 +3,6 @@ dependencies:
   axios: 1.7.9
   body-parser: 2.1.0
   cron: 3.5.0
-  crypto: 1.0.1
   express: 5.0.1
   luxon: 3.5.0
 packages:
@@ -181,11 +180,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-0eYZqCnapmxYcV06uktql93wNWdlTmmBFP2iYz+JPVcQqlyFYcn1lFuIk4R54pkOmE7mcldTAPZv6X5XA4Q46A==
-  /crypto/1.0.1:
-    deprecated: 'This package is no longer supported. It''s now a built-in Node module. If you''ve depended on crypto, you should switch to the one that''s built-in.'
-    dev: false
-    resolution:
-      integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
   /debug/2.6.9:
     dependencies:
       ms: 2.0.0
@@ -812,6 +806,5 @@ specifiers:
   axios: latest
   body-parser: ^2.0.2
   cron: ^3.5.0
-  crypto: ^1.0.1
   express: ^5.0.1
   luxon: ^3.5.0

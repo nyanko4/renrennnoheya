@@ -1,19 +1,21 @@
 {
   "name": "nyankoのへやbot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "bot.js",
   "license": "CC-BY-4.0",
   "dependencies": {
     "express": "^5.0.1",
     "axios": "latest",
+    "cron": "^3.5.0",
+    "@supabase/supabase-js": "^2.48.0",
     "body-parser": "^2.0.2",
-    "compression": "^1.7.4"
+    "luxon": "^3.5.0"
   },
   "engines": {
     "node": "16.x"
   },
   "private": false,
   "scripts": {
-    "start": "node index.js"
+    "start": "node bot.js"
   }
 }
