@@ -94,7 +94,12 @@ async function tag(body, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  if ((body.match("") || []).length >= 35) {
+  if ((body.match(/\[hr\]/g) || []).length >= 35) {
+    await block.blockMember(roomId, accountId);
+    return "ok";
+  }
+  
+  if ((body.match(/\[preview\]/g) || []).length >= 20) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
@@ -122,5 +127,6 @@ async function zalgo(body, roomId, accountId) {
 module.exports = {
   emoji,
   to,
-  zalgo,
+  tag,
+  zalgo
 };
