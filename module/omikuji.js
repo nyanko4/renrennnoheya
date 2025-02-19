@@ -82,4 +82,4 @@ async function omikuji(body, message, messageId, roomId, accountId) {
 }
 }
 
-module.exports = omikuj
+module.exports = omikuji

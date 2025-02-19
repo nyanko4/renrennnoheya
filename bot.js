@@ -276,7 +276,7 @@ async function sendchatwork(ms, roomId) {
   } catch (error) {
     console.error(
       "Chatworkへのメッセージ送信エラー:",
-      error.response?.data || error.message
+      error.response.data || error.message
     );
   }
 }
@@ -325,7 +325,7 @@ async function messageread(messageId, roomId) {
   } catch (error) {
     console.error(
       "既読がつけれませんでした:",
-      error.response?.data || error.message
+      error.response.data || error.message
     );
   }
 }
@@ -347,7 +347,7 @@ async function getChatworkMembers(roomId) {
   } catch (error) {
     console.error(
       "Error fetching Chatwork members:",
-      error.response?.data || error.message
+      error.response.data || error.message
     );
     return null;
   }
