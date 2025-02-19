@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.end(JSON.stringify(process.versions, null, 2));
 });
 
-app.post("/webhook", (req, res) => {
+app.post("/mention", (req, res) => {
   mention(req, res);
 });
 
