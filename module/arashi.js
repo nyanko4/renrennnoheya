@@ -53,7 +53,7 @@ const m = [
   ")",
 ];
 //絵文字に対して反応します
-async function emoji(body, roomId, accountId) {
+async function emoji(body, messageId, roomId, accountId) {
   let count = 0;
   const bodyChars = [...body];
 
@@ -70,7 +70,7 @@ async function emoji(body, roomId, accountId) {
   return;
 }
 //メンションに対して反応します
-async function to(body, roomId, accountId) {
+async function to(body, messageId, roomId, accountId) {
   if (body.match(/\[toall\]/g)) {
     if (!isAdmin) {
       await block.blockMember(roomId, accountId);
@@ -89,7 +89,7 @@ async function to(body, roomId, accountId) {
   return;
 }
 //タグに反応します
-async function tag(body, roomId, accountId) {
+async function tag(body, messageId, roomId, accountId) {
   if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
     await block.blockMember(roomId, accountId);
     return "ok";
@@ -109,7 +109,7 @@ async function tag(body, roomId, accountId) {
 const zzalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 
-async function zalgo(body, roomId, accountId) {
+async function zalgo(body, messageId, roomId, accountId) {
   let zalgoCount = 0;
 
   for (let char of body) {
