@@ -1,7 +1,6 @@
 "use strict";
 const express = require("express");
 const app = express();
-const compression = require("compression");
 const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;

@@ -5,9 +5,8 @@ const supabase = createClient(
 );
 const { DateTime } = require("luxon");
 const reqcheck = require("../middleware/sign");
-const sendername = require("../ctr/cwdata").sendername
+const sendername = require("../ctr/cwdata").sendername;
 const arashi = require("../module/arashi");
-const command = require("../module/command");
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -20,30 +19,29 @@ async function getchat(req, res) {
     body,
     account_id: accountId,
     room_id: roomId,
-    message_id: messageId
-    
+    message_id: messageId,
   } = req.body.webhook_event;
-if (roomId == 374987857) {
-      //メッセージを保存
-  const { data, error } = await supabase.from("nyankoのへや").insert({
-    messageId: messageId,
-    message: body,
-    accountId: accountId,
-    name: sendername,
-    date: today,
-  });
-    }
+  if (roomId == 374987857) {
+    //メッセージを保存
+    const { data, error } = await supabase.from("nyankoのへや").insert({
+      messageId: messageId,
+      message: body,
+      accountId: accountId,
+      name: sendername,
+      date: today,
+    });
+  }
   if (accountId === 9587322) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi.emoji, arashi.to, arashi.zalgo, command]
+  const handlers = [arashi.emoji, arashi.to, arashi.zalgo];
 
   for (const handler of handlers) {
-  if ((await handler(body, roomId, accountId)) === "ok") {
-    return res.sendStatus(200);
-  }
+    if ((await handler(body, roomId, accountId)) === "ok") {
+      return res.sendStatus(200);
     }
+  }
 
   res.sendStatus(200);
 }
