@@ -62,7 +62,6 @@ async function emoji(body, roomId, accountId) {
       count++;
     }
   });
-  console.log("emoji", count);
   if (count >= 20) {
     block.blockMember(roomId, accountId);
     return "ok";
@@ -113,7 +112,6 @@ async function zalgo(body, roomId, accountId) {
       zalgoCount++;
     }
   }
-  console.log("zalgo", zalgoCount);
   if (zalgoCount >= 500) {
     await block.blockMember(roomId, accountId);
     return "ok";

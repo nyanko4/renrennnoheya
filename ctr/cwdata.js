@@ -44,8 +44,16 @@ async function getChatworkMembers(roomId) {
     return null;
   }
 }
-
+async function sendername(accountId, roomId) {
+  const members = await getChatworkMembers(roomId);
+  if (members) {
+    const sender = members.find((member) => member.account_id === accountId);
+    return sender ? sender.name : "名前を取得できませんでした";
+  }
+  return "chatworkユーザー";
+}
 module.exports = {
     getChatworkMembers,
-    isUserAdmin
+    isUserAdmin,
+    sendername
 };
