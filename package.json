@@ -1,8 +1,7 @@
 {
-  "name": "nyankoのへやbot",
-  "version": "1.0.0",
-  "main": "bot.js",
-  "license": "CC-BY-4.0",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "^5.0.1",
     "axios": "latest",
@@ -13,11 +12,9 @@
     "compression": "^1.8.0",
     "crypto": "^1.0.1"
   },
-  "engines": {
-    "node": "16.x"
-  },
-  "private": false,
-  "scripts": {
-    "start": "node bot.js"
+  "narflinger": {
+    "basenames": [
+      "f6854wxlv8i0i88bzfn1zl8ifw8c3i0y-nodejs-20.11.1"
+    ]
   }
 }
