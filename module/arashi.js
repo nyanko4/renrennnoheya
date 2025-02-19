@@ -1,50 +1,94 @@
-const block = require('../ctr/filter');
-const isAdmin = ("../ctr/cwdata").isUserAdmin
-const sendchatwork = message.send
+const block = require("../ctr/filter");
+const isAdmin = "../ctr/cwdata".isUserAdmin;
+const sendchatwork = "../ctr/message".sendchatwork;
 
 const m = [
-  ":D", "8-)", ":o", ";)", ";(", "(sweat)", ":|", ":*", ":p", 
-  "(blush)", ":^)", "|-)", "(inlove)", "]:)", "(talk)", "(yawn)", 
-  "(puke)", "(emo)", "8-|", ":#)", "(nod)", "(shake)", "(^^;)", "(whew)", 
-  "(clap)", "(bow)", "(roger)", "(flex)", "(dance)", "(:/)", "(gogo)", 
-  "(think)", "(please)", "(quick)", "(anger)", "(devil)", "(lightbulb)", 
-  "(*)", "(h)", "(F)", "(cracker)", "(eat)", "(^)", "(coffee)", "(beer)", 
-  "(handshake)", "(y)"
+  ":D",
+  "8-)",
+  ":o",
+  ";)",
+  ";(",
+  "(sweat)",
+  ":|",
+  ":*",
+  ":p",
+  "(blush)",
+  ":^)",
+  "|-)",
+  "(inlove)",
+  "]:)",
+  "(talk)",
+  "(yawn)",
+  "(puke)",
+  "(emo)",
+  "8-|",
+  ":#)",
+  "(nod)",
+  "(shake)",
+  "(^^;)",
+  "(whew)",
+  "(clap)",
+  "(bow)",
+  "(roger)",
+  "(flex)",
+  "(dance)",
+  "(:/)",
+  "(gogo)",
+  "(think)",
+  "(please)",
+  "(quick)",
+  "(anger)",
+  "(devil)",
+  "(lightbulb)",
+  "(*)",
+  "(h)",
+  "(F)",
+  "(cracker)",
+  "(eat)",
+  "(^)",
+  "(coffee)",
+  "(beer)",
+  "(handshake)",
+  "(y)",
+  ")",
 ];
 //絵文字に対して反応します
 async function emoji(body, roomId, accountId) {
-    let count = 0;
-    const bodyChars = [...body];
+  let count = 0;
+  const bodyChars = [...body];
 
-    bodyChars.forEach(char => {
-        if (m.includes(char)) {
-            count++;
-        }
-    });
-    console.log("emoji", count)
-    if (count >= 20) {
-        block.blockMember(roomId, accountId);
-        return "ok";
-    } 
+  bodyChars.forEach((char) => {
+    if (m.includes(char)) {
+      count++;
+    }
+  });
+  console.log("emoji", count);
+  if (count >= 20) {
+    block.blockMember(roomId, accountId);
+    return "ok";
+  }
 
   return;
 }
 //メンションに対して反応します
 async function to(body, roomId, accountId) {
   if (body.match(/\[toall\]/g)) {
-    if(!isAdmin) {
-    await block.blockMember(roomId, accountId);
+    if (!isAdmin) {
+      await block.blockMember(roomId, accountId);
     } else {
-      sendchatwork("管理者がtoallを使用しました。見逃してあげてください()", roomId)
+      sendchatwork(
+        "管理者がtoallを使用しました。見逃してあげてください()",
+        roomId
+      );
     }
     return "ok";
   }
-  if ((body.match(/\[To:\d+\]/g) || []).length >= 35) {
-   block.blockMember(roomId, accountId);
-     return "ok";
+  if ((body.match(/\[To:\d+\]/g) || []).length >= 20) {
+    await block.blockMember(roomId, accountId);
+    return "ok";
   }
   return;
-};
+}
 //タグに反応します
 async function tag(body, roomId, accountId) {
   if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
@@ -52,13 +96,14 @@ async function tag(body, roomId, accountId) {
     return "ok";
   }
   if ((body.match("") || []).length >= 35) {
-     await block.blockMember(roomId, accountId);
-     return "ok";
+    await block.blockMember(roomId, accountId);
+    return "ok";
   }
   return;
-};
+}
 //zalgoに反応します
-const zzalgo = /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
+const zzalgo =
+  /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 
 async function zalgo(body, roomId, accountId) {
   let zalgoCount = 0;
@@ -68,16 +113,16 @@ async function zalgo(body, roomId, accountId) {
       zalgoCount++;
     }
   }
-  console.log("zalgo", zalgoCount)
+  console.log("zalgo", zalgoCount);
   if (zalgoCount >= 500) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  
+
   return;
-};
+}
 module.exports = {
   emoji,
   to,
-  zalgo
+  zalgo,
 };

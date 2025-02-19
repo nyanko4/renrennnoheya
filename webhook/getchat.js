@@ -20,7 +20,7 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi.arashi, arashi.zalgo, command]
+  const handlers = [arashi.emoji, arashi.to, arashi.zalgo, command]
 
   for (const handler of handlers) {
   if ((await handler(body, roomId, accountId)) === "ok") {
