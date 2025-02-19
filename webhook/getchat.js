@@ -5,10 +5,10 @@ const supabase = createClient(
 );
 const { DateTime } = require("luxon");
 const reqcheck = require("../middleware/sign");
-const sendername = require("../ctr/cwdata").sendername;
+const name = require("../ctr/cwdata").sendername;
 const arashi = require("../module/arashi");
 //const command = require("../module/command")
-const omikuji = require("../module/omikuji")
+const omikuji = require("../module/omikuji");
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -23,6 +23,7 @@ async function getchat(req, res) {
     room_id: roomId,
     message_id: messageId,
   } = req.body.webhook_event;
+  const sendername = await name(accountId, roomId)
   if (roomId == 374987857) {
     //メッセージを保存
     const { data, error } = await supabase.from("nyankoのへや").insert({
