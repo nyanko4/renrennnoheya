@@ -337,7 +337,7 @@ async function getChatworkMembers(roomId) {
       `https://api.chatwork.com/v2/rooms/${roomId}/members`,
       {
         headers: {
-          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
         },
       }
     );
