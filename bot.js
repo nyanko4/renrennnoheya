@@ -726,73 +726,17 @@ async function omikujiresult(body, message, messageId, roomId, accountId) {
     );
   }
 }
-//宣伝禁止
-async function sendenkinshi(
-  body,
-  message,
-  messageId,
-  roomId,
-  accountId,
-  sendername
-) {
+async function sendenkinshi(body, message, messageId, roomId, accountId) {
   try {
-    const members = await getChatworkMembers(roomId);
-    const isAdmin = await isUserAdmin(accountId, roomId);
-    if (!isAdmin) {
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n宣伝禁止`,
-        roomId
-      );
-      const { data } = await supabase
+    const { data, error } = await supabase
         .from("発禁者")
-        .select("accountId, reason, count")
-        .eq("accountId", accountId);
-      let count = "";
-      data.forEach((number) => {
-        count += number.count;
-      });
-      const count1 = Number(count) + 1;
-      if (count1 == 3) {
-        sendchatwork("3度目の概要違反となりますので発禁になります", roomId);
-        await blockMembers(
-          body,
-          message,
-          messageId,
-          roomId,
-          accountId,
-          sendername
-        );
-      } else if (count1 >= 4) {
-        sendchatwork("4度目の概要違反となりますので発禁になります", roomId);
-        await blockMembers(
-          body,
-          message,
-          messageId,
-          roomId,
-          accountId,
-          sendername
-        );
-      } else {
-        const { error } = await supabase.from("発禁者").upsert([
-          {
-            accountId: accountId,
-            reason: "宣伝",
-            count: count1,
-            roomId: roomId,
-          },
-        ]);
-        if (error) {
-          console.error(error);
-        }
-      }
-    } else {
-      console.log("管理者のため見逃されました");
-    }
+        .select("accountId, reason, count, roomId")
+        .eq("roomId", roomId);
+    data.forEach((item) => {
+            messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
+          });
   } catch (error) {
-    console.error(
-      "宣伝禁止エラー",
-      error.response ? error.response.data : error.message
-    );
+    console.error("error※宣伝", error)
   }
 }
 //ブラックリストを表示する
