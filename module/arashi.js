@@ -93,7 +93,7 @@ async function arashi(body, messageId, roomId, accountId) {
     return "ok";
   }
 
-  if ((body.match(/\[preview\]/g) || []).length >= 20) {
+  if ((body.match(/\[preview/g) || []).length >= 5) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
