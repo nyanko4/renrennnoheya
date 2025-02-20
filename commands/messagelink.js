@@ -1,5 +1,6 @@
 const axios = require("axios")
 const CHATWORK_API_TOKEN_N = process.env.CWapitoken2
+const sendchatwork = require("../ctr/message").sendchatwork
 //最新メッセージのリンクを取得する
 async function messagelink(body, message, messageId, roomId, accountId) {
   try {
@@ -30,3 +31,4 @@ async function messagelink(body, message, messageId, roomId, accountId) {
     await sendchatwork("エラーが起きました", roomId);
   }
 }
+module.exports = messagelink

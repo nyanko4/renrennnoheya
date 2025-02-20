@@ -9,6 +9,8 @@ const randommember = require("../commands/randommember");
 const say = require("../commands/say");
 const omikujiresult = require("../commands/omikujiresult")
 const blacklist = require("../commands/blacklist");
+const messagelink = require("../commands/messagelink")
+const roominfo = require("../commands/roominfo")
 //const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
@@ -21,6 +23,7 @@ const commands = {
   say: say,
   omikuji: omikujiresult,
   list: blacklist,
+  messagelink: messagelink,
   //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
