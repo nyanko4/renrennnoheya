@@ -822,7 +822,7 @@ async function diceroll(body, message, messageId, roomId, accountId) {
   }
 }
 
-//proxyを表示する//proxyを設定する
+//proxyを設定する
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
     const isAdmin = await isUserAdmin(accountId, roomId);
