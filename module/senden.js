@@ -29,17 +29,31 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
-    const { data, error } = await supabase
-        .from("発禁者")
-        .select("accountId, reason, count, roomId")
-        .eq("accountId", accountId)
-        .eq("roomId", 374987857);
-    console.log(data)
+    const { data } = await supabase
+      .from("発禁者")
+      .select("accountId, reason, count")
+      .eq("accountId", accountId);
     let count = "";
-    data.forEach((item) => {
-            count += Number(item.count);
-          });
-    console.log(count)
+    data.forEach((person) => {
+      count += person.count;
+    });
+    const number = Number(count) + 1;
+    if (number === 3) {
+      block.blockMember(roomId, accountId)
+    } else if (number >= 4) {
+      block.blockMember(roomId, accountId)
+    }
+    const { error } = await supabase.from("発禁者").upsert([
+      {
+        accountId: accountId,
+        reason: "宣伝",
+        count: number,
+        roomId: roomId,
+      },
+    ]);
+    if (error) {
+      console.error(error);
+    }
   } catch (error) {
     console.error("error※宣伝", error)
   }
