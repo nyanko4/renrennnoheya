@@ -7,6 +7,8 @@ const proxyget = require("../commands/proxy").proxyget;
 const proxydelete = require("../commands/proxy").proxydelete;
 const randommember = require("../commands/randommember");
 const say = require("../commands/say");
+const omikujiresult = require("../commands/omikujiresult")
+const blacklist = require("../commands/blacklist");
 //const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
@@ -17,7 +19,8 @@ const commands = {
   proxydelete: proxydelete,
   member: randommember,
   say: say,
-  omikuji: 
+  omikuji: omikujiresult,
+  list: blacklist,
   //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
