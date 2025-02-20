@@ -1,3 +1,24 @@
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+const sendchatwork = require("../ctr/message").sendchatwork
+//proxyを表示する
+async function proxyget(body, message, messageId, roomId, accountId) {
+  try {
+    const proxyname = message;
+    if (message == "") {
+      const { data, error } = await supabase.from("proxy").select("proxyname");
+      if (error) {
+        console.error("URL取得エラー:", error);
+      } else {
+        if (data.length === 0) {
+          await sendchatwork(
+            `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\n保存されされているproxyはありません`,
+            roomId
+          );
+        } else {
           let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]保存されているproxy[/title]`;
           data.forEach((item) => {
             messageToSend += `${item.proxyname}\n`;
@@ -33,4 +54,7 @@
   } catch (error) {
     console.error("error", error);
   }
+}
+module.exports = {
+  proxyget
 }

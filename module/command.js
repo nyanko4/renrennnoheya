@@ -1,18 +1,22 @@
 const sendchatwork = require("../ctr/message").sendchatwork;
-const poker = require("../commands/poker")
-const dice = require("../commands/dice")
-const Toomikuji = require("../commands/omikuji")
+const poker = require("../commands/poker");
+const dice = require("../commands/dice");
+const Toomikuji = require("../commands/omikuji");
+const proxyget = require("../commands/proxy").proxyget;
+const proxyset = require("../commands/proxy").proxyset;
+const proxydelete = require("../commands/proxy").proxydelete;
 const commands = {
   poker: poker,
   dice: dice,
   おみくじ: Toomikuji,
+  proxyget: proxyget,
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
   const command = getCommand(body);
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, accountId);
-  } else if (command){
+  } else if (command) {
     sendchatwork(
       "現在bot停止中のため要件のある場合は本垢に言ってください",
       roomId
