@@ -5,7 +5,8 @@ const Toomikuji = require("../commands/omikuji");
 const proxyset = require("../commands/proxy").proxyset;
 const proxyget = require("../commands/proxy").proxyget;
 const proxydelete = require("../commands/proxy").proxydelete;
-const kengen = require("../ctr/filter").kengen;
+const randommember = require("../commands/randommember");
+//const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
   dice: dice,
@@ -13,7 +14,8 @@ const commands = {
   proxyset: proxyset,
   proxyget: proxyget,
   proxydelete: proxydelete,
-  kengen: kengen
+  member: randommember
+  //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
