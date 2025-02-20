@@ -559,15 +559,15 @@ async function blockMembers(
     let reason = "";
     data.forEach((person) => {
       count += person.count;
-      reason += person.reason;
+      reason += person.reason
     });
-    const arashi = Number(count) + "1";
-    const reasona = reason + "荒らし";
+    let arashia = reason + "荒らし"
+    const number = Number(count) + "1";
     const { error } = await supabase.from("発禁者").upsert([
       {
         accountId: accountIdToBlock,
-        reason: reasona,
-        count: arashi,
+        reason: number,
+        count: arashia,
         roomId: roomId,
       },
     ]);

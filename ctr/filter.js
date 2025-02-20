@@ -64,14 +64,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
     );
   }
 }
-async function kengen(
-  body,
-  message,
-  messageId,
-  roomId,
-  accountIdToBlock,
-  sendername
-) {
+async function kengen(body, messageId, roomId, accountIdToBlock) {
   try {
     const members = await cwdata.getChatworkMembers(roomId);
 
@@ -123,4 +116,5 @@ async function kengen(
 }
 module.exports = {
   blockMember,
+  kengen,
 };
