@@ -24,6 +24,7 @@ const commands = {
   omikuji: omikujiresult,
   list: blacklist,
   messagelink: messagelink,
+  roominfo: roominfo,
   //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {

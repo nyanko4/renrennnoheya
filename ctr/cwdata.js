@@ -1,24 +1,28 @@
-const axios = require('axios');
+const axios = require("axios");
 
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
+const CHATWORK_API_TOKEN_N = process.env.CWapitoken2;
 
 async function isUserAdmin(accountId, roomId) {
   try {
-    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}/members`, {
-      headers: {
-        accept: 'application/json',
-        'X-ChatWorkToken': CHATWORK_API_TOKEN
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          accept: "application/json",
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
       }
-    });
-    const member = response.data.find(m => m.account_id === accountId);
-    
-    if (member && member.role === 'admin') {
+    );
+    const member = response.data.find((m) => m.account_id === accountId);
+
+    if (member && member.role === "admin") {
       return true;
     } else {
       return false;
     }
   } catch (error) {
-    console.error('エラーが発生しました:', error);
+    console.error("エラーが発生しました:", error);
     return false;
   }
 }
@@ -44,6 +48,29 @@ async function getChatworkMembers(roomId) {
     return null;
   }
 }
+
+async function getChatworkMembers2(roomId) {
+  try {
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_N,
+        },
+      }
+    );
+
+    const members = response.data;
+    return members;
+  } catch (error) {
+    console.error(
+      "Error fetching Chatwork members:",
+      error.response?.data || error.message
+    );
+    return null;
+  }
+}
+
 async function sendername(accountId, roomId) {
   const members = await getChatworkMembers(roomId);
   if (members) {
@@ -53,7 +80,8 @@ async function sendername(accountId, roomId) {
   return "chatworkユーザー";
 }
 module.exports = {
-    getChatworkMembers,
-    isUserAdmin,
-    sendername
+  getChatworkMembers,
+  getChatworkMembers2,
+  isUserAdmin,
+  sendername,
 };
