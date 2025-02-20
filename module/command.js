@@ -6,6 +6,7 @@ const proxyset = require("../commands/proxy").proxyset;
 const proxyget = require("../commands/proxy").proxyget;
 const proxydelete = require("../commands/proxy").proxydelete;
 const randommember = require("../commands/randommember");
+const say = require("../commands/say");
 //const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
@@ -14,7 +15,9 @@ const commands = {
   proxyset: proxyset,
   proxyget: proxyget,
   proxydelete: proxydelete,
-  member: randommember
+  member: randommember,
+  say: say,
+  omikuji: 
   //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
