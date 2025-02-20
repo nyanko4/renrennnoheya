@@ -7,7 +7,7 @@ const { DateTime } = require("luxon");
 const reqcheck = require("../middleware/sign");
 const name = require("../ctr/cwdata").sendername;
 const arashi = require("../module/arashi");
-const command = require("../module/command")
+const command = require("../module/command");
 const omikuji = require("../module/omikuji");
 
 async function getchat(req, res) {
@@ -38,7 +38,7 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi.emoji, arashi.to, arashi.tag, arashi.zalgo, omikuji, command.test];
+  const handlers = [arashi, omikuji, command.test];
 
   for (const handler of handlers) {
     if ((await handler(body, messageId, roomId, accountId)) === "ok") {

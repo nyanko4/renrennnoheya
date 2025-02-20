@@ -52,8 +52,11 @@ const m = [
   "(y)",
   ")",
 ];
-//絵文字に対して反応します
-async function emoji(body, messageId, roomId, accountId) {
+const zzalgo =
+  /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
+
+//荒らしに対して反応します
+async function arashi(body, messageId, roomId, accountId) {
   let count = 0;
   const bodyChars = [...body];
 
@@ -66,25 +69,6 @@ async function emoji(body, messageId, roomId, accountId) {
     block.blockMember(roomId, accountId);
     return "ok";
   }
-if (body.match(/\[toall\]/g)) {
-    if (!isAdmin) {
-      await block.blockMember(roomId, accountId);
-    } else {
-      sendchatwork(
-        "管理者がtoallを使用しました。見逃してあげてください()",
-        roomId
-      );
-    }
-    return "ok";
-  }
-  if ((body.match(/\[To:\d+\]/g) || []).length >= 20) {
-    await block.blockMember(roomId, accountId);
-    return "ok";
-  }
-  return;
-}
-//メンションに対して反応します
-async function to(body, messageId, roomId, accountId) {
   if (body.match(/\[toall\]/g)) {
     if (!isAdmin) {
       await block.blockMember(roomId, accountId);
@@ -100,10 +84,6 @@ async function to(body, messageId, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  return;
-}
-//タグに反応します
-async function tag(body, messageId, roomId, accountId) {
   if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
     await block.blockMember(roomId, accountId);
     return "ok";
@@ -112,18 +92,11 @@ async function tag(body, messageId, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  
+
   if ((body.match(/\[preview\]/g) || []).length >= 20) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  return;
-}
-//zalgoに反応します
-const zzalgo =
-  /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
-
-async function zalgo(body, messageId, roomId, accountId) {
   let zalgoCount = 0;
 
   for (let char of body) {
@@ -138,9 +111,4 @@ async function zalgo(body, messageId, roomId, accountId) {
 
   return;
 }
-module.exports = {
-  emoji,
-  to,
-  tag,
-  zalgo
-};
+module.exports = arashi
