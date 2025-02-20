@@ -30,4 +30,4 @@ function getCommand(body) {
   const match = body.match(pattern);
   return match ? match[1] : null;
 }
-module.exports = { test };
+module.exports = test;

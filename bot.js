@@ -732,8 +732,9 @@ async function sendenkinshi(body, message, messageId, roomId, accountId) {
         .from("発禁者")
         .select("accountId, reason, count, roomId")
         .eq("roomId", roomId);
+    let count = "";
     data.forEach((item) => {
-            messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
+            count += Number(item.count) + 1;
           });
   } catch (error) {
     console.error("error※宣伝", error)

@@ -9,6 +9,7 @@ const name = require("../ctr/cwdata").sendername;
 const arashi = require("../module/arashi");
 const command = require("../module/command");
 const omikuji = require("../module/omikuji");
+const senden = require("../module/senden")
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -38,7 +39,7 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi, omikuji, command.test];
+  const handlers = [arashi, omikuji, senden, command];
 
   for (const handler of handlers) {
     if ((await handler(body, messageId, roomId, accountId)) === "ok") {
