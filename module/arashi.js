@@ -55,7 +55,6 @@ const m = [
 const zzalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
 
-const ms = `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`
 //荒らしに対して反応します
 async function arashi(body, messageId, roomId, accountId) {
   let count = 0;

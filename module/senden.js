@@ -29,6 +29,7 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
+    sendchatwork(`[rp aid=${a}宣伝禁止`, roomId)
     const { data } = await supabase
       .from("発禁者")
       .select("accountId, reason, count")
@@ -39,9 +40,9 @@ async function sendenkinshi(body, messageId, roomId, accountId) {
     });
     const number = Number(count) + 1;
     if (number === 3) {
-      block.blockMember(roomId, accountId)
+      block.blockMember(roomId, accountId, "3度目の概要違反のため発禁になります")
     } else if (number >= 4) {
-      block.blockMember(roomId, accountId)
+      block.blockMember(roomId, accountId, "4度目の概要違反のためbanとなります")
     }
     const { error } = await supabase.from("発禁者").upsert([
       {

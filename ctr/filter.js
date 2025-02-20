@@ -45,8 +45,10 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         'x-chatworktoken': CHATWORK_API_TOKEN,
       },
     });
-    await msedit.sendchatwork(ms, roomId);
-
+    if (ms !== undefined) {
+      await msedit.sendchatwork(`[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`, roomId)
+    }
+    await msedit.sendchatwork(`[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。\n${ms}[/info]`, roomId);
   } catch (error) {
     console.error('不正利用フィルターエラー:', error.response ? error.response.data : error.message);
   }
