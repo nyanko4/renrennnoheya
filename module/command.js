@@ -1,9 +1,11 @@
 const sendchatwork = require("../ctr/message").sendchatwork;
 const poker = require("../commands/poker")
 const dice = require("../commands/dice")
+const Toomikuji = require("../commands/omikuji")
 const commands = {
   poker: poker,
   dice: dice,
+  おみくじ: Toomikuji,
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
