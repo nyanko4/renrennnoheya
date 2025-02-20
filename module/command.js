@@ -1,3 +1,4 @@
+const { DateTime } = require("luxon");
 const sendchatwork = require("../ctr/message").sendchatwork;
 const poker = require("../commands/poker");
 const dice = require("../commands/dice");
@@ -35,10 +36,19 @@ async function test(body, messageId, roomId, accountId) {
   } else if (command) {
     return;
   }
+  if (body.match(/^now$/)) {
+    await displaynow(body, message, messageId, roomId, accountId)
+}
+
 }
 function getCommand(body) {
   const pattern = /\/(.*?)\//;
   const match = body.match(pattern);
   return match ? match[1] : null;
+}
+//現在の時間を取得
+async function displaynow(body, message, messageId, roomId, accountId) {
+  const today = DateTime.now().setZone("Asia/Tokyo").toFormat("MM/dd hh:mm:ss");
+  sendchatwork(today, roomId);
 }
 module.exports = test;

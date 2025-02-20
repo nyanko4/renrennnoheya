@@ -9,7 +9,7 @@ const block = require("../ctr/filter").blockMember;
 //部屋に参加したら送信する
 async function welcome(body, messageId, roomId) {
   try {
-    if (body.match(/\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]/g)) {
+    if (body.match(/\[info\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]/g)) {
       const members = await cwdata.getChatworkMembers(roomId);
       const welcomeId = (body.match(/\[piconname:(\d+)\]/) || [])[1];
       const { data } = await supabase
