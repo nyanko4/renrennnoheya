@@ -608,7 +608,6 @@ async function omikuji(body, message, messageId, roomId, accountId) {
       console.log(data);
       return;
     }
-
     const omikujiResult = getOmikujiResult();
     const { data: insertData, error: insertError } = await supabase
       .from("おみくじ")
