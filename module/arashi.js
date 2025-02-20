@@ -66,7 +66,21 @@ async function emoji(body, messageId, roomId, accountId) {
     block.blockMember(roomId, accountId);
     return "ok";
   }
-
+if (body.match(/\[toall\]/g)) {
+    if (!isAdmin) {
+      await block.blockMember(roomId, accountId);
+    } else {
+      sendchatwork(
+        "管理者がtoallを使用しました。見逃してあげてください()",
+        roomId
+      );
+    }
+    return "ok";
+  }
+  if ((body.match(/\[To:\d+\]/g) || []).length >= 20) {
+    await block.blockMember(roomId, accountId);
+    return "ok";
+  }
   return;
 }
 //メンションに対して反応します
