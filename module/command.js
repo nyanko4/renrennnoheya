@@ -1,12 +1,13 @@
 const sendchatwork = require("../ctr/message").sendchatwork;
+const poker = require("../commands/poker")
 const commands = {
-  
+  poker: poker,
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
   const command = getCommand(body);
   if (command && commands[command]) {
-    //await commands[command](body, message, messageId, roomId, accountId);
+    await commands[command](body, message, messageId, roomId, accountId);
   } else if (command){
     sendchatwork(
       "現在bot停止中のため要件のある場合は本垢に言ってください",
