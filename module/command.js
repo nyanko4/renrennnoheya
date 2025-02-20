@@ -1,5 +1,7 @@
 const sendchatwork = require("../ctr/message").sendchatwork;
-const commands = {};
+const commands = {
+  
+};
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
   const command = getCommand(body);
