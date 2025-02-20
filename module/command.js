@@ -19,10 +19,7 @@ async function test(body, messageId, roomId, accountId) {
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, accountId);
   } else if (command) {
-    sendchatwork(
-      "現在bot整備中のため要件のある場合は本垢に言ってください",
-      roomId
-    );
+    return;
   }
 }
 function getCommand(body) {

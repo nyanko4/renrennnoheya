@@ -29,7 +29,7 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
-    sendchatwork(`[rp aid=${a}宣伝禁止`, roomId)
+    sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n宣伝禁止`, roomId)
     const { data } = await supabase
       .from("発禁者")
       .select("accountId, reason, count")
