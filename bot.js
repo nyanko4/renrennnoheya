@@ -876,7 +876,8 @@ async function diceroll(body, message, messageId, roomId, accountId) {
     sendchatwork("サイコロの数が多すぎます(1~100)", roomId);
   }
 }
-//proxyを設定する
+
+//proxyを表示する//proxyを設定する
 async function proxyset(body, message, messageId, roomId, accountId) {
   try {
     const isAdmin = await isUserAdmin(accountId, roomId);
@@ -914,7 +915,6 @@ async function proxyset(body, message, messageId, roomId, accountId) {
     console.error("error", error);
   }
 }
-//proxyを表示する
 async function proxyget(body, message, messageId, roomId, accountId) {
   try {
     const proxyname = message;
