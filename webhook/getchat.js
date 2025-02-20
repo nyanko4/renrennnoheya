@@ -10,6 +10,7 @@ const arashi = require("../module/arashi");
 const command = require("../module/command");
 const omikuji = require("../module/omikuji");
 const senden = require("../module/senden")
+const welcome = require("../module/welcome")
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -39,7 +40,7 @@ async function getchat(req, res) {
     return res.sendStatus(200);
   }
 
-  const handlers = [arashi, omikuji, senden, command];
+  const handlers = [arashi, omikuji, senden, welcome, command];
 
   for (const handler of handlers) {
     if ((await handler(body, messageId, roomId, accountId)) === "ok") {

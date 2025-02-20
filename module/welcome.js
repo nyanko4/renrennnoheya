@@ -3,39 +3,30 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const sendchatwork = require("../ctr/message").sendchatwork
-const cwdata = require("../ctr/cwdata")
-const block = require("../ctr/filter").blockMember
+const sendchatwork = require("../ctr/message").sendchatwork;
+const cwdata = require("../ctr/cwdata");
+const block = require("../ctr/filter").blockMember;
 //部屋に参加したら送信する
-async function welcome(body, message, messageId, roomId, sendername) {
+async function welcome(body, messageId, roomId) {
   try {
-    const members = await cwdata.getChatworkMembers(roomId);
-    const welcomeId = (message.match(/\[piconname:(\d+)\]/) || [])[1];
-    const { data } = await supabase
-      .from("発禁者")
-      .select("accountId, reason, count")
-      .eq("accountId", welcomeId);
-    let reason = "";
-    let count = "";
-    data.forEach((person) => {
-      reason += person.reason;
-      count += person.count;
-    });
-    if (reason.includes("荒らし") || count >= 4) {
-      await block(
-        
-  body,
-        message,
-        messageId,
-        roomId,
-        welcomeId,
-        sendername
-      );
+    if (body.match(/\[info\]\[title\]\[dtext:chatroom_chat_edited\]\[\/title\]\[dtext:chatroom_member_is\]\[piconname:\d+\]\[dtext:chatroom_added\]\[\/info\]/g)) {
+      const members = await cwdata.getChatworkMembers(roomId);
+      const welcomeId = (body.match(/\[piconname:(\d+)\]/) || [])[1];
+      const { data } = await supabase
+        .from("発禁者")
+        .select("accountId, reason, count")
+        .eq("accountId", welcomeId);
+      let reason = "";
+      let count = "";
+      data.forEach((person) => {
+        reason += person.reason;
+        count += person.count;
+      });
+      if (reason.includes("荒らし") || count >= 4) {
+        await block(roomId, welcomeId);
+      }
+      await sendchatwork(`[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,roomId);
     }
-    await sendchatwork(
-      `[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,
-      roomId
-    );
   } catch (error) {
     console.error(
       "入室エラー",
@@ -43,3 +34,4 @@ async function welcome(body, message, messageId, roomId, sendername) {
     );
   }
 }
+module.exports = welcome;
