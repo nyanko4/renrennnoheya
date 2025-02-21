@@ -12,20 +12,7 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       accountIds.push(member.account_id)
     })
     console.log(accountIds)
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1)); // 0からiまでのランダムなインデックス
-        [array[i], array[j]] = [array[j], array[i]]; // 要素を交換
-    }
-    return array;
-}
-
-const shuffledArr = shuffle(accountIds);
-const numberedItems = shuffledArr.map((item, index) => {
-    return  // 番号と値をオブジェクトにまとめる
-});
-    console.log(numberedItems)
-    fs.writeFile("./ousamagame/ousama.txt", numberedItems[1],(err, data) => {
+    fs.writeFile("./ousamagame/ousama.txt", "a",(err, data) => {
       console.error(err);
       console.log(data)
     });
