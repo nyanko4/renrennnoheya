@@ -8,13 +8,13 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       return;
     }
     const randomIndex = Math.floor(Math.random() * members.length);
-    const randomMember = members[randomIndex];
+    const randomMember = members[randomIndex].account_id
     const ousama = randomMember.toString();
     await sendchatwork(
-      `王様は[piconname:${randomMember.account_id}]さんです`,
+      `王様は[piconname:${ousama}]さんです`,
       roomId
     );
-    fs.writeFile("./ousamagame/ousama.txt", ousama, function (data, err) {
+    fs.writeFile("./ousamagame/ousama.txt", ousama, (data, err) => {
       console.log(data);
       console.log(err);
     });
