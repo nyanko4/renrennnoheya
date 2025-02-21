@@ -4,7 +4,7 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 const block = require("../ctr/filter");
-const isAdmin = require("../ctr/cwdata").isUserAdmin;
+const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
 const sendchatwork = require("../ctr/message").sendchatwork;
 async function senden(body, messageId, roomId, accountId) {
   try {
@@ -29,7 +29,8 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
-    if (isAdmin) {
+    const isAdmin = await isUserAdmin(accountId, roomId)
+    if (!isAdmin) {
       sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n宣伝禁止`,
         roomId

@@ -26,7 +26,7 @@ const commands = {
   list: blacklist,
   messagelink: messagelink,
   roominfo: roominfo,
-  kengen: kengen
+  //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
