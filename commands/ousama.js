@@ -7,6 +7,10 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
     if (!members || members.length === 0) {
       return;
     }
+    let accountId = []
+    members.forEath((member) => {
+      accountId.
+    })
     const randomIndex = Math.floor(Math.random() * members.length);
     const randomMember = members[randomIndex].account_id
     const ousama = randomMember.toString();
@@ -14,9 +18,9 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       `王様は[piconname:${ousama}]さんです`,
       roomId
     );
-    fs.writeFile("./ousamagame/ousama.txt", "kaki", (data, err) => {
-      console.log(data);
-      console.log(err);
+    fs.writeFile("./ousamagame/ousama.txt", ousama, (err, data) => {
+      console.error(err);
+      console.log(data)
     });
     return;
   } catch (error) {
@@ -27,10 +31,10 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
   }
 }
 async function ousamakekka(body, message, messageId, roomId, accountId) {
-  fs.readFile("./ousamagame/ousama.txt", "utf8", function (data, err) {
+  fs.readFile("./ousamagame/ousama.txt", "utf8", (err, data) => {
+    console.error(err);
     console.log(data);
-    console.log(err);
-    sendchatwork(data, roomId);
+    sendchatwork(`[info][title]王様ゲーム[/title]王様は[piconname:${data}]さん\n[/info]`, roomId);
   });
 }
 module.exports = {
