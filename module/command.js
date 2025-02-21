@@ -12,7 +12,8 @@ const omikujiresult = require("../commands/omikujiresult")
 const blacklist = require("../commands/blacklist");
 const messagelink = require("../commands/messagelink")
 const roominfo = require("../commands/roominfo")
-const ousamagame = require("../commands/ousama")
+const ousamagame = require("../commands/ousama").ousamagame
+const ousamakekka = require("../commands/ousama").ousamakekka
 const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
@@ -28,6 +29,7 @@ const commands = {
   messagelink: messagelink,
   roominfo: roominfo,
   王様ゲーム: ousamagame,
+  結果: ousamakekka,
   //kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
