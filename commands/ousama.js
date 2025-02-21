@@ -14,7 +14,7 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       `王様は[piconname:${ousama}]さんです`,
       roomId
     );
-    fs.writeFile("./ousamagame/ousama.txt", ousama, (data, err) => {
+    fs.writeFile("./ousamagame/ousama.txt", "kaki", (data, err) => {
       console.log(data);
       console.log(err);
     });
