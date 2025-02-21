@@ -23,9 +23,14 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       return array;
     }
     const number = shuffle(numbers);
-    console.log(number);
-    const ousama = accountIds[number].toString();
-    fs.writeFile("./ousamagame/ousama.txt", ousama, (err, data) => {
+    const ousama = accountIds[number[0]]
+    await sendchatwork(`王様は[piconname:${ousama}]さんです`, roomId)
+    console.log(ousama)
+    fs.writeFile("./ousamagame/ousama.txt", ousama.toString(), (err, data) => {
+      console.error(err);
+      console.log(data);
+    });
+    fs.writeFile("./ousamagame/ousamaいがい.txt", ousama.toString(), (err, data) => {
       console.error(err);
       console.log(data);
     });
@@ -38,13 +43,17 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
   }
 }
 async function ousamakekka(body, message, messageId, roomId, accountId) {
+  let m = "[info][title]王様ゲーム[/title]王様は[piconname:"
   fs.readFile("./ousamagame/ousama.txt", "utf8", (err, data) => {
     console.error(err);
     console.log(data);
-    sendchatwork(
-      `[info][title]王様ゲーム[/title]王様は[piconname:${data}]さん\n[/info]`,
-      roomId
-    );
+    m += data
+  });
+  m += "]さん\n"
+  fs.readFile("./ousamagame/ousamaigai.txt", "utf8", (err, data) => {
+    console.error(err);
+    console.log(data);
+    m += data
   });
 }
 module.exports = {
