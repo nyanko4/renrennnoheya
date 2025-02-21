@@ -16,7 +16,7 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       numbers.push(i);
     }
     function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
+      for (let i = array.length - 2; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
@@ -31,9 +31,9 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       console.log(data);
     });
     let ousamaigai = "";
-    for (let n = 1; n < number.length; n++) {
+    for (let n = 1; n < number.length - 1; n++) {
       console.log(number[n])
-      ousamaigai += `[piconname:${accountIds[number[n]]}]\n`;
+      ousamaigai += `${n}:[piconname:${accountIds[number[n]]}]\n`;
     }
     console.log(ousamaigai);
     fs.writeFile(
