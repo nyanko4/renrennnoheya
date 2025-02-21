@@ -32,7 +32,7 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
     });
     let ousamaigai = "";
     for (let n = 1; n <= number.length; n++) {
-      ousamaigai += `${accountIds[number[n]]}\n`;
+      ousamaigai += `${accountIds[number[n]]}]\n`;
     }
     console.log(ousamaigai);
     fs.writeFile(
@@ -61,7 +61,7 @@ async function ousamakekka(body, message, messageId, roomId, accountId) {
     fs.readFile("./ousamagame/ousamaigai.txt", "utf8", (err, data) => {
       console.error(err);
       console.log(data);
-      m += `[piconname:${data}]`;
+      m += data;
       m += "[/info]";
       sendchatwork(m, roomId);
     });
