@@ -32,9 +32,9 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
     });
     let ousamaigai = "";
     for (let n = 1; n < number.length; n++) {
+      console.log(number[n])
       ousamaigai += `[piconname:${accountIds[number[n]]}]\n`;
     }
-    console.log(number)
     console.log(ousamaigai);
     fs.writeFile(
       "./ousamagame/ousamaigai.txt",
