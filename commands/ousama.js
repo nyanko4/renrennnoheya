@@ -12,17 +12,21 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
       accountIds.push(member.account_id)
     })
     console.log(accountIds)
-var a = accountIds.length;
-
-//シャッフルアルゴリズム
-while (a) {
-    var j = Math.floor( Math.random() * a );
-    var t = accountIds[--a];
-    accountIds[a] = accountIds[j];
-    accountIds[j] = t;
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); // 0からiまでのランダムなインデックス
+        [array[i], array[j]] = [array[j], array[i]]; // 要素を交換
+    }
+    return array;
 }
-const ousama = 1
-    fs.writeFile("./ousamagame/ousama.txt", ousama, (err, data) => {
+
+// 使用例
+const shuffledArr = shuffle(accountIds);
+const numberedItems = shuffledArr.map((item, index) => {
+    return { number: index + 1, value: item }; // 番号と値をオブジェクトにまとめる
+});
+    console.log(numberedItems);
+    fs.writeFile("./ousamagame/ousama.txt", "ousama", (err, data) => {
       console.error(err);
       console.log(data)
     });
