@@ -7,17 +7,21 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
     if (!members || members.length === 0) {
       return;
     }
-    let accountId = []
-    members.forEath((member) => {
-      accountId.
+    let accountIds = []
+    members.forEach((member) => {
+      accountIds.push(member.account_id)
     })
-    const randomIndex = Math.floor(Math.random() * members.length);
-    const randomMember = members[randomIndex].account_id
-    const ousama = randomMember.toString();
-    await sendchatwork(
-      `王様は[piconname:${ousama}]さんです`,
-      roomId
-    );
+    console.log(accountIds)
+var a = accountIds.length;
+
+//シャッフルアルゴリズム
+while (a) {
+    var j = Math.floor( Math.random() * a );
+    var t = accountIds[--a];
+    accountIds[a] = accountIds[j];
+    accountIds[j] = t;
+}
+const ousama = 1
     fs.writeFile("./ousamagame/ousama.txt", ousama, (err, data) => {
       console.error(err);
       console.log(data)
