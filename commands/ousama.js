@@ -20,13 +20,12 @@ function shuffle(array) {
     return array;
 }
 
-// 使用例
 const shuffledArr = shuffle(accountIds);
 const numberedItems = shuffledArr.map((item, index) => {
-    return { number: index + 1, value: item }; // 番号と値をオブジェクトにまとめる
+    return  // 番号と値をオブジェクトにまとめる
 });
-    console.log(numberedItems);
-    fs.writeFile("./ousamagame/ousama.txt", "ousama", (err, data) => {
+    console.log(numberedItems)
+    fs.writeFile("./ousamagame/ousama.txt", numberedItems[1],(err, data) => {
       console.error(err);
       console.log(data)
     });
