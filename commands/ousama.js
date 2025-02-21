@@ -7,9 +7,7 @@ async function ousamagame(body, message, messageId, roomId, accountId) {
     if (!members || members.length === 0) {
       return;
     }
-    fs.writeFile('../ousamagame/ousama.txt', 'サンプルの文字列', function(err) {
-      console.log(err)
-    })
+    fs.appendFile('/ousamagame/ousama.txt', 'サンプルの文字列', function(err) {})
   } catch (error) {
     await sendchatwork(
       `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん\nエラー`,
