@@ -64,7 +64,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
     );
   }
 }
-async function kengen(body, messageId, roomId, accountIdToBlock) {
+async function kengen(body, message, messageId, roomId, accountIdToBlock) {
   try {
     const members = await cwdata.getChatworkMembers(roomId);
 

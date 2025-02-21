@@ -12,7 +12,7 @@ const omikujiresult = require("../commands/omikujiresult")
 const blacklist = require("../commands/blacklist");
 const messagelink = require("../commands/messagelink")
 const roominfo = require("../commands/roominfo")
-//const kengen = require("../ctr/filter").kengen;
+const kengen = require("../ctr/filter").kengen;
 const commands = {
   poker: poker,
   dice: dice,
@@ -26,7 +26,7 @@ const commands = {
   list: blacklist,
   messagelink: messagelink,
   roominfo: roominfo,
-  //kengen: kengen
+  kengen: kengen
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");

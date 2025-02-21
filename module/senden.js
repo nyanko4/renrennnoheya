@@ -29,7 +29,7 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
-    if (!isAdmin) {
+    if (isAdmin) {
       sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n宣伝禁止`,
         roomId
