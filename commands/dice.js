@@ -38,10 +38,10 @@ async function diceroll(body, message, messageId, roomId, accountId) {
         );
       }
     } else {
-      sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n面の数が正しくありません(1~100)", roomId);
+      sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n面の数が正しくありません(1~100)`, roomId);
     }
   } else {
-    sendchatwork("サイコロの数が正しくありません(1~100)", roomId);
+    sendchatwork(`[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\nサイコロの数が正しくありません(1~100)`, roomId);
   }
 }
 module.exports = diceroll
