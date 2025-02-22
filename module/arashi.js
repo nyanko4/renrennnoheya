@@ -1,5 +1,5 @@
 const block = require("../ctr/filter");
-const isAdmin = require("../ctr/cwdata").isUserAdmin;
+const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
 const sendchatwork = require("../ctr/message").sendchatwork;
 
 const m = [
@@ -57,6 +57,7 @@ const zzalgo =
 
 //荒らしに対して反応します
 async function arashi(body, messageId, roomId, accountId) {
+  const isAdmin = isUserAdmin(accountId, roomId)
   let count = 0;
   const bodyChars = [...body];
 
