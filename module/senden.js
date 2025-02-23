@@ -23,6 +23,9 @@ async function senden(body, messageId, roomId, accountId) {
     if (body.match(/\https:\/\/padlet.com/g)) {
       await sendenkinshi(body, messageId, roomId, accountId);
     }
+    if (body.match(/\https:\/\/marshmallow-qa.com/g)) {
+      await sendenkinshi(body, messageId, roomId, accountId);
+    }
   } catch (error) {
     console.error("エラー※宣伝", error);
   }
