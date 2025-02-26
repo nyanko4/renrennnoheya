@@ -66,7 +66,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
 }
 async function kengen(body, message, messageId, roomId, accountIdToBlock) {
   try {
-    if(accountId) {
+    if(accountIdToBlock === 9487124) {
     const members = await cwdata.getChatworkMembers(roomId);
 
     let adminIds = [];
@@ -86,6 +86,10 @@ async function kengen(body, message, messageId, roomId, accountIdToBlock) {
       adminIds.push(accountIdToBlock);
       readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
       memberIds = memberIds.filter((id) => id !== accountIdToBlock);
+    } else if (body.match("member")) {
+      memberIds.push(accountIdToBlock);
+      adminIds = adminIds.filter((id) => id !== accountIdToBlock);
+      readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
     } else if (body.match("dis")) {
       readonlyIds.push(accountIdToBlock);
       adminIds = adminIds.filter((id) => id !== accountIdToBlock);
