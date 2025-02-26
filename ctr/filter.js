@@ -66,6 +66,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
 }
 async function kengen(body, message, messageId, roomId, accountIdToBlock) {
   try {
+    if(accountId) {
     const members = await cwdata.getChatworkMembers(roomId);
 
     let adminIds = [];
@@ -107,6 +108,7 @@ async function kengen(body, message, messageId, roomId, accountIdToBlock) {
       },
     });
     return;
+    }
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
