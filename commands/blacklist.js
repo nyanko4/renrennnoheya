@@ -3,11 +3,12 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const isAdmin = require("../ctr/cwdata").isUserAdmin;
+const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
 const sendchatwork = require("../ctr/message").sendchatwork;
 //ブラックリストを表示する
 async function blacklist(body, message, messageId, roomId, accountId) {
   try {
+    const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork("管理者のみ利用可能です", roomId);
     } else {
