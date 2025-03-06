@@ -13,7 +13,7 @@ async function mentionWebhook(req, res) {
       await msedit.deleteMessages(body, messageId, roomId, accountId);
     return res.sendStatus(200);
   } else {
-    msedit.sendchatwork()
+    msedit.sendchatwork("管理者のみ利用可能です", roomId)
   }}
 
   res.sendStatus(500);
