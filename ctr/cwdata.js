@@ -79,9 +79,34 @@ async function sendername(accountId, roomId) {
   }
   return "chatworkユーザー";
 }
+
+async function fileurl(body, roomId) {
+  try {
+    const match = body.match(/download:(\d+)/);
+    const fileId = match[1];
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/files/${fileId}?create_download_url=1`,
+      {
+        headers: {
+          accept: "application/json",
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
+    const downloadurl = response.data.download_url;
+    const filename = response.data.filename;
+
+    return { fileurl: downloadurl, filename: filename };
+  } catch (error) {
+    console.error("エラーが発生しました:", error);
+    return false;
+  }
+}
+
 module.exports = {
   getChatworkMembers,
   getChatworkMembers2,
   isUserAdmin,
   sendername,
+  fileurl,
 };
