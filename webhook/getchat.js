@@ -5,6 +5,7 @@ const supabase = createClient(
 );
 const { DateTime } = require("luxon");
 const fs = require("fs")
+const axios = require("axios")
 const reqcheck = require("../middleware/sign");
 const name = require("../ctr/cwdata").sendername;
 const fileurl = require("../ctr/cwdata").fileurl
@@ -27,6 +28,7 @@ async function getchat(req, res) {
     account_id: accountId,
     room_id: roomId,
     message_id: messageId,
+    send_time:sendtime,
   } = req.body.webhook_event;
   const sendername = await name(accountId, roomId)
   if (roomId == 374987857) {
@@ -51,7 +53,7 @@ async function getchat(req, res) {
         );
       } else {
         try {
-          const localFilePath = url.filename; // 拡張子をpngに変更
+          const localFilePath = url.filename;
           const writer = fs.createWriteStream(localFilePath);
           const response = await axios({
             method: "get",
