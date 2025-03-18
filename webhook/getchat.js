@@ -41,72 +41,7 @@ async function getchat(req, res) {
       date: today,
     });
   }
-  const a = await arashi(body, messageId, roomId, accountId);
-  if (a !== "ok") {
-    if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
-      const url = await fileurl(body, roomId);
-      if (url === false) {
-        console.log(url);
-        sendchatwork(
-          `[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-          
-        );
-      } else {
-        try {
-          const localFilePath = url.filename;
-          const writer = fs.createWriteStream(localFilePath);
-          const response = await axios({
-            method: "get",
-            url: url.fileurl,
-            responseType: "stream",
-          });
-
-          response.data.pipe(writer);
-
-          await new Promise((resolve, reject) => {
-            writer.on("finish", resolve);
-            writer.on("error", reject);
-          });
-
-          const formData = new FormData();
-          formData.append("file", fs.createReadStream(localFilePath));
-
-          const uploadUrl = `https://api.chatwork.com/v2/rooms/388502383/files`;
-          const headers = {
-            ...formData.getHeaders(),
-            "x-chatworktoken": CHATWORK_API_TOKEN,
-          };
-
-          const uploadResponse = await axios.post(uploadUrl, formData, {
-            headers,
-          });
-
-          console.log("ファイルアップロード成功:", uploadResponse.data);
-
-          fs.unlink(localFilePath, (err) => {
-            if (err) {
-              console.error("ローカルファイルの削除エラー:", err);
-            }
-          });
-        } catch (error) {
-          console.error("ファイル送信でエラーが発生しました:", error.message);
-          if (error.response) {
-            console.error(
-              "Chatwork APIエラー:",
-              error.response.status,
-              error.response.data
-            );
-          }
-        }
-      }
-    } else {
-      const name = await sendername(accountId, roomId);
-      sendchatwork(
-        `${name}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-        
-      );
-    }
-  }
+  
   if (accountId === 9587322) {
     return res.sendStatus(200);
   }
