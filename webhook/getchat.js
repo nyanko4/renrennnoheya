@@ -1,3 +1,5 @@
+const msedit = require("../ctr/message");
+const CHATWORK_API_TOKEN = process.env.CWapitoken
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -9,6 +11,7 @@ const axios = require("axios")
 const reqcheck = require("../middleware/sign");
 const name = require("../ctr/cwdata").sendername;
 const fileurl = require("../ctr/cwdata").fileurl
+const arashim = require("../ctr/cwdata").arashi
 const sendchatwork = require("../ctr/message").sendchatwork
 const arashi = require("../module/arashi");
 const command = require("../module/command");
@@ -30,6 +33,7 @@ async function getchat(req, res) {
     message_id: messageId,
     send_time:sendtime,
   } = req.body.webhook_event;
+  await msedit.readmessage(roomId, messageId);
   const sendername = await name(accountId, roomId)
   if (roomId == 374987857) {
     //メッセージを保存
@@ -41,7 +45,71 @@ async function getchat(req, res) {
       date: today,
     });
   }
-  
+  const a = await arashim(body, messageId, roomId, accountId);
+  if (a !== "ok") {
+    if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
+      const url = await fileurl(body, roomId);
+      if (url === false) {
+        console.log(url);
+        sendchatwork(
+          `[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+          389966097
+        );
+      } else {
+        try {
+          const localFilePath = url.filename;
+          const writer = fs.createWriteStream(localFilePath);
+          const response = await axios({
+            method: "get",
+            url: url.fileurl,
+            responseType: "stream",
+          });
+
+          response.data.pipe(writer);
+
+          await new Promise((resolve, reject) => {
+            writer.on("finish", resolve);
+            writer.on("error", reject);
+          });
+
+          const formData = new FormData();
+          formData.append("file", fs.createReadStream(localFilePath));
+
+          const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
+          const headers = {
+            ...formData.getHeaders(),
+            "x-chatworktoken": CHATWORK_API_TOKEN,
+          };
+
+          const uploadResponse = await axios.post(uploadUrl, formData, {
+            headers,
+          });
+
+          console.log("ファイルアップロード成功:", uploadResponse.data);
+
+          fs.unlink(localFilePath, (err) => {
+            if (err) {
+              console.error("ローカルファイルの削除エラー:", err);
+            }
+          });
+        } catch (error) {
+          console.error("ファイル送信でエラーが発生しました:", error.message);
+          if (error.response) {
+            console.error(
+              "Chatwork APIエラー:",
+              error.response.status,
+              error.response.data
+            );
+          }
+        }
+      }
+    } else {
+      sendchatwork(
+        `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+        389966097
+      );
+    }
+  }
   if (accountId === 9587322) {
     return res.sendStatus(200);
   }
