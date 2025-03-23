@@ -1,4 +1,4 @@
-const sendchatwork = require("../ctr/message").sendchatwork
+const sendchatwork = require("../ctr/message").sendchatwork;
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -8,8 +8,22 @@ function shuffle(array) {
 }
 
 function generateDeck() {
-  const suits = ['H', 'D', 'C', 'S'];
-  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+  const suits = ["♥", "◆", "♣", "♠"];
+  const ranks = [
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "J",
+    "Q",
+    "K",
+    "A",
+  ];
   const deck = [];
 
   for (const suit of suits) {
@@ -26,8 +40,8 @@ function generateHand(deck) {
 }
 
 function checkHand(hand) {
-  const ranks = hand.map(card => card.rank);
-  const suits = hand.map(card => card.suit);
+  const ranks = hand.map((card) => card.rank);
+  const suits = hand.map((card) => card.suit);
 
   const rankCounts = {};
   for (const rank of ranks) {
@@ -47,91 +61,108 @@ function checkHand(hand) {
     }
   });
 
-  const isFlush = Object.values(suitCounts).some(count => count === 5);
+  const isFlush = Object.values(suitCounts).some((count) => count === 5);
   const isStraight = checkStraight(sortedRanks);
 
   if (isFlush && isStraight) {
-    if (sortedRanks[0] === 'A' && sortedRanks[4] === '10') {
-      return 'ロイヤルストレートフラッシュ';
+    if (sortedRanks[0] === "A" && sortedRanks[4] === "10") {
+      return "ロイヤルストレートフラッシュ";
     } else {
-      return 'ストレートフラッシュ';
+      return "ストレートフラッシュ";
     }
   }
 
   if (rankCounts[sortedRanks[0]] === 4) {
-    return 'フォーカード';
+    return "フォーカード";
   }
 
   if (rankCounts[sortedRanks[0]] === 3 && rankCounts[sortedRanks[1]] === 2) {
-    return 'フルハウス';
+    return "フルハウス";
   }
 
   if (isFlush) {
-    return 'フラッシュ';
+    return "フラッシュ";
   }
 
   if (isStraight) {
-    return 'ストレート';
+    return "ストレート";
   }
 
   if (rankCounts[sortedRanks[0]] === 3) {
-    return 'スリーカード';
+    return "スリーカード";
   }
 
   if (rankCounts[sortedRanks[0]] === 2 && rankCounts[sortedRanks[1]] === 2) {
-    return 'ツーペア';
+    return "ツーペア";
   }
 
   if (rankCounts[sortedRanks[0]] === 2) {
-    return 'ワンペア';
+    return "ワンペア";
   }
 
-  return 'ハイカード';
+  return "ハイカード";
 }
 
 function checkStraight(ranks) {
   const rankValues = {
-    '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
-    'J': 11, 'Q': 12, 'K': 13, 'A': 14
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    J: 11,
+    Q: 12,
+    K: 13,
+    A: 14,
   };
 
-  const values = ranks.map(rank => rankValues[rank]);
+  const values = ranks.map((rank) => rankValues[rank]);
   values.sort((a, b) => a - b);
 
   if (values[4] - values[0] === 4) {
     return true;
   }
 
-  if (values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14) {
+  if (
+    values[0] === 2 &&
+    values[1] === 3 &&
+    values[2] === 4 &&
+    values[3] === 5 &&
+    values[4] === 14
+  ) {
     return true; // A, 2, 3, 4, 5 のストレート
   }
 
   return false;
 }
 
-// デッキを生成してシャッフル
-//poker
 //poker
 async function poker(body, message, messageId, roomId, accountId) {
   try {
     if (message.match(/^役$/)) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
-const deck = generateDeck();
-const shuffledDeck = shuffle(deck);
+      const deck = generateDeck();
+      const shuffledDeck = shuffle(deck);
 
-// シャッフルされたデッキから手札を生成
-const hand = generateHand(shuffledDeck);
+      // シャッフルされたデッキから手札を生成
+      const hand = generateHand(shuffledDeck);
 
-// 手札の役を判定
-const result = checkHand(hand);
-
-// 結果を表示
-sendchatwork(hand,roomId);
-sendchatwork(result,roomId);
-      
-      }
-  } catch(error) {
-        console.error("poker",error)
-      }
+      // 手札の役を判定
+      const result = checkHand(hand);
+      const handString = hand.map(card => `${card.suit}${card.rank}`).join(', ');
+      // 結果を表示
+      console.log(hand);
+      console.log(result);
+      sendchatwork(handString, roomId);
+      sendchatwork(result, roomId);
+    }
+  } catch (error) {
+    console.error("poker", error);
   }
+}
+module.exports = poker;
