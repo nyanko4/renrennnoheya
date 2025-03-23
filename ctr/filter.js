@@ -1,3 +1,9 @@
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
 const axios = require("axios");
 
 const cwdata = require("../ctr/cwdata");
@@ -45,7 +51,27 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         "x-chatworktoken": CHATWORK_API_TOKEN,
       },
     });
-    
+    const { data } = await supabase
+        .from("発禁者")
+        .select("accountId, reason, count")
+        .eq("accountId", accountIdToBlock);
+      let count = "";
+      data.forEach((person) => {
+        count += person.count;
+      });
+      
+      
+      const { error } = await supabase.from("発禁者").upsert([
+        {
+          accountId: accountIdToBlock,
+          reason: "荒らし",
+          count: 1,
+          roomId: roomId,
+        },
+      ]);
+      if (error) {
+        console.error(error);
+      }
     console.log(ms);
     if (ms !== undefined) {
       await msedit.sendchatwork(
