@@ -55,8 +55,10 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         .from("発禁者")
         .select("accountId, reason, count")
         .eq("accountId", accountIdToBlock);
-      let count = "";
+      let reason = "";
+      let count = "" 
       data.forEach((person) => {
+        reason += person.reason
         count += person.count;
       });
       
@@ -64,8 +66,8 @@ async function blockMember(roomId, accountIdToBlock, ms) {
       const { error } = await supabase.from("発禁者").upsert([
         {
           accountId: accountIdToBlock,
-          reason: "荒らし",
-          count: 1,
+          reason: reason + "荒らし",
+          count: count + "1",
           roomId: roomId,
         },
       ]);
