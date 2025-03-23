@@ -1,6 +1,6 @@
 const { DateTime } = require("luxon");
 const sendchatwork = require("../ctr/message").sendchatwork;
-const poker = require("../commands/pokertest");
+const poker = require("../commands/poker");
 const dice = require("../commands/dice");
 const Toomikuji = require("../commands/omikuji");
 const proxyset = require("../commands/proxy").proxyset;
