@@ -45,6 +45,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         "x-chatworktoken": CHATWORK_API_TOKEN,
       },
     });
+    
     console.log(ms);
     if (ms !== undefined) {
       await msedit.sendchatwork(
