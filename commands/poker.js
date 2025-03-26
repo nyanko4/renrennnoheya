@@ -156,26 +156,7 @@ async function poker(body, message, messageId, roomId, accountId) {
       const today = new Date().toLocaleDateString("ja-JP", {
         timeZone: "Asia/Tokyo",
       });
-      const { datas,  error } = await supabase
-        .from("poker")
-        .select("*")
-        .eq("accountId", accountId);
-      if (error) {
-        console.error("Supabaseエラー:", error);
-      }
-      let numbers = "";
-      datas.forEach((person) => {
-        numbers += person.number;
-      });
-      if (datas && numbers <= 15) {
-        await sendchatwork(
-          `[rp aid=${accountId} to=${roomId}-${messageId}] pokerは1日${number}回までです。`,
-          roomId
-        );
-        console.log(data);
-        return;
-      }
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("poker")
         .select("*")
         .eq("accountId", accountId);
@@ -183,14 +164,25 @@ async function poker(body, message, messageId, roomId, accountId) {
       data.forEach((person) => {
         count += person.number;
       });
-      const n = Number(count) + 1;
+      const n = Number(count);
+      if (error) {
+        console.error("Supabaseエラー:", error);
+      }
+      if (data && n >= number) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}] pokerは1日${number}回までです。`,
+          roomId
+        );
+        console.log(data);
+        return;
+      }
       const { data: insertData, error: insertError } = await supabase
         .from("poker")
         .upsert([
           {
             accountId: accountId,
             roomId: roomId,
-            number: n,
+            number: n + 1,
             today: today,
           },
         ]);
