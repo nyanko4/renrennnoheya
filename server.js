@@ -9,7 +9,19 @@ const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
 const sendchatwork = require("./ctr/message").sendchatwork
-  new CronJob(
+const cluster = require("cluster");
+const os = require("os");
+const compression = require("compression");
+const numClusters = os.cpus().length;
+if (cluster.isMaster) {
+  for (let i = 0; i < numClusters; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker, code, signal) => {
+    cluster.fork();
+  });
+} else {
+    new CronJob(
   "0 0 0 * * *",
   async () => {
     const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
@@ -23,10 +35,11 @@ const sendchatwork = require("./ctr/message").sendchatwork
   true,
   "Asia/Tokyo"
 );
+  app.use(compression());
   app.listen(3000, () => {
     console.log(`${process.pid} started`);
-  })
-
+  });
+}
 const https = require('https');
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
