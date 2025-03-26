@@ -188,7 +188,7 @@ async function poker(body, message, messageId, roomId, accountId) {
       const n = Number(count) + 1;
       const { data: insertData, error: insertError } = await supabase
         .from("poker")
-        .insert([
+        .upsert([
           {
             accountId: accountId,
             roomId: roomId,

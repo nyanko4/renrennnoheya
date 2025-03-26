@@ -14,7 +14,7 @@ const messagelink = require("../commands/messagelink")
 const roominfo = require("../commands/roominfo")
 const kengen = require("../ctr/filter").kengen;
 const commands = {
-  //poker: poker,
+  poker: poker,
   dice: dice,
   おみくじ: Toomikuji,
   proxyset: proxyset,

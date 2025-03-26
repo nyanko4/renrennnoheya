@@ -8,7 +8,7 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
-const sendchatwork = require("./ctr/message").sendchatwork
+const sendchatwork = require("./ctr/message").sendchatwork;
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
@@ -21,23 +21,32 @@ if (cluster.isMaster) {
     cluster.fork();
   });
   new CronJob(
-  "0 0 0 * * *",
-  async () => {
-    const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
-    sendchatwork(`日付変更　今日は${date}日です`, 374987857);
-    const { data, error } = await supabase.from("おみくじ").delete().neq("accountId", 0);
-  },
-  null,
-  true,
-  "Asia/Tokyo"
-);
+    "0 0 0 * * *",
+    async () => {
+      const date = DateTime.now()
+        .setZone("Asia/Tokyo")
+        .toFormat("yyyy年MM月dd");
+      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
+      await supabase
+        .from("おみくじ")
+        .delete()
+        .neq("accountId", 0);
+      await supabase
+        .from("poker")
+        .delete()
+        .neq("accountId", 0);
+    },
+    null,
+    true,
+    "Asia/Tokyo"
+  );
 } else {
   app.use(compression());
   app.listen(3000, () => {
     console.log(`${process.pid} started`);
   });
 }
-const https = require('https');
+const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
 

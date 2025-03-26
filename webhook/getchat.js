@@ -24,6 +24,7 @@ async function getchat(req, res) {
   if (c !== "ok") {
     return res.sendStatus(400);
   }
+  
   const today = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy-MM-dd");
   console.log(req.body);
   const {
