@@ -9,7 +9,8 @@
     "@supabase/supabase-js": "^2.48.0",
     "body-parser": "^2.0.2",
     "luxon": "^3.5.0",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "compression": "^1.8.0"
   },
   "narflinger": {
     "basenames": [
