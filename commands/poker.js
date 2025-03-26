@@ -156,20 +156,18 @@ async function poker(body, message, messageId, roomId, accountId) {
       const today = new Date().toLocaleDateString("ja-JP", {
         timeZone: "Asia/Tokyo",
       });
-      const { datas, error } = await supabase
+      const { datas,  error } = await supabase
         .from("poker")
         .select("*")
-        .eq("accountId", accountId)
-        .eq("roomId", roomId)
-        .eq("number", number)
-        .eq("today", today)
-        .single();
-
+        .eq("accountId", accountId);
       if (error) {
         console.error("Supabaseエラー:", error);
       }
-
-      if (datas) {
+      let numbers = "";
+      datas.forEach((person) => {
+        numbers += person.number;
+      });
+      if (datas && numbers <= 15) {
         await sendchatwork(
           `[rp aid=${accountId} to=${roomId}-${messageId}] pokerは1日${number}回までです。`,
           roomId
