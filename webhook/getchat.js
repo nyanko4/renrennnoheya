@@ -34,6 +34,9 @@ async function getchat(req, res) {
     send_time:sendtime,
   } = req.body.webhook_event;
   await msedit.readmessage(roomId, messageId);
+  if (accountId === 9587322) {
+    return res.sendStatus(200);
+  }
   const sendername = await name(accountId, roomId)
   if (roomId == 374987857) {
     //メッセージを保存
