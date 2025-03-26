@@ -110,10 +110,6 @@ async function getchat(req, res) {
       );
     }
   }
-  if (accountId === 9587322) {
-    return res.sendStatus(200);
-  }
-
   const handlers = [arashi, omikuji, senden, welcome, command];
 
   for (const handler of handlers) {
