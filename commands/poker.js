@@ -156,7 +156,7 @@ async function poker(body, message, messageId, roomId, accountId) {
       const today = new Date().toLocaleDateString("ja-JP", {
         timeZone: "Asia/Tokyo",
       });
-      const { data, error } = await supabase
+      const { datas, error } = await supabase
         .from("poker")
         .select("*")
         .eq("accountId", accountId)
@@ -169,7 +169,7 @@ async function poker(body, message, messageId, roomId, accountId) {
         console.error("Supabaseエラー:", error);
       }
 
-      if (data) {
+      if (datas) {
         await sendchatwork(
           `[rp aid=${accountId} to=${roomId}-${messageId}] pokerは1日${number}回までです。`,
           roomId
@@ -177,26 +177,29 @@ async function poker(body, message, messageId, roomId, accountId) {
         console.log(data);
         return;
       }
-
+      const { data } = await supabase
+        .from("poker")
+        .select("*")
+        .eq("accountId", accountId);
+      let count = "";
+      data.forEach((person) => {
+        count += person.number;
+      });
+      const n = Number(count) + 1;
       const { data: insertData, error: insertError } = await supabase
-        .from("おみくじ")
+        .from("poker")
         .insert([
           {
             accountId: accountId,
             roomId: roomId,
-            number: n + 1,
+            number: n,
             today: today,
           },
         ]);
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
-        roomId
-      );
-
       if (insertError) {
         console.error("Supabase保存エラー:", insertError);
       } else {
-        console.log("おみくじ結果が保存されました:", insertData);
+        console.log("保存されました:", insertData);
       }
       const deck = generateDeck();
       const shuffledDeck = shuffle(deck);
