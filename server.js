@@ -20,20 +20,19 @@ if (cluster.isMaster) {
   cluster.on("exit", (worker, code, signal) => {
     cluster.fork();
   });
-} else {
-  app.use(compression());
   new CronJob(
-  "0 7 0 * * *",
+  "0 0 0 * * *",
   async () => {
     const date = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy年MM月dd");
-    //sendchatwork(`日付変更　今日は${date}日です`, 374987857);
-    sendchatwork("テストメッセージ",374987857)
-    //const { data, error } = await supabase.from("おみくじ").delete().neq("accountId", 0);
+    sendchatwork(`日付変更　今日は${date}日です`, 374987857);
+    const { data, error } = await supabase.from("おみくじ").delete().neq("accountId", 0);
   },
   null,
   true,
   "Asia/Tokyo"
 );
+} else {
+  app.use(compression());
   app.listen(3000, () => {
     console.log(`${process.pid} started`);
   });
