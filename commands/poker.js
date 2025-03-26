@@ -1,3 +1,8 @@
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 const sendchatwork = require("../ctr/message").sendchatwork;
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -146,6 +151,53 @@ async function poker(body, message, messageId, roomId, accountId) {
     if (message.match(/^役$/)) {
       sendchatwork("[preview id=1670380556 ht=200]", roomId);
     } else {
+      //pokerのできる回数
+      const number = 15
+      const today = new Date().toLocaleDateString("ja-JP", {
+        timeZone: "Asia/Tokyo",
+      });
+      const { data, error } = await supabase
+        .from("poker")
+        .select("*")
+        .eq("accountId", accountId)
+        .eq("roomId", roomId)
+        .eq("number", number)
+        .eq("today", today)
+        .single();
+
+      if (error) {
+        console.error("Supabaseエラー:", error);
+      }
+
+      if (data) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}] pokerは1日${number}回までです。`,
+          roomId
+        );
+        console.log(data);
+        return;
+      }
+
+      const { data: insertData, error: insertError } = await supabase
+        .from("おみくじ")
+        .insert([
+          {
+            accountId: accountId,
+            roomId: roomId,
+            number: n + 1,
+            today: today,
+          },
+        ]);
+      await sendchatwork(
+        `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
+        roomId
+      );
+
+      if (insertError) {
+        console.error("Supabase保存エラー:", insertError);
+      } else {
+        console.log("おみくじ結果が保存されました:", insertData);
+      }
       const deck = generateDeck();
       const shuffledDeck = shuffle(deck);
 
