@@ -1,4 +1,3 @@
-const msedit = require("../ctr/message");
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
@@ -10,7 +9,7 @@ const fs = require("fs");
 const axios = require("axios");
 const reqcheck = require("../middleware/sign");
 const { sendername: name, fileurl, arashi: arashim } = require("../ctr/cwdata");
-const { sendchatwork, deleteMessage } = require("../ctr/message");
+const { sendchatwork, deleteMessage, readmessage } = require("../ctr/message");
 const arashi = require("../module/arashi");
 const command = require("../module/command");
 const omikuji = require("../module/omikuji");
@@ -33,13 +32,14 @@ async function getchat(req, res) {
     send_time: sendtime,
     update_time: updatetime,
   } = req.body.webhook_event;
-  await msedit.readmessage(roomId, messageId);
+  await readmessage(roomId, messageId);
   const sendername = await name(accountId, roomId);
    if (accountId === 9587322) {
     if (body.includes("[dtext:chatroom_chat_edited]")) {
       deleteMessage(body, messageId, roomId, accountId);
     } else return res.sendStatus(200);
   }
+  log(body, messageId, roomId, accountId, event, sendtime, updatetime)
   if (roomId == 374987857) {
     //メッセージを保存
     const { data, error } = await supabase.from("nyankoのへや").insert({
@@ -49,72 +49,7 @@ async function getchat(req, res) {
       name: sendername,
       date: today,
     });
-   
-  const a = await arashim(body, messageId, roomId, accountId);
-  if (a !== "ok") {
-    if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
-      const url = await fileurl(body, roomId);
-      if (url === false) {
-        console.log(url);
-        sendchatwork(
-          `[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-          389966097
-        );
-      } else {
-        try {
-          const localFilePath = url.filename;
-          const writer = fs.createWriteStream(localFilePath);
-          const response = await axios({
-            method: "get",
-            url: url.fileurl,
-            responseType: "stream",
-          });
-
-          response.data.pipe(writer);
-
-          await new Promise((resolve, reject) => {
-            writer.on("finish", resolve);
-            writer.on("error", reject);
-          });
-
-          const formData = new FormData();
-          formData.append("file", fs.createReadStream(localFilePath));
-
-          const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
-          const headers = {
-            ...formData.getHeaders(),
-            "x-chatworktoken": CHATWORK_API_TOKEN,
-          };
-
-          const uploadResponse = await axios.post(uploadUrl, formData, {
-            headers,
-          });
-
-          console.log("ファイルアップロード成功:", uploadResponse.data);
-
-          fs.unlink(localFilePath, (err) => {
-            if (err) {
-              console.error("ローカルファイルの削除エラー:", err);
-            }
-          });
-        } catch (error) {
-          console.error("ファイル送信でエラーが発生しました:", error.message);
-          if (error.response) {
-            console.error(
-              "Chatwork APIエラー:",
-              error.response.status,
-              error.response.data
-            );
-          }
-        }
-      }
-    } else {
-      sendchatwork(
-        `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-        389966097
-      );
-    }
-  }
+   }
   const handlers = [arashi, omikuji, senden, welcome, command];
 
   for (const handler of handlers) {
@@ -127,13 +62,14 @@ async function getchat(req, res) {
 }
 async function log(body, messageId, roomId, accountId, event, sendtime, updatetime) {
   try {
-    const a = await arashi(body, messageId, roomId, accountId);
+    const a = await arashim(body, messageId, roomId, accountId);
+    const sendername = await name(accountId, roomId);
   if (a !== "ok") {
     if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
       const url = await fileurl(body, roomId);
       if (url === false) {
         sendchatwork(
-          `[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+          `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
           389966097
         );
       } else {
@@ -185,15 +121,14 @@ async function log(body, messageId, roomId, accountId, event, sendtime, updateti
         }
       }
     } else {
-      const name = await name(accountId, roomId);
       if(event === "message_updated") {
     sendchatwork(
-        `${name}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
+        `${sendername}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
         389966097
       );
   } else {
       sendchatwork(
-        `${name}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+        `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
         389966097
       );
     }
