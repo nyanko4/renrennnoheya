@@ -9,6 +9,7 @@ const proxydelete = require("../commands/proxy").proxydelete;
 const randommember = require("../commands/randommember");
 const say = require("../commands/say");
 const omikujiresult = require("../commands/omikujiresult")
+const pokerresult = require("../commands/pokerresult")
 const blacklist = require("../commands/blacklist");
 const messagelink = require("../commands/messagelink")
 const roominfo = require("../commands/roominfo")
@@ -23,6 +24,7 @@ const commands = {
   member: randommember,
   say: say,
   omikuji: omikujiresult,
+  ポーカー: pokerresult,
   list: blacklist,
   messagelink: messagelink,
   roominfo: roominfo,
