@@ -34,12 +34,12 @@ async function getchat(req, res) {
     update_time: updatetime,
   } = req.body.webhook_event;
   await msedit.readmessage(roomId, messageId);
-  if (accountId === 9587322) {
+  const sendername = await name(accountId, roomId);
+   if (accountId === 9587322) {
     if (body.includes("[dtext:chatroom_chat_edited]")) {
       deleteMessage(body, messageId, roomId, accountId);
     } else return res.sendStatus(200);
   }
-  const sendername = await name(accountId, roomId);
   if (roomId == 374987857) {
     //メッセージを保存
     const { data, error } = await supabase.from("nyankoのへや").insert({
@@ -49,7 +49,7 @@ async function getchat(req, res) {
       name: sendername,
       date: today,
     });
-  }
+   
   const a = await arashim(body, messageId, roomId, accountId);
   if (a !== "ok") {
     if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
@@ -134,7 +134,7 @@ async function log(body, messageId, roomId, accountId, event, sendtime, updateti
       if (url === false) {
         sendchatwork(
           `[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-          388502383
+          389966097
         );
       } else {
         try {
@@ -156,7 +156,7 @@ async function log(body, messageId, roomId, accountId, event, sendtime, updateti
           const formData = new FormData();
           formData.append("file", fs.createReadStream(localFilePath));
 
-          const uploadUrl = `https://api.chatwork.com/v2/rooms/388502383/files`;
+          const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
           const headers = {
             ...formData.getHeaders(),
             "x-chatworktoken": CHATWORK_API_TOKEN,
@@ -185,16 +185,16 @@ async function log(body, messageId, roomId, accountId, event, sendtime, updateti
         }
       }
     } else {
-      const name = await sendername(accountId, roomId);
+      const name = await name(accountId, roomId);
       if(event === "message_updated") {
     sendchatwork(
         `${name}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
-        388502383
+        389966097
       );
   } else {
       sendchatwork(
         `${name}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-        388502383
+        389966097
       );
     }
     }
