@@ -12,7 +12,7 @@ const reqcheck = require("../middleware/sign");
 const name = require("../ctr/cwdata").sendername;
 const fileurl = require("../ctr/cwdata").fileurl
 const arashim = require("../ctr/cwdata").arashi
-const sendchatwork = require("../ctr/message").sendchatwork
+const {sendchatwork, deleteMessages} = require("../ctr/message")
 const arashi = require("../module/arashi");
 const command = require("../module/command");
 const omikuji = require("../module/omikuji");
@@ -35,6 +35,9 @@ async function getchat(req, res) {
   } = req.body.webhook_event;
   await msedit.readmessage(roomId, messageId);
   if (accountId === 9587322) {
+    if (body.includes("[dtext:chatroom_chat_edited]")) {
+     deleteMessages(body, messageId, roomId, accountId);
+    } else
     return res.sendStatus(200);
   }
   const sendername = await name(accountId, roomId)

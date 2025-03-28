@@ -25,7 +25,6 @@ async function deleteMessages(body, messageId, roomId, accountId) {
   if (dlmessageIds.length === 0) {
     return;
   }
-
   for (let i = 0; i < dlmessageIds.length; i++) {
     const messageId = dlmessageIds[i];
     const url = `https://api.chatwork.com/v2/rooms/${roomId}/messages/${messageId}`;
@@ -43,6 +42,23 @@ async function deleteMessages(body, messageId, roomId, accountId) {
     }
   }
 }
+
+async function deleteMessage(body, messageId, roomId, accountId) {
+    const url = `https://api.chatwork.com/v2/rooms/${roomId}/messages/${messageId}`;
+
+    try {
+      const response = await axios.delete(url, {
+        headers: {
+          'Accept': 'application/json',
+          'x-chatworktoken': CHATWORK_API_TOKEN,
+        }
+      });
+
+    } catch (err) {
+      console.error(`メッセージID ${messageId} の削除中にエラーが発生しました:`, err.response ? err.response.data : err.message);
+    }
+}
+
 //メッセージに既読をつける
 async function readmessage(roomId, messageId) {
   try {
