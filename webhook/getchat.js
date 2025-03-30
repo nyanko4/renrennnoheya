@@ -23,7 +23,7 @@ async function getchat(req, res) {
   }
   const today = DateTime.now().setZone("Asia/Tokyo").toFormat("yyyy-MM-dd");
   console.log(req.body);
-  const event = req.body.webhook_event_type
+  const event = req.body.webhook_event_type;
   const {
     body,
     account_id: accountId,
@@ -34,12 +34,12 @@ async function getchat(req, res) {
   } = req.body.webhook_event;
   await readmessage(roomId, messageId);
   const sendername = await name(accountId, roomId);
-   if (accountId === 9587322) {
+  if (accountId === 9587322) {
     if (body.includes("[dtext:chatroom_chat_edited]")) {
       deleteMessage(body, messageId, roomId, accountId);
     } else return res.sendStatus(200);
   }
-  log(body, messageId, roomId, accountId, event, sendtime, updatetime)
+  log(body, messageId, roomId, accountId, event, sendtime, updatetime);
   if (roomId == 374987857) {
     //メッセージを保存
     const { data, error } = await supabase.from("nyankoのへや").insert({
@@ -49,7 +49,7 @@ async function getchat(req, res) {
       name: sendername,
       date: today,
     });
-   }
+  }
   const handlers = [arashi, omikuji, senden, welcome, command];
 
   for (const handler of handlers) {
@@ -60,82 +60,97 @@ async function getchat(req, res) {
 
   res.sendStatus(200);
 }
-async function log(body, messageId, roomId, accountId, event, sendtime, updatetime) {
+async function log(
+  body,
+  messageId,
+  roomId,
+  accountId,
+  event,
+  sendtime,
+  updatetime
+) {
   try {
     const a = await arashim(body, messageId, roomId, accountId);
     const sendername = await name(accountId, roomId);
-  if (a !== "ok") {
-    if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
-      const url = await fileurl(body, roomId);
-      if (url === false) {
-        sendchatwork(
-          `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-          389966097
-        );
-      } else {
-        try {
-          const localFilePath = url.filename; // 拡張子をpngに変更
-          const writer = fs.createWriteStream(localFilePath);
-          const response = await axios({
-            method: "get",
-            url: url.fileurl,
-            responseType: "stream",
-          });
+    if (a !== "ok") {
+      if (body.includes("[info][title][dtext:file_uploaded][/title]")) {
+        const url = await fileurl(body, roomId);
+        if (url === false) {
+          sendchatwork(
+            `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+            389966097
+          );
+        } else {
+          try {
+            const localFilePath = url.filename; // 拡張子をpngに変更
+            const writer = fs.createWriteStream(localFilePath);
+            const response = await axios({
+              method: "get",
+              url: url.fileurl,
+              responseType: "stream",
+            });
 
-          response.data.pipe(writer);
+            response.data.pipe(writer);
 
-          await new Promise((resolve, reject) => {
-            writer.on("finish", resolve);
-            writer.on("error", reject);
-          });
+            await new Promise((resolve, reject) => {
+              writer.on("finish", resolve);
+              writer.on("error", reject);
+            });
 
-          const formData = new FormData();
-          formData.append("file", fs.createReadStream(localFilePath));
+            const formData = new FormData();
+            formData.append("file", fs.createReadStream(localFilePath));
 
-          const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
-          const headers = {
-            ...formData.getHeaders(),
-            "x-chatworktoken": CHATWORK_API_TOKEN,
-          };
+            const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
+            const headers = {
+              ...formData.getHeaders(),
+              "x-chatworktoken": CHATWORK_API_TOKEN,
+            };
 
-          const uploadResponse = await axios.post(uploadUrl, formData, {
-            headers,
-          });
+            const uploadResponse = await axios.post(uploadUrl, formData, {
+              headers,
+            });
 
-          console.log("ファイルアップロード成功:", uploadResponse.data);
+            console.log("ファイルアップロード成功:", uploadResponse.data);
 
-          fs.unlink(localFilePath, (err) => {
-            if (err) {
-              console.error("ローカルファイルの削除エラー:", err);
+            await new Promise((resolve, reject) => {
+              fs.unlink(localFilePath, (err) => {
+                if (err) {
+                  console.error("ローカルファイルの削除エラー:", err);
+                  reject(err); // エラーをreject
+                } else {
+                  resolve(); // 正常終了
+                }
+              });
+            });
+
+            console.log("ローカルファイルを削除しました。");
+          } catch (error) {
+            console.error("ファイル送信でエラーが発生しました:", error.message);
+            if (error.response) {
+              console.error(
+                "Chatwork APIエラー:",
+                error.response.status,
+                error.response.data
+              );
             }
-          });
-        } catch (error) {
-          console.error("ファイル送信でエラーが発生しました:", error.message);
-          if (error.response) {
-            console.error(
-              "Chatwork APIエラー:",
-              error.response.status,
-              error.response.data
-            );
           }
         }
+      } else {
+        if (event === "message_updated") {
+          sendchatwork(
+            `${sendername}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
+            389966097
+          );
+        } else {
+          sendchatwork(
+            `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+            389966097
+          );
+        }
       }
-    } else {
-      if(event === "message_updated") {
-    sendchatwork(
-        `${sendername}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
-        389966097
-      );
-  } else {
-      sendchatwork(
-        `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
-        389966097
-      );
     }
-    }
-  }
-  } catch (error){
-    console.error("error",error)
+  } catch (error) {
+    console.error("error", error);
   }
 }
 
