@@ -67,7 +67,6 @@ def reader_read_limit(r, size):
   return r.read1(size)
 
 def reader_read_exact(r, size):
-
   piece = r.read1(size)
   piece_len = len(piece)
   if piece_len == size:
@@ -135,7 +134,6 @@ def nar_unpack_dir_entry(dst, r):
     else:
       raise Exception('dir entry unrecognized key %r' % k)
 
-
 def nar_unpack_node(dst, r):
   type = None
   executable = False
@@ -186,7 +184,6 @@ class DecompressReader:
     return piece
   def finish(self):
     piece_in = self.r.read()
-
     if not self.decompressor.eof:
       self.decompressor.decompress(piece_in)
   def close(self):
@@ -242,7 +239,6 @@ def installation_collect_recursive(store_prefix, base, basename):
   installation_encountered_hashes.add(hash)
   store_path = os.path.join(store_prefix, basename)
   if os.path.lexists(store_path):
-
     print(store_path, 'exists', file=sys.stderr, flush=True) # %%%
     return
   narinfo = cache_get_narinfo(base, hash)
@@ -299,7 +295,6 @@ def installation_link(store_prefix, basename):
 
 def installation_install_closure(temp, store_prefix, base, top_basename):
   for basename, narinfo in installation_collect_recursive(store_prefix, base, top_basename):
-
     installation_download_one(temp, store_prefix, base, basename, narinfo)
   installation_link(store_prefix, top_basename)
 
