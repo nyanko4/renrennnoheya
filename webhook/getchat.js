@@ -6,6 +6,7 @@ const supabase = createClient(
 );
 const { DateTime } = require("luxon");
 const fs = require("fs");
+const FormData = require('form-data');
 const axios = require("axios");
 const reqcheck = require("../middleware/sign");
 const { sendername: name, fileurl, arashi: arashim } = require("../ctr/cwdata");
@@ -99,6 +100,7 @@ async function log(
 
             const formData = new FormData();
             formData.append("file", fs.createReadStream(localFilePath));
+            formData.append("message",sendername);
 
             const uploadUrl = `https://api.chatwork.com/v2/rooms/389966097/files`;
             const headers = {
@@ -128,8 +130,7 @@ async function log(
             sendchatwork(`[To:9487124]ファイル送信でエラーが発生しました\n${error.message}`,roomId)
             console.error("ファイル送信でエラーが発生しました:", error.message);
             if (error.response) {
-              sendchatwork(Chatwork APIエラー:,
-                ${error.response.status}\n${error.response.data}`,roomId)
+              sendchatwork(`[To:9487124]\nChatwork APIエラー:${error.response.status}\n${error.response.data}`,roomId)
               console.error(
                 "Chatwork APIエラー:",
                 error.response.status,
