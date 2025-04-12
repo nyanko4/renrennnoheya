@@ -28,7 +28,7 @@ async function omikujiresult(body, message, messageId, roomId, accountId) {
         } else {
           let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん[info][title]おみくじを引いた人[/title]`;
           data.forEach((item) => {
-            messageToSend += `${item.roomId} ${item.結果} [piconname:${item.accountId}]\n`;
+            messageToSend += `${item.結果} [piconname:${item.accountId}]\n`;
           });
 
           messageToSend += "[/info]";
