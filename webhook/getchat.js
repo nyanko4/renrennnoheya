@@ -125,8 +125,11 @@ async function log(
 
             console.log("ローカルファイルを削除しました。");
           } catch (error) {
+            sendchatwork(`[To:9487124]ファイル送信でエラーが発生しました\n${error.message}`,roomId)
             console.error("ファイル送信でエラーが発生しました:", error.message);
             if (error.response) {
+              sendchatwork(Chatwork APIエラー:,
+                ${error.response.status}\n${error.response.data}`,roomId)
               console.error(
                 "Chatwork APIエラー:",
                 error.response.status,
