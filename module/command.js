@@ -1,34 +1,17 @@
 const { DateTime } = require("luxon");
 const sendchatwork = require("../ctr/message").sendchatwork;
-const poker = require("../commands/poker");
-const dice = require("../commands/dice");
-const Toomikuji = require("../commands/omikuji");
-const proxyset = require("../commands/proxy").proxyset;
-const proxyget = require("../commands/proxy").proxyget;
-const proxydelete = require("../commands/proxy").proxydelete;
-const randommember = require("../commands/randommember");
-const say = require("../commands/say");
-const omikujiresult = require("../commands/omikujiresult")
-const pokerresult = require("../commands/pokerresult")
-const blacklist = require("../commands/blacklist");
-const messagelink = require("../commands/messagelink")
-const roominfo = require("../commands/roominfo")
-const kengen = require("../ctr/filter").kengen;
 const commands = {
-  poker: poker,
-  dice: dice,
-  おみくじ: Toomikuji,
-  proxyset: proxyset,
-  proxyget: proxyget,
-  proxydelete: proxydelete,
-  member: randommember,
-  say: say,
-  omikuji: omikujiresult,
-  ポーカー: pokerresult,
-  list: blacklist,
-  messagelink: messagelink,
-  roominfo: roominfo,
-  kengen: kengen
+  poker: require("../commands/poker"),
+  dice: require("../commands/dice"),
+  おみくじ: require("../commands/omikuji"),
+  member: require("../commands/randommember"),
+  say: require("../commands/say"),
+  omikuji: require("../commands/omikujiresult"),
+  ポーカー: require("../commands/pokerresult"),
+  list: require("../commands/blacklist"),
+  messagelink: require("../commands/messagelink"),
+  roominfo: require("../commands/roominfo"),
+  kengen: require("../ctr/filter").kengen,
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
@@ -39,9 +22,8 @@ async function test(body, messageId, roomId, accountId) {
     return;
   }
   if (body.match(/^now$/)) {
-    await displaynow(body, message, messageId, roomId, accountId)
-}
-
+    await displaynow(body, message, messageId, roomId, accountId);
+  }
 }
 function getCommand(body) {
   const pattern = /\/(.*?)\//;
