@@ -1,5 +1,6 @@
 const { DateTime } = require("luxon");
 const sendchatwork = require("../ctr/message").sendchatwork;
+const { kengen } = require("../ctr/filter");
 const commands = {
   poker: require("../commands/poker"),
   dice: require("../commands/dice"),
@@ -11,7 +12,7 @@ const commands = {
   list: require("../commands/blacklist"),
   messagelink: require("../commands/messagelink"),
   roominfo: require("../commands/roominfo"),
-  kengen: require("../ctr/filter").kengen,
+  kengen: kengen,
 };
 async function test(body, messageId, roomId, accountId) {
   const message = body.replace(/\/.*?\/|\s+/g, "");
