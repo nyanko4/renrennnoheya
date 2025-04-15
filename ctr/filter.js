@@ -52,28 +52,27 @@ async function blockMember(roomId, accountIdToBlock, ms) {
       },
     });
     const { data } = await supabase
-        .from("発禁者")
-        .select("accountId, reason, count")
-        .eq("accountId", accountIdToBlock);
-      let reason = "";
-      let count = "" 
-      data.forEach((person) => {
-        reason += person.reason
-        count += person.count;
-      });
-      
-      
-      const { error } = await supabase.from("発禁者").upsert([
-        {
-          accountId: accountIdToBlock,
-          reason: reason + "荒らし",
-          count: count + "1",
-          roomId: roomId,
-        },
-      ]);
-      if (error) {
-        console.error(error);
-      }
+      .from("発禁者")
+      .select("accountId, reason, count")
+      .eq("accountId", accountIdToBlock);
+    let reason = "";
+    let count = "";
+    data.forEach((person) => {
+      reason += person.reason;
+      count += person.count;
+    });
+
+    const { error } = await supabase.from("発禁者").upsert([
+      {
+        accountId: accountIdToBlock,
+        reason: reason + "荒らし",
+        count: count + "1",
+        roomId: roomId,
+      },
+    ]);
+    if (error) {
+      console.error(error);
+    }
     console.log(ms);
     if (ms !== undefined) {
       await msedit.sendchatwork(
@@ -95,52 +94,52 @@ async function blockMember(roomId, accountIdToBlock, ms) {
 }
 async function kengen(body, message, messageId, roomId, accountIdToBlock) {
   try {
-    if(accountIdToBlock === 9487124) {
-    const members = await cwdata.getChatworkMembers(roomId);
+    if (accountIdToBlock === 9487124) {
+      const members = await cwdata.getChatworkMembers(roomId);
 
-    let adminIds = [];
-    let memberIds = [];
-    let readonlyIds = [];
+      let adminIds = [];
+      let memberIds = [];
+      let readonlyIds = [];
 
-    members.forEach((member) => {
-      if (member.role === "admin") {
-        adminIds.push(member.account_id);
-      } else if (member.role === "member") {
-        memberIds.push(member.account_id);
-      } else if (member.role === "readonly") {
-        readonlyIds.push(member.account_id);
+      members.forEach((member) => {
+        if (member.role === "admin") {
+          adminIds.push(member.account_id);
+        } else if (member.role === "member") {
+          memberIds.push(member.account_id);
+        } else if (member.role === "readonly") {
+          readonlyIds.push(member.account_id);
+        }
+      });
+      if (body.match("admin")) {
+        adminIds.push(accountIdToBlock);
+        readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
+        memberIds = memberIds.filter((id) => id !== accountIdToBlock);
+      } else if (body.match("member")) {
+        memberIds.push(accountIdToBlock);
+        adminIds = adminIds.filter((id) => id !== accountIdToBlock);
+        readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
+      } else if (body.match("dis")) {
+        readonlyIds.push(accountIdToBlock);
+        adminIds = adminIds.filter((id) => id !== accountIdToBlock);
+        memberIds = memberIds.filter((id) => id !== accountIdToBlock);
+      } else {
+        console.log("error");
       }
-    });
-    if (body.match("admin")) {
-      adminIds.push(accountIdToBlock);
-      readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
-      memberIds = memberIds.filter((id) => id !== accountIdToBlock);
-    } else if (body.match("member")) {
-      memberIds.push(accountIdToBlock);
-      adminIds = adminIds.filter((id) => id !== accountIdToBlock);
-      readonlyIds = readonlyIds.filter((id) => id !== accountIdToBlock);
-    } else if (body.match("dis")) {
-      readonlyIds.push(accountIdToBlock);
-      adminIds = adminIds.filter((id) => id !== accountIdToBlock);
-      memberIds = memberIds.filter((id) => id !== accountIdToBlock);
-    } else {
-      console.log("error");
-    }
 
-    const encodedParams = new URLSearchParams();
-    encodedParams.set("members_admin_ids", adminIds.join(","));
-    encodedParams.set("members_member_ids", memberIds.join(","));
-    encodedParams.set("members_readonly_ids", readonlyIds.join(","));
+      const encodedParams = new URLSearchParams();
+      encodedParams.set("members_admin_ids", adminIds.join(","));
+      encodedParams.set("members_member_ids", memberIds.join(","));
+      encodedParams.set("members_readonly_ids", readonlyIds.join(","));
 
-    const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
-    const response = await axios.put(url, encodedParams.toString(), {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "x-chatworktoken": CHATWORK_API_TOKEN,
-      },
-    });
-    return;
+      const url = `https://api.chatwork.com/v2/rooms/${roomId}/members`;
+      const response = await axios.put(url, encodedParams.toString(), {
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          "x-chatworktoken": CHATWORK_API_TOKEN,
+        },
+      });
+      return;
     }
   } catch (error) {
     console.error(

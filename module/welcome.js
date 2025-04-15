@@ -23,7 +23,8 @@ async function welcome(body, messageId, roomId) {
         count += person.count;
       });
       if (reason.includes("荒らし") || count >= 4) {
-        await block(roomId, welcomeId);
+        await block(roomId, welcomeId, );
+        return
       }
       await sendchatwork(`[rp aid=${welcomeId} to=${roomId}-${messageId}] [pname:${welcomeId}]さん\nよろ〜`,roomId);
     }
