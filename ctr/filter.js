@@ -66,7 +66,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
       {
         accountId: accountIdToBlock,
         reason: reason + "荒らし",
-        count: count + "1",
+        count: count,
         roomId: roomId,
       },
     ]);
