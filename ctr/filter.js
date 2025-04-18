@@ -84,6 +84,10 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
         roomId
       );
+      await msedit.sendchatwork(
+        `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
+        389966097
+      );
     }
   } catch (error) {
     console.error(
