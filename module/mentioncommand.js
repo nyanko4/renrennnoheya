@@ -15,7 +15,7 @@ const commands = {
   kengen: kengen,
 };
 async function command(body, messageId, roomId, accountId) {
-  const message = body.replace(/\/.*?\/|\s+/g, "");
+  const message = body.replace(/\[To\:9587322\] 暇やねぇ さん|\/.*?\/|\s+/g, "");
   const command = getCommand(body);
   if (command && commands[command]) {
     await commands[command](body, message, messageId, roomId, accountId);
@@ -27,7 +27,7 @@ async function command(body, messageId, roomId, accountId) {
   }
 }
 function getCommand(body) {
-  const pattern = /^\/(.*?)\//;
+  const pattern = /\/(.*?)\//;
   const match = body.match(pattern);
   return match ? match[1] : null;
 }

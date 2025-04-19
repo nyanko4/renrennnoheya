@@ -1,6 +1,6 @@
 const msedit = require("../ctr/message");
 const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
-const command = require("../module/command");
+const command = require("../module/mentioncommand");
 
 async function mentionWebhook(req, res) {
   const accountId = req.body.webhook_event.from_account_id;
