@@ -27,7 +27,7 @@ async function command(body, messageId, roomId, accountId) {
   }
 }
 function getCommand(body) {
-  const pattern = /^\/(.*?)\//;
+  const pattern = /\/(.*?)\//;
   const match = body.match(pattern);
   return match ? match[1] : null;
 }

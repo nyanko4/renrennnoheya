@@ -35,7 +35,7 @@ async function getchat(req, res) {
   } = req.body.webhook_event;
   await readmessage(roomId, messageId);
   const sendername = await name(accountId, roomId);
-  if (accountId === 9587322) {
+  if (accountId === 9587322　|| body.match(/\[To\:9587322\]/)) {
     if (body.includes("[dtext:chatroom_chat_edited]")) {
       deleteMessage(body, messageId, roomId, accountId);
     } else return res.sendStatus(200);

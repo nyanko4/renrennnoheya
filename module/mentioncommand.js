@@ -22,7 +22,7 @@ async function command(body, messageId, roomId, accountId) {
   } else if (command) {
     return;
   }
-  if (body.match(/^now$/)) {
+  if (body.match(/now$/)) {
     await displaynow(body, message, messageId, roomId, accountId);
   }
 }
