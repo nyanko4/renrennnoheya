@@ -8,6 +8,8 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const sendchatwork = require("./ctr/message").sendchatwork;
 const cluster = require("cluster");
 const os = require("os");
@@ -50,8 +52,30 @@ const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
 
+app.set("views", __dirname + "/views");
+app.set("view engine", "ejs");
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 5 * 24 * 60 * 60 * 1000 }
+}));
+
+app.post('/login', (req, res) => {
+    const password = req.body.password;
+    if (password === "a") {
+        res.cookie('nyanko_a', 'ok', { maxAge: 5 * 24 * 60 * 60 * 1000, httpOnly: true });
+        const redirectTo = req.session.redirectTo || '/';
+        delete req.session.redirectTo;
+        return res.redirect(redirectTo);
+    } else {
+            res.render('login', { error: 'パスワードが間違っています。もう一度お試しください。' });
+    }
+});
 
 app.get("/", (req, res) => {
   res.end(JSON.stringify(process.versions, null, 2));
@@ -62,9 +86,5 @@ app.post("/mention", (req, res) => {
 });
 
 app.post("/getchat", (req, res) => {
-  getchat(req, res);
-});
-
-app.post("/test", (req, res) => {
   getchat(req, res);
 });
