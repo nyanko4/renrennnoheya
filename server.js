@@ -93,10 +93,6 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.render("index")
-});
-
 app.post("/mention", (req, res) => {
   mention(req, res);
 });
@@ -105,10 +101,10 @@ app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
 
-app.get('/api', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('omikuji')
+            .from('おみくじ')
             .select('*');
 
         if (error) {
@@ -126,7 +122,7 @@ app.post('/api/items', async (req, res) => {
     try {
         const { name, description } = req.body;
         const { data, error } = await supabase
-            .from('omikuji')
+            .from('おみくじ')
             .insert([{ name, description }]);
 
         if (error) {
@@ -144,7 +140,7 @@ app.delete('/api/items/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { data, error } = await supabase
-            .from('omikuji')
+            .from('おみくじ')
             .delete()
             .eq('accountId', id);
 
