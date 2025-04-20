@@ -1,6 +1,6 @@
 const block = require("../ctr/filter");
-const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
-const sendchatwork = require("../ctr/message").sendchatwork;
+const {isUserAdmin} = require("../ctr/cwdata");
+const {sendchatwork} = require("../ctr/message");
 
 const m = [
   ":D",
