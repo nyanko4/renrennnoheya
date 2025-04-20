@@ -12,6 +12,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
+const path = require("path")
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
@@ -103,3 +104,61 @@ app.post("/mention", (req, res) => {
 app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
+
+app.get('/api', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('omikuji')
+            .select('*');
+
+        if (error) {
+            throw error;
+        }
+        res.render('index', { items: data });
+    } catch (error) {
+        console.error('Supabaseデータの取得エラー:', error);
+        res.status(500).send('データの取得に失敗しました');
+    }
+});
+
+// データの追加
+app.post('/api/items', async (req, res) => {
+    try {
+        const { name, description } = req.body;
+        const { data, error } = await supabase
+            .from('omikuji')
+            .insert([{ name, description }]);
+
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({ message: 'データが追加されました' });
+    } catch (error) {
+        console.error('Supabaseデータの追加エラー:', error);
+        res.status(500).json({ message: 'データの追加に失敗しました', error: error.message });
+    }
+});
+
+// データの削除
+app.delete('/api/items/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await supabase
+            .from('omikuji')
+            .delete()
+            .eq('accountId', id);
+
+        if (error) {
+            throw error;
+        }
+        if (data && data.length > 0) {
+            res.status(200).json({ message: 'データが削除されました' });
+        } else {
+            res.status(404).json({ message: '指定されたIDのデータが見つかりませんでした' });
+        }
+    } catch (error) {
+        console.error('Supabaseデータの削除エラー:', error);
+        res.status(500).json({ message: 'データの削除に失敗しました', error: error.message });
+    }
+});
+

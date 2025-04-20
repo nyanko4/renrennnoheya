@@ -3,26 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>設定</title>
-    </head>
+    <title>Supabaseデータ表示</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
 <body>
-  <table>
-  <tr>
-    <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
-  </tr>
-  <% users.forEach(user => { }>
-    <tr>
-      <td><%= user.id %></td>
-      <td><%= user.name %></td>
-      <td><%= user.email %></td>
-      <td>
-        <a href="/edit/<%= user.id %>">Edit</a>
-        <form action="/delete/<%= user.id %>" method="POST" style="display:inline;">
-          <button type="submit">Delete</button>
-        </form>
-      </td>
-    </tr>
-  <% }) %>
-</table>
+
+    <h1>データ一覧</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>説明</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% items.forEach(item => { %>
+                <tr>
+                    <td><%= item.id %></td>
+                    <td><%= item.name %></td>
+                    <td><%= item.description %></td>
+                    <td>
+                        <button onclick="editItem('<%= item.id %>')">編集</button>
+                        <button onclick="deleteItem('<%= item.id %>')">削除</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <h2>新規追加</h2>
+    <form id="addItemForm">
+        <div>
+            <label for="name">名前:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="description">説明:</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <button type="submit">追加</button>
+    </form>
+
+    <script>
+        async function editItem(id) {
+            alert(`編集ID: ${id}`);
+        }
+
+        async function deleteItem(id) {
+            if (confirm('本当に削除しますか？')) {
+                try {
+                    const response = await fetch(`/api/items/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        window.location.reload(); // ページをリロードして最新の状態を表示
+                    } else {
+                        const error = await response.json();
+                        alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
+                    }
+                } catch (error) {
+                    console.error('削除エラー:', error);
+                    alert('削除中にエラーが発生しました');
+                }
+            }
+        }
+
+        document.getElementById('addItemForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    window.location.reload(); // ページをリロードして最新の状態を表示
+                } else {
+                    const error = await response.json();
+                    alert(`追加に失敗しました: ${error.message || '不明なエラー'}`);
+                }
+            } catch (error) {
+                console.error('追加エラー:', error);
+                alert('追加中にエラーが発生しました');
+            }
+        });
+    </script>
+
 </body>
 </html>
