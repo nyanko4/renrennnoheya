@@ -10,7 +10,8 @@ const express = require("express");
 const app = express();
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const sendchatwork = require("./ctr/message").sendchatwork;
+const {sendchatwork} = require("./ctr/message");
+const ejs = require("ejs");
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
@@ -64,6 +65,15 @@ app.use(session({
     saveUninitialized: true,
     cookie: { maxAge: 5 * 24 * 60 * 60 * 1000 }
 }));
+
+app.use((req, res, next) => {
+    if (req.cookies.nyanko_a !== 'ok' && !req.path.includes('login')) {
+        req.session.redirectTo = req.path !== '/' ? req.path : null;
+        return res.redirect('/login');
+    } else {
+        next();
+    }
+});
 
 app.post('/login', (req, res) => {
     const password = req.body.password;
