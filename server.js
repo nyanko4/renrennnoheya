@@ -8,9 +8,9 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
-const {sendchatwork} = require("./ctr/message");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
 const cluster = require("cluster");
 const os = require("os");
@@ -30,14 +30,8 @@ if (cluster.isMaster) {
         .setZone("Asia/Tokyo")
         .toFormat("yyyy年MM月dd");
       sendchatwork(`日付変更　今日は${date}日です`, 374987857);
-      await supabase
-        .from("おみくじ")
-        .delete()
-        .neq("accountId", 0);
-      await supabase
-        .from("poker")
-        .delete()
-        .neq("accountId", 0);
+      await supabase.from("おみくじ").delete().neq("accountId", 0);
+      await supabase.from("poker").delete().neq("accountId", 0);
     },
     null,
     true,
@@ -59,36 +53,47 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
+app.use(
+  session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 5 * 24 * 60 * 60 * 1000 }
-}));
+    cookie: { maxAge: 5 * 24 * 60 * 60 * 1000 },
+  })
+);
 
 app.use((req, res, next) => {
-    if (req.cookies.nyanko_a !== 'ok' && !req.path.includes('login')) {
-        req.session.redirectTo = req.path !== '/' ? req.path : null;
-        return res.redirect('/login');
-    } else {
-        next();
-    }
+  if (req.cookies.nyanko_a !== "ok" && !req.path.includes("login")) {
+    req.session.redirectTo = req.path !== "/" ? req.path : null;
+    return res.redirect("/login");
+  } else {
+    next();
+  }
 });
 
-app.post('/login', (req, res) => {
-    const password = req.body.password;
-    if (password === "a") {
-        res.cookie('nyanko_a', 'ok', { maxAge: 5 * 24 * 60 * 60 * 1000, httpOnly: true });
-        const redirectTo = req.session.redirectTo || '/';
-        delete req.session.redirectTo;
-        return res.redirect(redirectTo);
-    } else {
-            res.render('login', { error: 'パスワードが間違っています。もう一度お試しください。' });
-    }
+app.get("/login", (req, res) => {
+  res.render("login", { error: null });
+});
+
+app.post("/login", (req, res) => {
+  const password = req.body.password;
+  if (password === process.env.password) {
+    res.cookie("nyanko_a", "ok", {
+      maxAge: 5 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+    const redirectTo = req.session.redirectTo || "/";
+    delete req.session.redirectTo;
+    return res.redirect(redirectTo);
+  } else {
+    res.render("login", {
+      error: "パスワードが間違っています。もう一度お試しください。",
+    });
+  }
 });
 
 app.get("/", (req, res) => {
-  res.end(JSON.stringify(process.versions, null, 2));
+  res.render("index")
 });
 
 app.post("/mention", (req, res) => {

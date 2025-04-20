@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定</title>
+    </head>
+<body>
+  <table>
+  <tr>
+    <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
+  </tr>
+  <% users.forEach(user => { }>
+    <tr>
+      <td><%= user.id %></td>
+      <td><%= user.name %></td>
+      <td><%= user.email %></td>
+      <td>
+        <a href="/edit/<%= user.id %>">Edit</a>
+        <form action="/delete/<%= user.id %>" method="POST" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+</table>
+</body>
+</html>
