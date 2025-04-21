@@ -48,8 +48,8 @@ const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
 
-//app.set("views", __dirname + "/views");
-//app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
+app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -63,14 +63,17 @@ app.use(
   })
 );
 
-//app.use((req, res, next) => {
-  //if (req.cookies.nyanko_a !== "ok" && !req.path.includes("login")) {
-    // req.session.redirectTo = req.path !== "/" ? req.path : null;
-   // return res.redirect("/login");
- // } else {
-    //next();
- // }
-//});
+app.use((req, res, next) => {
+  const publicRoutes = ["/login", "/getchat", "/mention"]; // 認証をスキップするパスのリスト
+
+  if (!publicRoutes.includes(req.path) && req.cookies.nyanko_a !== "ok") {
+    req.session.redirectTo = req.path !== "/" ? req.path : null;
+    return res.redirect("/login");
+  } else {
+    next();
+  }
+});
+
 
 app.get("/login", (req, res) => {
   res.render("login", { error: null });
