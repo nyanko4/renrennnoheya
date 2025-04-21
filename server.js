@@ -181,7 +181,7 @@ app.post('/api/items', async (req, res) => {
             if (error) {
                 throw error;
             }
-            res.status(200).json({ message: `${dataType}のデータが追加されました` });
+           res.status(200).json({ message: `${dataType}のデータが追加されました` });
         }
     } catch (error) {
         console.error(`Supabaseデータの追加/更新エラー (${dataType}):`, error);
