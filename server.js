@@ -115,11 +115,10 @@ app.get('/', async (req, res) => {
             tableName = 'おみくじ';
             dataKey = 'items';
             break;
-        case '商品':
-            tableName = '商品データ'; // 商品データ用のテーブル名
+        case 'ブラックリスト':
+            tableName = '発禁者';
             dataKey = 'products';
             break;
-        // 他のデータタイプがあればここに追加
         default:
             tableName = 'おみくじ';
             dataKey = 'items';
@@ -152,11 +151,10 @@ app.post('/api/items', async (req, res) => {
             tableName = 'おみくじ';
             insertData = { accountId, 名前: name, 結果: result };
             break;
-        case '商品':
-            tableName = '商品データ'; // 商品データ用のテーブル名
-            insertData = { productId: accountId, 商品名: name, 価格: result }; // フィールド名を調整
+        case 'ブラックリスト':
+            tableName = '発禁者';
+            insertData = { accountId, reason: name, count: result };
             break;
-        // 他のデータタイプがあればここに追加
         default:
             tableName = 'おみくじ';
             insertData = { accountId, 名前: name, 結果: result };
@@ -191,11 +189,10 @@ app.delete('/api/items/:id', async (req, res) => {
             tableName = 'おみくじ';
             idColumnName = 'accountId';
             break;
-        case '商品':
-            tableName = '商品データ'; // 商品データ用のテーブル名
-            idColumnName = 'productId';
+        case 'ブラックリスト':
+            tableName = '発禁者';
+            idColumnName = 'accountId';
             break;
-        // 他のデータタイプがあればここに追加
         default:
             tableName = 'おみくじ';
             idColumnName = 'accountId';
