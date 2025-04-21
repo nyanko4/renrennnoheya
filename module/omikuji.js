@@ -4,7 +4,9 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 const { DateTime } = require("luxon");
-const sendchatwork = require("../ctr/message").sendchatwork;
+const { sendchatwork } = require("../ctr/message");
+const { sendername } = require("../ctr/cwdata");
+
 //おみくじ
 async function omikuji(body, messageId, roomId, accountId) {
   if (body.match(/^おみくじ$/)) {
@@ -17,7 +19,9 @@ async function omikuji(body, messageId, roomId, accountId) {
         .select("*")
         .eq("accountId", accountId)
         .eq("roomId", roomId)
-        .eq("today", today)
+
+      
+      .eq("today", today)
         .single();
 
       if (error) {
@@ -42,6 +46,7 @@ async function omikuji(body, messageId, roomId, accountId) {
             roomId: roomId,
             today: today,
             結果: omikujiResult,
+            名前: name
           },
         ]);
       await sendchatwork(
