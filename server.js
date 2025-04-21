@@ -13,6 +13,7 @@ const cookieParser = require("cookie-parser");
 const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
 const path = require("path")
+const cors = require('cors')
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
@@ -53,7 +54,7 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors())
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
