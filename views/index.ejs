@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定</title>
+    <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
+    h1, h2 {
+        color: #337ab7;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    select {
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 90%;
+        margin: 20px auto;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #555;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    button {
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    h2 {
+        margin-top: 30px;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 20px;
+        margin: 20px auto;
+        width: 80%;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    form input[type="text"],
+    form input[type="number"] {
+        width: calc(100% - 12px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    form button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    form button[type="submit"]:hover {
+        opacity: 0.9;
+    }
+</style>
+
+</head>
+<body>
+
+    <h1>データ一覧</h1>
+
+    <select id="dataTypeSelector" onchange="window.location.href = '/?type=' + this.value">
+        <option value="おみくじ" <%= currentDataType === 'おみくじ' ? 'selected' : '' %>>おみくじ</option>
+        <option value="ブラックリスト" <%= currentDataType === 'ブラックリスト' ? 'selected' : '' %>>ブラックリスト</option>
+    </select>
+
+    <table>
+        <thead>
+            <tr>
+                <% if (currentDataType === 'おみくじ') { %>
+                    <th>accountId</th>
+                    <th>名前</th>
+                    <th>結果</th>
+                <% } else if (currentDataType === 'ブラックリスト') { %>
+                    <th>accountId</th>
+                    <th>理由</th>
+                    <th>回数</th>
+                  <% } %>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (currentDataType === 'おみくじ' && items) { %>
+                <% items.forEach(item => { %>
+                    <tr>
+                        <td><%= item.accountId %></td>
+                        <td><%= item.名前 %></td>
+                        <td><%= item.結果 %></td>
+                        <td>
+                            <button onclick="startEditItem('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>', 'おみくじ')">編集</button>
+                            <button onclick="deleteItem('<%= item.accountId %>', 'おみくじ')">削除</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else if (currentDataType === 'ブラックリスト' && blacklist) { %>
+                <% blacklist.forEach(blacklist => { %>
+                    <tr>
+                        <td><%= blacklist.accountId %></td>
+                        <td><%= blacklist.reason %></td>
+                        <td><%= blacklist.count %></td>
+                        <td>
+                            <button onclick="startEditItem('<%= blacklist.accountId %>', '<%= blacklist.理由 %>', '<%= blacklist.回数 %>', 'ブラックリスト')">編集</button>
+                            <button onclick="deleteItem('<%= blacklist.accountId %>', 'ブラックリスト')">削除</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr><td colspan="4">データがありません</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <h2><% if (isEditing) { %>編集<% } else { %>新規追加<% } %></h2>
+    <form id="itemForm" action="/api/items" method="POST">
+        <input type="hidden" name="dataType" value="<%= currentDataType %>">
+        <input type="hidden" id="editId" name="editId"> <% // 編集時のIDを保持する隠しフィールド %>
+        <% if (currentDataType === 'おみくじ') { %>
+            <div>
+                <label for="accountId">accountId:</label>
+                <input type="text" id="accountId" name="accountId" required>
+            </div>
+            <div>
+                <label for="name">名前:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="result">結果:</label>
+                <input type="text" id="result" name="result">
+            </div>
+        <% } else if (currentDataType === 'ブラックリスト') { %>
+            <div>
+                <label for="accountId">accountId:</label>
+                <input type="text" id="accountId" name="accountId" required>
+            </div>
+            <div>
+                <label for="name">理由:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="result">回数:</label>
+                <input type="number" id="result" name="result">
+            </div>
+        <% } %>
+        <button type="submit"><% if (isEditing) { %>更新<% } else { %>追加<% } %></button>
+        <% if (isEditing) { %>
+            <button type="button" onclick="cancelEdit()">キャンセル</button>
+        <% } %>
+    </form>
+
+    <script>
+        let isEditing = false;
+        let currentEditId = null;
+
+        function startEditItem(id, name, result, dataType) {
+            isEditing = true;
+            currentEditId = id;
+            document.querySelector('h2').textContent = '編集';
+            const form = document.getElementById('itemForm');
+            form.action = `/api/items/${id}?type=${dataType}`; // 編集時のAPIエンドポイント
+            form.method = 'PUT';
+            document.getElementById('editId').value = id;
+            document.getElementById('accountId').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('result').value = result;
+            document.querySelector('form button[type="submit"]').textContent = '更新';
+            const cancelButton = document.createElement('button');
+            cancelButton.type = 'button';
+            cancelButton.textContent = 'キャンセル';
+            cancelButton.onclick = cancelEdit;
+            if (!document.querySelector('form button[type="button"][onclick="cancelEdit()"]')) {
+                form.appendChild(cancelButton);
+            }
+        }
+
+        function cancelEdit() {
+            isEditing = false;
+            currentEditId = null;
+            document.querySelector('h2').textContent = '新規追加';
+            const form = document.getElementById('itemForm');
+            form.action = '/api/items';
+            form.method = 'POST';
+            document.getElementById('editId').value = '';
+            document.getElementById('accountId').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('result').value = '';
+  
+            }
+            document.querySelector('form button[type="submit"]').textContent = '追加';
+            const cancelButton = document.querySelector('form button[type="button"][onclick="cancelEdit()"]');
+            if (cancelButton) {
+                cancelButton.remove();
+            }
+        }
+
+        async function deleteItem(id, dataType) {
+            if (confirm(`${id} のデータを本当に削除しますか？`)) {
+                try {
+                    const response = await fetch(`/api/items/${id}?type=${dataType}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        const error = await response.json();
+                        alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
+                    }
+                } catch (error) {
+                    console.error('削除エラー:', error);
+                    alert('削除中にエラーが発生しました');
+                }
+            }
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            const method = event.target.method;
+            const url = event.target.action;
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(`${isEditing ? '更新' : '追加'}に失敗しました: ${error.message || '不明なエラー'}`);
+                }
+            } catch (error) {
+                console.error(`${isEditing ? '更新' : '追加'}エラー:`, error);
+                alert(`${isEditing ? '更新' : '追加'}中にエラーが発生しました`);
+            }
+        });
+    </script>
+
+</body>
+</html>
