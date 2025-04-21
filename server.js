@@ -105,18 +105,22 @@ app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
 
-
 // データの取得
 app.get('/', async (req, res) => {
+    const selectedTable = req.query.table === 'ブラックリスト' ? '発禁者' : 'おみくじ';
+    const nameColumn = selectedTable === 'ブラックリスト' ? '理由' : '名前';
+    const resultColumn = selectedTable === 'ブラックリスト' ? '回数' : '結果';
+    const accountIdColumn = 'accountId';
+
     try {
         const { data: items, error } = await supabase
-            .from('おみくじ')
-            .select('*');
+            .from(selectedTable)
+            .select("*");
 
         if (error) {
             throw error;
         }
-        res.render('index', { items }); // index.ejsなどのテンプレートエンジンを使用している場合
+        res.render('index', { items, selectedTable });
     } catch (error) {
         console.error('Supabaseデータの取得エラー:', error);
         res.status(500).send('データの取得に失敗しました');
@@ -125,11 +129,18 @@ app.get('/', async (req, res) => {
 
 // データの追加
 app.post('/api/items', async (req, res) => {
+    const selectedTable = req.body.table;
+    const nameKey = selectedTable === '発禁者' ? '理由' : '名前';
+    const resultKey = selectedTable === '発禁者' ? '回数' : '結果';
+    const { accountId, name, result } = req.body;
+    const insertData = { accountId };
+    insertData[nameKey] = name;
+    insertData[resultKey] = result;
+
     try {
-        const { accountId, name, result } = req.body;
         const { data, error } = await supabase
-            .from('おみくじ')
-            .insert([{ accountId, 名前: name, 結果: result }]);
+            .from(selectedTable)
+            .insert([insertData]);
 
         if (error) {
             throw error;
@@ -143,12 +154,15 @@ app.post('/api/items', async (req, res) => {
 
 // データの削除
 app.delete('/api/items/:id', async (req, res) => {
+    const selectedTable = req.query.table;
+    const idColumn = 'accountId';
+
     try {
         const { id } = req.params;
         const { error } = await supabase
-            .from('おみくじ')
+            .from(selectedTable)
             .delete()
-            .eq('accountId', id);
+            .eq(idColumn, id);
 
         if (error) {
             throw error;
@@ -164,13 +178,21 @@ app.delete('/api/items/:id', async (req, res) => {
 
 // データの更新
 app.put('/api/items/:id', async (req, res) => {
+    const selectedTable = req.body.table;
+    const nameKey = selectedTable === '発禁者' ? '理由' : '名前';
+    const resultKey = selectedTable === '発禁者' ? '回数' : '結果';
+    const idColumn = 'accountId';
+    const { id } = req.params;
+    const { name, result } = req.body;
+    const updateData = {};
+    updateData[nameKey] = name;
+    updateData[resultKey] = result;
+
     try {
-        const { id } = req.params;
-        const { name, result } = req.body;
         const { data, error } = await supabase
-            .from('おみくじ')
-            .update({ 名前: name, 結果: result })
-            .eq('accountId', id);
+            .from(selectedTable)
+            .update(updateData)
+            .eq(idColumn, id);
 
         if (error) {
             throw error;
