@@ -126,10 +126,10 @@ app.get('/', async (req, res) => {
 // データの追加
 app.post('/api/items', async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { accountId, name, result } = req.body;
         const { data, error } = await supabase
             .from('おみくじ')
-            .insert([{ name, description }]);
+            .insert([{ accountId, name, result }]);
 
         if (error) {
             throw error;
@@ -145,7 +145,7 @@ app.post('/api/items', async (req, res) => {
 app.delete('/api/items/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('おみくじ')
             .delete()
             .eq('accountId', id);
@@ -153,11 +153,9 @@ app.delete('/api/items/:id', async (req, res) => {
         if (error) {
             throw error;
         }
-        if (data && data.length > 0) {
-            res.status(200).json({ message: 'データが削除されました' });
-        } else {
-            res.status(404).json({ message: '指定されたIDのデータが見つかりませんでした' });
-        }
+
+        res.status(200).json({ message: `accountId: ${id} のデータを削除しました` });
+
     } catch (error) {
         console.error('Supabaseデータの削除エラー:', error);
         res.status(500).json({ message: 'データの削除に失敗しました', error: error.message });
