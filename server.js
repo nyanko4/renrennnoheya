@@ -123,10 +123,10 @@ app.get('/', async (req, res) => {
 // データの追加
 app.post('/api/items', async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { accountId, name, result } = req.body;
         const { data, error } = await supabase
             .from('おみくじ')
-            .insert([{ name, description }]);
+            .insert([{ accountIdname, result }]);
 
         if (error) {
             throw error;

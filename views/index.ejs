@@ -40,7 +40,7 @@
             <% items.forEach(item => { %>
                 <tr>
                     <td><%= item.accountId %></td>
-                    <td><%= item.name %></td>
+                    <td><%= item.名前 %></td>
                     <td><%= item.結果 %></td>
                     <td>
                         <button onclick="editItem('<%= item.accountId %>')">編集</button>
@@ -53,13 +53,17 @@
 
     <h2>新規追加</h2>
     <form id="addItemForm">
+      <div>
+            <label for="Id">accountId:</label>
+            <input type="text" id="Id" name="Id" required>
+        </div>
         <div>
             <label for="name">名前:</label>
             <input type="text" id="name" name="name" required>
         </div>
         <div>
-            <label for="description">説明:</label>
-            <input type="text" id="description" name="description">
+            <label for="result">結果:</label>
+            <input type="text" id="result" name="result">
         </div>
         <button type="submit">追加</button>
     </form>
@@ -70,7 +74,7 @@
         }
 
         async function deleteItem(id) {
-            if (confirm(`${id}本当に削除しますか？`)) {
+            if (confirm(`${id}を本当に削除しますか？`)) {
                 try {
                     const response = await fetch(`/api/items/${id}`, {
                         method: 'DELETE'
