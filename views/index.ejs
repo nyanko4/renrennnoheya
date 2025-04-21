@@ -148,7 +148,7 @@
           <td><%= item.結果 %></td>
           <td>
             <button onclick="showEditForm('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>')">編集</button>
-            <button onclick="deleteItem('<%= item.名前 %>')">削除</button>
+            <button onclick="deleteItem('<%= item.accountId %>', '<%= item.名前 %>')">削除</button>
           </td>
         </tr>
       <% }); %>
@@ -198,7 +198,7 @@
     const editResultInput = document.getElementById('editResult');
 
     function showEditForm(id, name, result) {
-      editFormTitle.innerText = `accountId: ${id} の編集`;
+      editFormTitle.innerText = `${name}さんのデータを編集`;
       editAccountIdInput.value = id;
       editNameInput.value = name;
       editResultInput.value = result;
@@ -211,10 +211,10 @@
       editForm.style.display = 'none';
     }
 
-    async function deleteItem(id) {
-      if (confirm(`${id}さんのものを本当に削除しますか？`)) {
+    async function deleteItem(id, name) {
+      if (confirm(`${name}さんのものを本当に削除しますか？`)) {
         try {
-          const response = await fetch(`/api/items/${id}`, {
+          const response = await fetch(`/api/items/${id.accountId}`, {
             method: 'DELETE'
           });
           if (response.ok) {
