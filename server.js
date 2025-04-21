@@ -105,7 +105,7 @@ app.post("/getchat", (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    const dataType = req.query.type || 'おみくじ'; // デフォルトはおみくじ
+    const dataType = req.query.type || 'おみくじ';
 
     let tableName = '';
     let dataKey = 'items';
@@ -117,7 +117,7 @@ app.get('/', async (req, res) => {
             break;
         case 'ブラックリスト':
             tableName = '発禁者';
-            dataKey = 'products';
+            dataKey = 'blacklist';
             break;
         default:
             tableName = 'おみくじ';
@@ -133,7 +133,7 @@ app.get('/', async (req, res) => {
         if (error) {
             throw error;
         }
-        res.render('index', { [dataKey]: data, currentDataType: dataType }); // テンプレートにデータと現在のデータタイプを渡す
+        res.render('index', { [dataKey]: data, currentDataType: dataType });
     } catch (error) {
         console.error(`Supabaseデータの取得エラー (${dataType}):`, error);
         res.status(500).send(`データの取得に失敗しました (${dataType})`);

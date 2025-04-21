@@ -176,7 +176,46 @@
             <% } %>
         </tbody>
     </table>
+                  
+                  <h2><% if (isEditing) { %>編集<% } else { %>新規追加<% } %></h2>
+<form id="itemForm" action="/api/items" method="POST">
+    <input type="hidden" name="dataType" value="<%= currentDataType %>">
+    <input type="hidden" id="editId" name="editId"
+    <% if (currentDataType === 'おみくじ') { %>
+        <div>
+            <label for="accountId">accountId:</label>
+            <input type="text" id="accountId" name="accountId" required>
+        </div>
+        <div>
+            <label for="name">名前:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="result">結果:</label>
+            <input type="text" id="result" name="result">
+        </div>
+    <% } else if (currentDataType === 'ブラックリスト') { %>
+        <div>
+            <label for="accountId">accountId:</label>
+            <input type="text" id="accountId" name="accountId" required>
+        </div>
+        <div>
+            <label for="name">理由:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="result">回数:</label>
+            <input type="number" id="result" name="result">
+        </div>
+        
+    <% } %>
+    <button type="submit"><% if (isEditing) { %>更新<% } else { %>追加<% } %></button>
+    <% if (isEditing) { %>
+        <button type="button" onclick="cancelEdit()">キャンセル</button>
+    <% } %>
+</form>
 
+      
     <h2>新規追加</h2>
     <form id="addItemForm" action="/api/items" method="POST">
         <input type="hidden" name="dataType" value="<%= currentDataType %>">
@@ -211,11 +250,7 @@
         <button type="submit">追加</button>
     </form>
 
-    <script>
-        async function editItem(id) {
-            alert(`編集ID: ${id}`);
-        }
-
+    <script>  
         async function deleteItem(id, dataType) {
             if (confirm(`${id} のデータを本当に削除しますか？`)) {
                 try {
@@ -235,6 +270,101 @@
             }
         }
     </script>
+<script>
+    let isEditing = false;
+    let currentEditId = null;
+
+    function editItem(id, name, result, dataType) {
+        isEditing = true;
+        currentEditId = id;
+        document.querySelector('h2').textContent = '編集';
+        const form = document.getElementById('itemForm');
+        form.action = `/api/items/${id}?type=${dataType}`; // 編集時のAPIエンドポイント
+        form.method = 'PUT';
+        document.getElementById('editId').value = id;
+        document.getElementById('accountId').value = id;
+        document.getElementById('name').value = name;
+        document.getElementById('result').value = result;
+        if (dataType === 'ブラックリスト' && stock !== undefined) {
+            document.getElementById('stock').value = stock;
+        }
+        document.querySelector('form button[type="submit"]').textContent = '更新';
+        const cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.textContent = 'キャンセル';
+        cancelButton.onclick = cancelEdit;
+        if (!document.querySelector('form button[type="button"][onclick="cancelEdit()"]')) {
+            form.appendChild(cancelButton);
+        }
+    }
+
+    function cancelEdit() {
+        isEditing = false;
+        currentEditId = null;
+        document.querySelector('h2').textContent = '新規追加';
+        const form = document.getElementById('itemForm');
+        form.action = '/api/items';
+        form.method = 'POST';
+        document.getElementById('editId').value = '';
+        document.getElementById('accountId').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('result').value = '';
+        if (document.getElementById('stock')) {
+            document.getElementById('stock').value = '';
+        }
+        document.querySelector('form button[type="submit"]').textContent = '追加';
+        const cancelButton = document.querySelector('form button[type="button"][onclick="cancelEdit()"]');
+        if (cancelButton) {
+            cancelButton.remove();
+        }
+    }
+
+    async function deleteItem(id, dataType) {
+        if (confirm(`${id} のデータを本当に削除しますか？`)) {
+            try {
+                const response = await fetch(`/api/items/${id}?type=${dataType}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
+                } catch (error) {
+                    console.error('削除エラー:', error);
+                    alert('削除中にエラーが発生しました');
+                }
+            }
+        }
+    }
+
+    document.getElementById('itemForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        const method = event.target.method;
+        const url = event.target.action;
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(`${isEditing ? '更新' : '追加'}に失敗しました: ${error.message || '不明なエラー'}`);
+            }
+        } catch (error) {
+            console.error(`${isEditing ? '更新' : '追加'}エラー:`, error);
+            alert(`${isEditing ? '更新' : '追加'}中にエラーが発生しました`);
+        }
+    });
+</script>
 
 </body>
 </html>
