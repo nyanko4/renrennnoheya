@@ -32,14 +32,14 @@ async function senden(body, messageId, roomId, accountId) {
 }
 async function sendenkinshi(body, messageId, roomId, accountId) {
   try {
-    const isAdmin = await isUserAdmin(accountId, roomId)
+    const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
       sendchatwork(
         `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}] さん\n宣伝禁止`,
         roomId
       );
       const { data } = await supabase
-        .from("発禁者")
+        .from("ブラックリスト")
         .select("accountId, reason, count")
         .eq("accountId", accountId);
       let count = "";
@@ -60,7 +60,7 @@ async function sendenkinshi(body, messageId, roomId, accountId) {
           "4度目の概要違反のためbanとなります"
         );
       }
-      const { error } = await supabase.from("発禁者").upsert([
+      const { error } = await supabase.from("ブラックリスト").upsert([
         {
           accountId: accountId,
           reason: "宣伝",

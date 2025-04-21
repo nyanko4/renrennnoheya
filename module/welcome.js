@@ -13,7 +13,7 @@ async function welcome(body, messageId, roomId) {
       const members = await cwdata.getChatworkMembers(roomId);
       const welcomeId = (body.match(/\[piconname:(\d+)\]/) || [])[1];
       const { data } = await supabase
-        .from("発禁者")
+        .from("ブラックリスト")
         .select("accountId, reason, count")
         .eq("accountId", welcomeId);
       let reason = "";

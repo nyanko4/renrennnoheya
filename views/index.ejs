@@ -141,7 +141,7 @@
     <thead>
       <tr>
         <th>accountId</th>
-        <th>名前</th>
+        <th><%= nameColumn %></th>
         <th>結果</th>
         <th>操作</th>
       </tr>
@@ -150,11 +150,11 @@
       <% items.forEach(item => { %>
         <tr>
           <td><%= item.accountId %></td>
-          <td><%= item.name %></td>
-          <td><%= item.result %></td>
+          <td><%= item.名前 %></td>
+          <td><%= item.結果 %></td>
           <td>
-            <button onclick="showEditForm('<%= item.accountId %>', '<%= item.name %>', '<%= item.result %>')">編集</button>
-            <button onclick="deleteItem('<%= item.accountId %>', '<%= item.name %>')">削除</button>
+            <button onclick="showEditForm('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>')">編集</button>
+            <button onclick="deleteItem('<%= item.accountId %>', '<%= item.名前 %>')">削除</button>
           </td>
         </tr>
       <% }); %>
