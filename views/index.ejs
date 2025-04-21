@@ -54,8 +54,8 @@
     <h2>新規追加</h2>
     <form id="addItemForm">
       <div>
-            <label for="Id">accountId:</label>
-            <input type="text" id="Id" name="Id" required>
+            <label for="accountId">accountId:</label>
+            <input type="text" id="accountId" name="accountId" required>
         </div>
         <div>
             <label for="name">名前:</label>
@@ -80,7 +80,7 @@
                         method: 'DELETE'
                     });
                     if (response.ok) {
-                        window.location.reload(); // ページをリロードして最新の状態を表示
+                        window.location.reload();
                     } else {
                         const error = await response.json();
                         alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
@@ -106,7 +106,7 @@
                     body: JSON.stringify(data)
                 });
                 if (response.ok) {
-                    window.location.reload(); // ページをリロードして最新の状態を表示
+                    window.location.reload();
                 } else {
                     const error = await response.json();
                     alert(`追加に失敗しました: ${error.message || '不明なエラー'}`);

@@ -126,7 +126,7 @@ app.post('/api/items', async (req, res) => {
         const { accountId, name, result } = req.body;
         const { data, error } = await supabase
             .from('おみくじ')
-            .insert([{ accountIdname, result }]);
+            .insert([{ accountId, 名前: name, 結果: result }]);
 
         if (error) {
             throw error;
@@ -150,6 +150,7 @@ app.delete('/api/items/:id', async (req, res) => {
         if (error) {
             throw error;
         }
+      
         if (data && data.length > 0) {
             res.status(200).json({ message: 'データが削除されました' });
         } else {

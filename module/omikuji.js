@@ -18,8 +18,6 @@ async function omikuji(body, messageId, roomId, accountId) {
         .from("おみくじ")
         .select("*")
         .eq("accountId", accountId)
-        .eq("roomId", roomId)      
-        .eq("today", today)
         .single();
 
       if (error) {
@@ -41,8 +39,6 @@ async function omikuji(body, messageId, roomId, accountId) {
         .insert([
           {
             accountId: accountId,
-            roomId: roomId,
-            today: today,
             結果: omikujiResult,
             名前: name
           },
