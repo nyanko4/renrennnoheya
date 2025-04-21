@@ -109,14 +109,14 @@ app.post("/getchat", (req, res) => {
 // データの取得
 app.get('/', async (req, res) => {
     try {
-        const { data, error } = await supabase
+        const { data: items, error } = await supabase
             .from('おみくじ')
             .select('*');
 
         if (error) {
             throw error;
         }
-        res.render('index', { items: data });
+        res.render('index', { items }); // index.ejsなどのテンプレートエンジンを使用している場合
     } catch (error) {
         console.error('Supabaseデータの取得エラー:', error);
         res.status(500).send('データの取得に失敗しました');
@@ -129,7 +129,7 @@ app.post('/api/items', async (req, res) => {
         const { accountId, name, result } = req.body;
         const { data, error } = await supabase
             .from('おみくじ')
-            .insert([{ accountId, name, result }]);
+            .insert([{ accountId, 名前: name, 結果: result }]);
 
         if (error) {
             throw error;
@@ -159,5 +159,27 @@ app.delete('/api/items/:id', async (req, res) => {
     } catch (error) {
         console.error('Supabaseデータの削除エラー:', error);
         res.status(500).json({ message: 'データの削除に失敗しました', error: error.message });
+    }
+});
+
+// データの更新
+app.put('/api/items/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, result } = req.body;
+        const { data, error } = await supabase
+            .from('おみくじ')
+            .update({ 名前: name, 結果: result })
+            .eq('accountId', id);
+
+        if (error) {
+            throw error;
+        }
+
+        res.status(200).json({ message: `accountId: ${id} のデータを更新しました` });
+
+    } catch (error) {
+        console.error('Supabaseデータの更新エラー:', error);
+        res.status(500).json({ message: 'データの更新に失敗しました', error: error.message });
     }
 });
