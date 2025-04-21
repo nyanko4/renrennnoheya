@@ -86,7 +86,7 @@ app.post("/login", (req, res) => {
       maxAge: 5 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-    const redirectTo = req.session.redirectTo || "/api";
+    const redirectTo = req.session.redirectTo || "/";
     delete req.session.redirectTo;
     return res.redirect(redirectTo);
   } else {
