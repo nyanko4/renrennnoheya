@@ -63,14 +63,14 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  if (req.cookies.nyanko_a !== "ok" && !req.path.includes("login")) {
-    req.session.redirectTo = req.path !== "/" ? req.path : null;
-    return res.redirect("/login");
-  } else {
-    next();
-  }
-});
+//app.use((req, res, next) => {
+  //if (req.cookies.nyanko_a !== "ok" && !req.path.includes("login")) {
+    // req.session.redirectTo = req.path !== "/" ? req.path : null;
+   // return res.redirect("/login");
+ // } else {
+    //next();
+ // }
+//});
 
 app.get("/login", (req, res) => {
   res.render("login", { error: null });
