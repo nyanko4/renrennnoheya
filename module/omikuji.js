@@ -18,10 +18,8 @@ async function omikuji(body, messageId, roomId, accountId) {
         .from("おみくじ")
         .select("*")
         .eq("accountId", accountId)
-        .eq("roomId", roomId)
-
-      
-      .eq("today", today)
+        .eq("roomId", roomId)      
+        .eq("today", today)
         .single();
 
       if (error) {
@@ -36,7 +34,7 @@ async function omikuji(body, messageId, roomId, accountId) {
         console.log(data);
         return;
       }
-
+      const name = await sendername(accountId, roomId);
       const omikujiResult = getOmikujiResult();
       const { data: insertData, error: insertError } = await supabase
         .from("おみくじ")
