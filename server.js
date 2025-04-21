@@ -48,8 +48,8 @@ const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
 
-app.set("views", __dirname + "/views");
-app.set("view engine", "ejs");
+//app.set("views", __dirname + "/views");
+//app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
