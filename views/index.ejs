@@ -154,8 +154,8 @@
                         <td><%= item.名前 %></td>
                         <td><%= item.結果 %></td>
                         <td>
-                            <button onclick="startEditItem('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>', 'おみくじ')">編集</button>
-<button onclick="deleteItem('<%= item.accountId %>', 'おみくじ')">削除</button>
+                          <button onclick="startEditItem('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>', 'おみくじ')">編集</button>
+                          <button onclick="deleteItem('<%= item.accountId %>', 'おみくじ')">削除</button>
                         </td>
                     </tr>
                 <% }); %>
@@ -166,8 +166,8 @@
                         <td><%= blacklist.reason %></td>
                         <td><%= blacklist.count %></td>
                         <td>
-<button onclick="startEditItem('<%= blacklist.accountId %>', '<%= blacklist.reason %>', '<%= blacklist.count %>', 'ブラックリスト')">編集</button>
-                            <button onclick="deleteItem('<%= blacklist.accountId %>', 'ブラックリスト')">削除</button>
+                          <button onclick="startEditItem('<%= blacklist.accountId %>', '<%= blacklist.reason %>', '<%= blacklist.count %>', 'ブラックリスト')">編集</button>
+                          <button onclick="deleteItem('<%= blacklist.accountId %>', 'ブラックリスト')">削除</button>
                         </td>
                     </tr>
                 <% }); %>
