@@ -12,8 +12,8 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
-const path = require("path")
-const cors = require('cors')
+const path = require("path");
+const cors = require("cors");
 const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
@@ -54,7 +54,7 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors())
+app.use(cors());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -74,7 +74,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
 
 app.get("/login", (req, res) => {
   res.render("login", { error: null });
@@ -106,98 +105,109 @@ app.post("/getchat", (req, res) => {
 });
 
 // データの取得
-app.get('/', async (req, res) => {
-    const selectedTable = req.query.table === 'ブラックリスト' ? 'ブラックリスト' : 'おみくじ';
-    try {
-        const { data: items, error } = await supabase
-            .from(selectedTable)
-            .select("*");
+app.get("/", async (req, res) => {
+  const selectedTable =
+    req.query.table === "ブラックリスト" ? "ブラックリスト" : "おみくじ";
+  const nameColumn = selectedTable === "ブラックリスト" ? "reason" : "名前";
+  const resultColumn = selectedTable === "ブラックリスト" ? "count" : "結果";
+  try {
+    const { data: items, error } = await supabase
+      .from(selectedTable)
+      .select("*");
 
-        if (error) {
-            throw error;
-        }
-        res.render('index', { items, selectedTable });
-    } catch (error) {
-        console.error('Supabaseデータの取得エラー:', error);
-        res.status(500).send('データの取得に失敗しました');
+    if (error) {
+      throw error;
     }
+    res.render("index", { items, selectedTable, nameColumn ,resultColumn });
+  } catch (error) {
+    console.error("Supabaseデータの取得エラー:", error);
+    res.status(500).send("データの取得に失敗しました");
+  }
 });
 
 // データの追加
-app.post('/api/items', async (req, res) => {
-    const selectedTable = req.body.table;
-    const nameKey = selectedTable === '発禁者' ? '理由' : '名前';
-    const resultKey = selectedTable === '発禁者' ? '回数' : '結果';
-    const { accountId, name, result } = req.body;
-    const insertData = { accountId };
-    insertData[nameKey] = name;
-    insertData[resultKey] = result;
+app.post("/api/items", async (req, res) => {
+  const selectedTable = req.body.table;
+  const nameKey = selectedTable === "発禁者" ? "理由" : "名前";
+  const resultKey = selectedTable === "発禁者" ? "回数" : "結果";
+  const { accountId, name, result } = req.body;
+  const insertData = { accountId };
+  insertData[nameKey] = name;
+  insertData[resultKey] = result;
 
-    try {
-        const { data, error } = await supabase
-            .from(selectedTable)
-            .insert([insertData]);
+  try {
+    const { data, error } = await supabase
+      .from(selectedTable)
+      .insert([insertData]);
 
-        if (error) {
-            throw error;
-        }
-        res.status(200).json({ message: 'データが追加されました' });
-    } catch (error) {
-        console.error('Supabaseデータの追加エラー:', error);
-        res.status(500).json({ message: 'データの追加に失敗しました', error: error.message });
+    if (error) {
+      throw error;
     }
+    res.status(200).json({ message: "データが追加されました" });
+  } catch (error) {
+    console.error("Supabaseデータの追加エラー:", error);
+    res
+      .status(500)
+      .json({ message: "データの追加に失敗しました", error: error.message });
+  }
 });
 
 // データの削除
-app.delete('/api/items/:id', async (req, res) => {
-    const selectedTable = req.query.table;
-    const idColumn = 'accountId';
+app.delete("/api/items/:id", async (req, res) => {
+  const selectedTable = req.query.table;
+  const idColumn = "accountId";
 
-    try {
-        const { id } = req.params;
-        const { error } = await supabase
-            .from(selectedTable)
-            .delete()
-            .eq(idColumn, id);
+  try {
+    const { id } = req.params;
+    const { error } = await supabase
+      .from(selectedTable)
+      .delete()
+      .eq(idColumn, id);
 
-        if (error) {
-            throw error;
-        }
-
-        res.status(200).json({ message: `accountId: ${id} のデータを削除しました` });
-
-    } catch (error) {
-        console.error('Supabaseデータの削除エラー:', error);
-        res.status(500).json({ message: 'データの削除に失敗しました', error: error.message });
+    if (error) {
+      throw error;
     }
+
+    res
+      .status(200)
+      .json({ message: `accountId: ${id} のデータを削除しました` });
+  } catch (error) {
+    console.error("Supabaseデータの削除エラー:", error);
+    res
+      .status(500)
+      .json({ message: "データの削除に失敗しました", error: error.message });
+  }
 });
 
 // データの更新
-app.put('/api/items/:id', async (req, res) => {
-    const selectedTable = req.body.table;
-    const nameKey = selectedTable === '発禁者' ? '理由' : '名前';
-    const resultKey = selectedTable === '発禁者' ? '回数' : '結果';
-    const idColumn = 'accountId';
-    const { id } = req.params;
-    const { name, result } = req.body;
-    const updateData = {};
-    updateData[nameKey] = name;
-    updateData[resultKey] = result;
+app.put("/api/items/:id", async (req, res) => {
+  const selectedTable = req.body.table;
+  const nameKey = selectedTable === "発禁者" ? "理由" : "名前";
+  const resultKey = selectedTable === "発禁者" ? "回数" : "結果";
+  const idColumn = "accountId";
+  const { id } = req.params;
+  const { name, result } = req.body;
+  const updateData = {};
+  updateData[nameKey] = name;
+  updateData[resultKey] = result;
 
-    try {
-        const { data, error } = await supabase
-            .from(selectedTable)
-            .update(updateData)
-            .eq(idColumn, id);
+  try {
+    const { data, error } = await supabase
+      .from(selectedTable)
+      .update(updateData)
+      .eq(idColumn, id);
 
-        if (error) {
-            throw error;
-        }
-
-        res.status(200).json({ message: `accountId: ${id} のデータを更新しました` });
-
-    } catch (error) {
-        console.error('Supabaseデータの更新エラー:', error);
-        res.status(500).json({ message: 'データの更新に失敗しました', error: error.message });
+    if (error) {
+      throw error;
     }
+
+    res
+      .status(200)
+      .json({ message: `accountId: ${id} のデータを更新しました` });
+  } catch (error) {
+    console.error("Supabaseデータの更新エラー:", error);
+    res
+      .status(500)
+      .json({ message: "データの更新に失敗しました", error: error.message });
+  }
 });
