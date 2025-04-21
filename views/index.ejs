@@ -134,15 +134,15 @@
 
   <select id="tableSelector" onchange="changeTable(this.value)">
     <option value="おみくじ" <%= selectedTable === 'おみくじ' ? 'selected' : '' %>>おみくじ</option>
-    <option value="ブラックリスト" <%= selectedTable === '発禁者' ? 'selected' : '' %>>ブラックリスト</option>
+    <option value="ブラックリスト" <%= selectedTable === 'ブラックリスト' ? 'selected' : '' %>>ブラックリスト</option>
   </select>
 
   <table>
     <thead>
       <tr>
         <th>accountId</th>
-        <th><%= nameColumn %></th>
-        <th>結果</th>
+        <th><%= selectedTable === 'ブラックリスト' ? '理由' : '名前' %></th>
+        <th><%= selectedTable === 'ブラックリスト' ? '回数' : '結果' %></th>
         <th>操作</th>
       </tr>
     </thead>
@@ -150,11 +150,13 @@
       <% items.forEach(item => { %>
         <tr>
           <td><%= item.accountId %></td>
-          <td><%= item.名前 %></td>
-          <td><%= item.結果 %></td>
+          <td><%= selectedTable === 'ブラックリスト' ? 'reason' : '名前' %></td>
+          <td><%= selectedTable === 'ブラックリスト' ? 'count' : '結果' %></td>
           <td>
             <button onclick="showEditForm('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>')">編集</button>
             <button onclick="deleteItem('<%= item.accountId %>', '<%= item.名前 %>')">削除</button>
+          </td>
+        </tr>
           </td>
         </tr>
       <% }); %>

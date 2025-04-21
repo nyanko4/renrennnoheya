@@ -107,10 +107,7 @@ app.post("/getchat", (req, res) => {
 
 // データの取得
 app.get('/', async (req, res) => {
-    const selectedTable = req.query.table === 'ブラックリスト' ? '発禁者' : 'おみくじ';
-    const nameColumn = selectedTable === '発禁者' ? '理由' : '名前';
-    const resultColumn = selectedTable === '発禁者' ? '回数' : '結果';
-    const accountIdColumn = 'accountId';
+    const selectedTable = req.query.table === 'ブラックリスト' ? 'ブラックリスト' : 'おみくじ';
     try {
         const { data: items, error } = await supabase
             .from(selectedTable)
@@ -119,7 +116,7 @@ app.get('/', async (req, res) => {
         if (error) {
             throw error;
         }
-        res.render('index', { items, selectedTable, nameColumn, resultColumn });
+        res.render('index', { items, selectedTable });
     } catch (error) {
         console.error('Supabaseデータの取得エラー:', error);
         res.status(500).send('データの取得に失敗しました');

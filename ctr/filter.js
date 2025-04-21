@@ -52,7 +52,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
       },
     });
     const { data } = await supabase
-      .from("発禁者")
+      .from("ブラックリスト")
       .select("accountId, reason, count")
       .eq("accountId", accountIdToBlock);
     let reason = "";
