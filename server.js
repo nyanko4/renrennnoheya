@@ -105,60 +105,116 @@ app.post("/getchat", (req, res) => {
 });
 
 app.get('/', async (req, res) => {
+    const dataType = req.query.type || 'おみくじ'; // デフォルトはおみくじ
+
+    let tableName = '';
+    let dataKey = 'items';
+
+    switch (dataType) {
+        case 'おみくじ':
+            tableName = 'おみくじ';
+            dataKey = 'items';
+            break;
+        case '商品':
+            tableName = '商品データ'; // 商品データ用のテーブル名
+            dataKey = 'products';
+            break;
+        // 他のデータタイプがあればここに追加
+        default:
+            tableName = 'おみくじ';
+            dataKey = 'items';
+            break;
+    }
+
     try {
         const { data, error } = await supabase
-            .from('おみくじ')
+            .from(tableName)
             .select('*');
 
         if (error) {
             throw error;
         }
-        res.render('index', { items: data });
+        res.render('index', { [dataKey]: data, currentDataType: dataType }); // テンプレートにデータと現在のデータタイプを渡す
     } catch (error) {
-        console.error('Supabaseデータの取得エラー:', error);
-        res.status(500).send('データの取得に失敗しました');
+        console.error(`Supabaseデータの取得エラー (${dataType}):`, error);
+        res.status(500).send(`データの取得に失敗しました (${dataType})`);
     }
 });
 
-// データの追加
+// データの追加 (データタイプによってテーブルを切り替える場合)
 app.post('/api/items', async (req, res) => {
+    const { dataType = 'おみくじ', accountId, name, result } = req.body;
+    let tableName = '';
+    let insertData = {};
+
+    switch (dataType) {
+        case 'おみくじ':
+            tableName = 'おみくじ';
+            insertData = { accountId, 名前: name, 結果: result };
+            break;
+        case '商品':
+            tableName = '商品データ'; // 商品データ用のテーブル名
+            insertData = { productId: accountId, 商品名: name, 価格: result }; // フィールド名を調整
+            break;
+        // 他のデータタイプがあればここに追加
+        default:
+            tableName = 'おみくじ';
+            insertData = { accountId, 名前: name, 結果: result };
+            break;
+    }
+
     try {
-        const { accountId, name, result } = req.body;
         const { data, error } = await supabase
-            .from('おみくじ')
-            .insert([{ accountId, 名前: name, 結果: result }]);
+            .from(tableName)
+            .insert([insertData]);
 
         if (error) {
             throw error;
         }
-        res.status(200).json({ message: 'データが追加されました' });
+        res.status(200).json({ message: `${dataType}のデータが追加されました` });
     } catch (error) {
-        console.error('Supabaseデータの追加エラー:', error);
-        res.status(500).json({ message: 'データの追加に失敗しました', error: error.message });
+        console.error(`Supabaseデータの追加エラー (${dataType}):`, error);
+        res.status(500).json({ message: `${dataType}のデータの追加に失敗しました`, error: error.message });
     }
 });
 
-// データの削除
+// データの削除 (データタイプによってテーブルを切り替える場合)
 app.delete('/api/items/:id', async (req, res) => {
+    const { dataType = 'おみくじ' } = req.query; // クエリパラメータでデータタイプを受け取る
+    const { id } = req.params;
+    let tableName = '';
+    let eqCondition = '';
+    let idColumnName = '';
+
+    switch (dataType) {
+        case 'おみくじ':
+            tableName = 'おみくじ';
+            idColumnName = 'accountId';
+            break;
+        case '商品':
+            tableName = '商品データ'; // 商品データ用のテーブル名
+            idColumnName = 'productId';
+            break;
+        // 他のデータタイプがあればここに追加
+        default:
+            tableName = 'おみくじ';
+            idColumnName = 'accountId';
+            break;
+    }
+
     try {
-        const { id } = req.params;
-        const { data, error } = await supabase
-            .from('おみくじ')
+        const { error } = await supabase
+            .from(tableName)
             .delete()
-            .eq('accountId', id);
+            .eq(idColumnName, id);
 
         if (error) {
             throw error;
         }
-      
-        if (data && data.length > 0) {
-            res.status(200).json({ message: 'データが削除されました' });
-        } else {
-            res.status(404).json({ message: '指定されたIDのデータが見つかりませんでした' });
-        }
+        res.status(200).json({ message: `${dataType}の ID: ${id} のデータを削除しました` });
+
     } catch (error) {
-        console.error('Supabaseデータの削除エラー:', error);
-        res.status(500).json({ message: 'データの削除に失敗しました', error: error.message });
+        console.error(`Supabaseデータの削除エラー (${dataType}):`, error);
+        res.status(500).json({ message: `${dataType}のデータの削除に失敗しました`, error: error.message });
     }
 });
-

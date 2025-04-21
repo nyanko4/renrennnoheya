@@ -3,119 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supabaseデータ表示</title>
+    <title>データ表示切り替え</title>
     <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        button {
-            margin-right: 5px;
-        }
+        /* 省略 */
     </style>
 </head>
 <body>
 
-    <h1>データ一覧</h1>
+    <h1>データ表示</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>accountId</th>
-                <th>名前</th>
-                <th>結果</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% items.forEach(item => { %>
-                <tr>
-                    <td><%= item.accountId %></td>
-                    <td><%= item.名前 %></td>
-                    <td><%= item.結果 %></td>
-                    <td>
-                        <button onclick="editItem('<%= item.accountId %>')">編集</button>
-                        <button onclick="deleteItem('<%= item.accountId %>')">削除</button>
-                    </td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
+    <select id="dataTypeSelector">
+        <option value="omikuji">おみくじデータ</option>
+        <option value="product">商品データ</option>
+        </select>
 
-    <h2>新規追加</h2>
-    <form id="addItemForm">
-      <div>
-            <label for="accountId">accountId:</label>
-            <input type="text" id="accountId" name="accountId" required>
-        </div>
-        <div>
-            <label for="name">名前:</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-        <div>
-            <label for="result">結果:</label>
-            <input type="text" id="result" name="result">
-        </div>
-        <button type="submit">追加</button>
-    </form>
+    <div id="dataDisplayArea">
+        <table id="dataTable">
+            <thead>
+                <tr></tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <h2>新規追加</h2>
+        <form id="dataForm">
+            <div id="inputFields">
+            </div>
+            <button type="submit">追加</button>
+        </form>
+    </div>
 
     <script>
-        async function editItem(id) {
-            alert(`編集ID: ${id}`);
+        async function fetchData(apiEndpoint) {
+            const response = await fetch(apiEndpoint);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
         }
 
-        async function deleteItem(id) {
-            if (confirm(`${id}を本当に削除しますか？`)) {
-                try {
-                    const response = await fetch(`/api/items/${id}`, {
-                        method: 'DELETE'
-                    });
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        const error = await response.json();
-                        alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
-                    }
-                } catch (error) {
-                    console.error('削除エラー:', error);
-                    alert('削除中にエラーが発生しました');
+        async function deleteData(apiEndpoint) {
+            const response = await fetch(apiEndpoint, { method: 'DELETE' });
+            if (!response.ok) {
+                const error = await response.json();
+                alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
+                return false;
+            }
+            return true;
+        }
+
+        async function postData(apiEndpoint, data) {
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                alert(`追加に失敗しました: ${error.message || '不明なエラー'}`);
+                return false;
+            }
+            return true;
+        }
+
+        async function loadData(apiEndpoint, dataStructure) {
+            const data = await fetchData(apiEndpoint);
+            const tableHead = document.querySelector('#dataTable thead tr');
+            const tableBody = document.querySelector('#dataTable tbody');
+            const inputFields = document.querySelector('#dataForm #inputFields');
+
+            // ヘッダーを生成
+            tableHead.innerHTML = '';
+            for (const key of Object.keys(dataStructure)) {
+                const th = document.createElement('th');
+                th.textContent = dataStructure[key].label;
+                tableHead.appendChild(th);
+            }
+            const actionTh = document.createElement('th');
+            actionTh.textContent = '操作';
+            tableHead.appendChild(actionTh);
+
+            // データ行を生成
+            tableBody.innerHTML = '';
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                for (const key of Object.keys(dataStructure)) {
+                    const td = document.createElement('td');
+                    td.textContent = item[key];
+                    tr.appendChild(td);
                 }
+                const actionTd = document.createElement('td');
+                const editButton = document.createElement('button');
+                editButton.textContent = '編集';
+                editButton.onclick = () => alert(`編集ID: ${item[dataStructure.idProperty]}`);
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = '削除';
+                deleteButton.onclick = async () => {
+                    if (confirm(`${item[dataStructure.nameProperty || dataStructure.idProperty]}さんのものを本当に削除しますか？`)) {
+                        const deleteEndpoint = `${apiEndpoint}/${item[dataStructure.idProperty]}`;
+                        if (await deleteData(deleteEndpoint)) {
+                            loadData(apiEndpoint, dataStructure); // リロード
+                        }
+                    }
+                };
+                actionTd.appendChild(editButton);
+                actionTd.appendChild(deleteButton);
+                tr.appendChild(actionTd);
+                tableBody.appendChild(tr);
+            });
+
+            // 入力フォームを生成
+            inputFields.innerHTML = '';
+            for (const key of Object.keys(dataStructure)) {
+                const div = document.createElement('div');
+                const label = document.createElement('label');
+                label.setAttribute('for', key);
+                label.textContent = dataStructure[key].label + ':';
+                const input = document.createElement('input');
+                input.setAttribute('type', dataStructure[key].type || 'text');
+                input.setAttribute('id', key);
+                input.setAttribute('name', key);
+                if (dataStructure[key].required) {
+                    input.setAttribute('required', 'required');
+                }
+                div.appendChild(label);
+                div.appendChild(input);
+                inputFields.appendChild(div);
+            }
+
+            // フォームのイベントリスナーを設定（初回のみ）
+            const form = document.getElementById('dataForm');
+            if (!form.dataset.listenerAdded) {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const formData = new FormData(event.target);
+                    const dataToSend = Object.fromEntries(formData.entries());
+                    if (await postData(apiEndpoint, dataToSend)) {
+                        loadData(apiEndpoint, dataStructure); // リロード
+                    }
+                });
+                form.dataset.listenerAdded = true;
             }
         }
 
-        document.getElementById('addItemForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
+        // データ構造とAPIエンドポイントの定義
+        const dataConfigs = {
+            omikuji: {
+                structure: {
+                    accountId: { label: 'accountId', type: 'text', required: true },
+                    名前: { label: '名前', type: 'text', required: true, nameProperty: true },
+                    結果: { label: '結果', type: 'text' },
+                    idProperty: 'accountId'
+                },
+                endpoint: '/api/items'
+            },
+            product: {
+                structure: {
+                    productId: { label: 'productId', type: 'text', required: true, idProperty: true },
+                    productName: { label: '商品名', type: 'text', required: true, nameProperty: true },
+                    price: { label: '価格', type: 'number' },
+                    stock: { label: '在庫', type: 'number' }
+                },
+                endpoint: '/api/products'
+            }
+            // 他のデータ種別の設定を追加
+        };
 
-            try {
-                const response = await fetch('/api/items', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    const error = await response.json();
-                    alert(`追加に失敗しました: ${error.message || '不明なエラー'}`);
-                }
-            } catch (error) {
-                console.error('追加エラー:', error);
-                alert('追加中にエラーが発生しました');
+        const dataTypeSelector = document.getElementById('dataTypeSelector');
+        dataTypeSelector.addEventListener('change', (event) => {
+            const selectedType = event.target.value;
+            const config = dataConfigs[selectedType];
+            if (config) {
+                loadData(config.endpoint, config.structure);
+            } else {
+                // 選択された値に対応する設定がない場合の処理
+                document.querySelector('#dataTable thead tr').innerHTML = '';
+                document.querySelector('#dataTable tbody').innerHTML = '';
+                document.querySelector('#dataForm #inputFields').innerHTML = '';
+                alert('選択されたデータタイプの設定が見つかりません。');
             }
         });
+
+        // 初期表示
+        const initialType = dataTypeSelector.value;
+        const initialConfig = dataConfigs[initialType];
+        if (initialConfig) {
+            loadData(initialConfig.endpoint, initialConfig.structure);
+        }
     </script>
 
 </body>
