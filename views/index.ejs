@@ -154,8 +154,8 @@
                         <td><%= item.名前 %></td>
                         <td><%= item.結果 %></td>
                         <td>
-                            <button onclick="editItem('<%= item.accountId %>')">編集</button>
-                            <button onclick="deleteItem('<%= item.accountId %>', 'おみくじ')">削除</button>
+                            <button onclick="startEditItem('<%= item.accountId %>', '<%= item.名前 %>', '<%= item.結果 %>', 'おみくじ')">編集</button>
+<button onclick="deleteItem('<%= item.accountId %>', 'おみくじ')">削除</button>
                         </td>
                     </tr>
                 <% }); %>
@@ -166,7 +166,7 @@
                         <td><%= blacklist.reason %></td>
                         <td><%= blacklist.count %></td>
                         <td>
-                            <button onclick="editItem('<%= blacklist.accountId %>')">編集</button>
+<button onclick="startEditItem('<%= blacklist.accountId %>', '<%= blacklist.reason %>', '<%= blacklist.count %>', 'ブラックリスト')">編集</button>
                             <button onclick="deleteItem('<%= blacklist.accountId %>', 'ブラックリスト')">削除</button>
                         </td>
                     </tr>
@@ -216,65 +216,12 @@
 </form>
 
       
-    <h2>新規追加</h2>
-    <form id="addItemForm" action="/api/items" method="POST">
-        <input type="hidden" name="dataType" value="<%= currentDataType %>">
-        <% if (currentDataType === 'おみくじ') { %>
-            <div>
-                <label for="accountId">accountId:</label>
-                <input type="text" id="accountId" name="accountId" required>
-            </div>
-            <div>
-                <label for="name">名前:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label for="result">結果:</label>
-                <input type="text" id="result" name="result">
-            </div>
-        <% } else if (currentDataType === 'ブラックリスト') { %>
-            <div>
-                <label for="accountId">accountId:</label>
-                <input type="text" id="accountId" name="accountId" required>
-            </div>
-            <div>
-                <label for="name">理由:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label for="result">回数:</label>
-                <input type="number" id="result" name="result">
-            </div>
     
-        <% } %>
-        <button type="submit">追加</button>
-    </form>
-
-    <script>  
-        async function deleteItem(id, dataType) {
-            if (confirm(`${id} のデータを本当に削除しますか？`)) {
-                try {
-                    const response = await fetch(`/api/items/${id}?type=${dataType}`, {
-                        method: 'DELETE'
-                    });
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        const error = await response.json();
-                        alert(`削除に失敗しました: ${error.message || '不明なエラー'}`);
-                    }
-                } catch (error) {
-                    console.error('削除エラー:', error);
-                    alert('削除中にエラーが発生しました');
-                }
-            }
-        }
-    </script>
 <script>
     let isEditing = false;
     let currentEditId = null;
 
-    function editItem(id, name, result, dataType) {
+    function startEditItem(id, name, result, dataType) {
         isEditing = true;
         currentEditId = id;
         document.querySelector('h2').textContent = '編集';
