@@ -104,6 +104,39 @@ app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
 
+app.get('/', async (req, res) => {
+    const dataType = req.query.type || 'おみくじ';
+    let tableName = '';
+    let dataKey = 'items';
+    switch (dataType) {
+        case 'おみくじ':
+            tableName = 'おみくじ';
+            dataKey = 'items';
+            break;
+        case 'ブラックリスト':
+            tableName = '発禁者';
+            dataKey = 'blacklist';
+            break;
+        default:
+            tableName = 'おみくじ';
+            dataKey = 'items';
+            break;
+    }
+    try {
+        const { data, error } = await supabase
+            .from(tableName)
+            .select('*');
+        if (error) {
+            throw error;
+        }
+        res.render('index', { [dataKey]: data, currentDataType: dataType, isEditing: false });
+    } catch (error) {
+        console.error(`Supabaseデータの取得エラー (${dataType}):`, error);
+        res.status(500).send(`データの取得に失敗しました (${dataType})`);
+    }
+});
+
+// データの追加と更新
 app.post('/api/items', async (req, res) => {
     const { dataType = 'おみくじ', editId, accountId, name, result } = req.body;
     let tableName = '';
@@ -155,6 +188,44 @@ app.post('/api/items', async (req, res) => {
     }
 });
 
+// データの削除
+app.delete('/api/items/:id', async (req, res) => {
+    const { dataType = 'おみくじ' } = req.query;
+    const { id } = req.params;
+    let tableName = '';
+    let idColumnName = '';
+
+    switch (dataType) {
+        case 'おみくじ':
+            tableName = 'おみくじ';
+            idColumnName = 'accountId';
+            break;
+        case 'ブラックリスト':
+            tableName = '発禁者';
+            idColumnName = 'accountId';
+            break;
+        default:
+            tableName = 'おみくじ';
+            idColumnName = 'accountId';
+            break;
+    }
+
+    try {
+        const { error } = await supabase
+            .from(tableName)
+            .delete()
+            .eq(idColumnName, id);
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({ message: `${dataType}の ID: ${id} のデータを削除しました` });
+    } catch (error) {
+        console.error(`Supabaseデータの削除エラー (${dataType}):`, error);
+        res.status(500).json({ message: `${dataType}のデータの削除に失敗しました`, error: error.message });
+    }
+});
+
+// データの更新 (PUTリクエスト用エンドポイント)
 app.put('/api/items/:id', async (req, res) => {
     const { dataType = 'おみくじ' } = req.query;
     const { id } = req.params;
@@ -169,8 +240,8 @@ app.put('/api/items/:id', async (req, res) => {
             updateData = { accountId, 名前: name, 結果: result };
             idColumnName = 'accountId';
             break;
-        case '商品':
-            tableName = '商品データ';
+        case 'ブラックリスト':
+            tableName = '発禁者';
             updateData = { accountId: accountId, 理由: name, 回数: result };
             idColumnName = 'accountId';
             break;
@@ -193,36 +264,5 @@ app.put('/api/items/:id', async (req, res) => {
     } catch (error) {
         console.error(`Supabaseデータの更新エラー (${dataType}):`, error);
         res.status(500).json({ message: `${dataType}のデータの更新に失敗しました`, error: error.message });
-    }
-});
-app.get('/', async (req, res) => {
-    const dataType = req.query.type || 'おみくじ';
-    let tableName = '';
-    let dataKey = 'items';
-    switch (dataType) {
-        case 'おみくじ':
-            tableName = 'おみくじ';
-            dataKey = 'items';
-            break;
-        case 'ブラックリスト':
-            tableName = '発禁者';
-            dataKey = 'blacklist';
-            break;
-        default:
-            tableName = 'おみくじ';
-            dataKey = 'items';
-            break;
-    }
-    try {
-        const { data, error } = await supabase
-            .from(tableName)
-            .select('*');
-        if (error) {
-            throw error;
-        }
-        res.render('index', { [dataKey]: data, currentDataType: dataType, isEditing: false });
-    } catch (error) {
-        console.error(`Supabaseデータの取得エラー (${dataType}):`, error);
-        res.status(500).send(`データの取得に失敗しました (${dataType})`);
     }
 });
