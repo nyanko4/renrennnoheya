@@ -8,11 +8,13 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
+const axios = require("axios")
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
 const path = require("path");
+const renbeyalink = process.env.renbeyalink
 const cors = require("cors");
 const cluster = require("cluster");
 const os = require("os");
@@ -105,12 +107,22 @@ app.post("/getchat", (req, res) => {
 });
 
 app.get("/renbeya", (req, res) => {
-  res.render("renbeya");
+  const proxy = axios.get(renbeyalink)
+  .then(() => {
+
+        console.log("ステータスコード:", status);
+
+    })
+    // catchでエラー時の挙動を定義
+    .catch(err => {
+        console.log("err:", err);
+    });
+  console.log(proxy)
+  const rproxy = ""
+  const senden = ""
+  res.render("renbeya", {proxy, rproxy, senden});
 });
 
-app.post("/renbeya", async (req, res) => {
-  res.render("renbeya", { error: null });
-});
 
 
 // データの取得
