@@ -106,20 +106,28 @@ app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
 
-app.get("/renbeya", (req, res) => {
-  const proxy = axios.get(renbeyalink)
-  .then(() => {
-
-        console.log("ステータスコード:", status);
-
+app.get("/renbeya", async (req, res) => {
+  const proxy = await axios.get(renbeyalink + "/proxy")
+  .then((response) => {
+        return response.data
     })
-    // catchでエラー時の挙動を定義
     .catch(err => {
-        console.log("err:", err);
+        return err
     });
-  console.log(proxy)
-  const rproxy = ""
-  const senden = ""
+  const rproxy = await axios.get(renbeyalink + "/renrenproxy")
+  .then((response) => {
+        return response.data
+    })
+    .catch(err => {
+        return err
+    });
+  const senden = await axios.get(renbeyalink + "/senden")
+  .then((response) => {
+        return response.data
+    })
+    .catch(err => {
+        return err
+    });
   res.render("renbeya", {proxy, rproxy, senden});
 });
 
