@@ -4,8 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>れん部屋</title>
+  <style>
+  button {
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+  </style>
 </head>
 <body>
+    <button onclick="location.href='/'">nyankoのへや</button>
     <div class="container">
         <h1>プロキシ部屋</h1>
         <% if (proxy) { %>
