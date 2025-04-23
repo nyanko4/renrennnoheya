@@ -107,31 +107,20 @@ app.post("/getchat", (req, res) => {
 });
 
 app.get("/renbeya", async (req, res) => {
-  const proxy = await axios.get(renbeyalink + "/proxy")
-  .then((response) => {
-        return response.data
-    })
-    .catch(err => {
-        return err
-    });
-  const rproxy = await axios.get(renbeyalink + "/renrenproxy")
-  .then((response) => {
-        return response.data
-    })
-    .catch(err => {
-        return err
-    });
-  const senden = await axios.get(renbeyalink + "/senden")
-  .then((response) => {
-        return response.data
-    })
-    .catch(err => {
-        return err
-    });
+  const proxy = await getlink(renbeyalink + "/proxy")
+  const rproxy = await getlink(renbeyalink + "/renrenproxy")
+  const senden = await getlink(renbeyalink + "/senden")
   res.render("renbeya", {proxy, rproxy, senden});
 });
 
-
+async function getlink(link) {
+  try {
+  const response = await axios.get(link)
+  return response.data
+  } catch (error) {
+    return error
+  }
+}
 
 // データの取得
 app.get("/", async (req, res) => {
