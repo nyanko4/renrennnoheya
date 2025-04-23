@@ -104,6 +104,15 @@ app.post("/getchat", (req, res) => {
   getchat(req, res);
 });
 
+app.get("/renbeya", (req, res) => {
+  res.render("renbeya");
+});
+
+app.post("/renbeya", async (req, res) => {
+  res.render("renbeya", { error: null });
+});
+
+
 // データの取得
 app.get("/", async (req, res) => {
   const selectedTable =
@@ -128,8 +137,8 @@ app.get("/", async (req, res) => {
 // データの追加
 app.post("/api/items", async (req, res) => {
   const selectedTable = req.body.table;
-  const nameKey = selectedTable === "発禁者" ? "理由" : "名前";
-  const resultKey = selectedTable === "発禁者" ? "回数" : "結果";
+  const nameKey = selectedTable === "ブラックリスト" ? "理由" : "名前";
+  const resultKey = selectedTable === "ブラックリスト" ? "回数" : "結果";
   const { accountId, name, result } = req.body;
   const insertData = { accountId };
   insertData[nameKey] = name;
@@ -182,8 +191,8 @@ app.delete("/api/items/:id", async (req, res) => {
 // データの更新
 app.put("/api/items/:id", async (req, res) => {
   const selectedTable = req.body.table;
-  const nameKey = selectedTable === "発禁者" ? "理由" : "名前";
-  const resultKey = selectedTable === "発禁者" ? "回数" : "結果";
+  const nameKey = selectedTable === "ブラックリスト" ? "理由" : "名前";
+  const resultKey = selectedTable === "ブラックリスト" ? "回数" : "結果";
   const idColumn = "accountId";
   const { id } = req.params;
   const { name, result } = req.body;
