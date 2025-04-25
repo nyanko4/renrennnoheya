@@ -1,7 +1,8 @@
-{
-  "scripts": {
-    "start": "node server.js"
-  },
+    {
+  "name": "nyankoのへや",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "CC-BY-4.0",
   "dependencies": {
     "express": "^5.1.0",
     "axios": "latest",
@@ -14,11 +15,13 @@
     "express-session": "^1.18.1",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "compression": "^1.8.0"
   },
-  "narflinger": {
-    "basenames": [
-      "f6854wxlv8i0i88bzfn1zl8ifw8c3i0y-nodejs-20.11.1"
-    ]
+  "engines": {
+    "node": "16.x"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
