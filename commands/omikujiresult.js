@@ -14,8 +14,7 @@ async function omikujiresult(body, message, messageId, roomId, accountId) {
     } else {
       const { data, error } = await supabase
         .from("おみくじ")
-        .select("accountId, roomId, today, 結果")
-        .eq("roomId", roomId);
+        .select("accountId, 名前, 結果")
 
       if (error) {
         console.error("おみくじ取得エラー:", error);
