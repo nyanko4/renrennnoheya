@@ -25,6 +25,4 @@ async function trustSignature(req) {
     return "f";
 }
 
-console.info(trustSignature)
-
 module.exports = trustSignature;
