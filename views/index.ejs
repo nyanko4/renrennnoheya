@@ -187,14 +187,14 @@
     <input type="hidden" name="table" value="<%= selectedTable %>">
     <div>
       <label for="editAccountId">accountId:</label>
-      <input type="text" id="editAccountId" name="accountId" readonly>
+      <input type="text" id="editAccountId" name="accountId" required>
     </div>
     <div>
-      <label for="editName">名前:</label>
+      <label for="editName"><%= nameColumn === 'reason' ? '理由' : '名前' %>:</label>
       <input type="text" id="editName" name="name" required>
     </div>
     <div>
-      <label for="editResult">結果:</label>
+      <label for="editResult"><%= resultColumn === 'count' ? '回数' : '結果' %>:</label>
       <input type="text" id="editResult" name="result">
     </div>
     <button type="submit">更新</button>
