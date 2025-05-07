@@ -142,8 +142,8 @@
     <thead>
       <tr>
         <th>accountId</th>
-        <th><%= nameColumn === 'reason' ? '理由' : '名前' %></th>
-        <th><%= resultColumn === 'count' ? '回数' : '結果' %></th>
+        <th><%= nameColumn === '理由' ? '理由' : '名前' %></th>
+        <th><%= resultColumn === '回数' ? '回数' : '結果' %></th>
         <th>操作</th>
       </tr>
     </thead>
@@ -172,11 +172,11 @@
       <input type="text" id="accountId" name="accountId" required>
     </div>
     <div>
-      <label for="name"><%= nameColumn === 'reason' ? '理由' : '名前' %>:</label>
+      <label for="name"><%= nameColumn === '理由' ? '理由' : '名前' %>:</label>
       <input type="text" id="name" name="name" required>
     </div>
     <div>
-      <label for="result"><%= resultColumn === 'count' ? '回数' : '結果' %>:</label>
+      <label for="result"><%= resultColumn === '回数' ? '回数' : '結果' %>:</label>
       <input type="text" id="result" name="result">
     </div>
     <button type="submit">追加</button>
@@ -190,11 +190,11 @@
       <input type="text" id="editAccountId" name="accountId" required>
     </div>
     <div>
-      <label for="editName"><%= nameColumn === 'reason' ? '理由' : '名前' %>:</label>
+      <label for="editName"><%= nameColumn === '理由' ? '理由' : '名前' %>:</label>
       <input type="text" id="editName" name="name" required>
     </div>
     <div>
-      <label for="editResult"><%= resultColumn === 'count' ? '回数' : '結果' %>:</label>
+      <label for="editResult"><%= resultColumn === '回数' ? '回数' : '結果' %>:</label>
       <input type="text" id="editResult" name="result">
     </div>
     <button type="submit">更新</button>

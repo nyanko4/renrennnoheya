@@ -126,8 +126,8 @@ async function getlink(link) {
 app.get("/", async (req, res) => {
   const selectedTable =
     req.query.table === "ブラックリスト" ? "ブラックリスト" : "おみくじ";
-  const nameColumn = selectedTable === "ブラックリスト" ? "reason" : "名前";
-  const resultColumn = selectedTable === "ブラックリスト" ? "count" : "結果";
+  const nameColumn = selectedTable === "ブラックリスト" ? "理由" : "名前";
+  const resultColumn = selectedTable === "ブラックリスト" ? "回数" : "結果";
   try {
     const { data: items, error } = await supabase
       .from(selectedTable)
