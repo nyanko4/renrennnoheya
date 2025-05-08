@@ -53,20 +53,20 @@ async function blockMember(roomId, accountIdToBlock, ms) {
     });
     const { data } = await supabase
       .from("ブラックリスト")
-      .select("accountId, reason, count")
+      .select("accountId, 理由, 回数")
       .eq("accountId", accountIdToBlock);
     let reason = "";
     let count = "";
     data.forEach((person) => {
-      reason += person.reason;
-      count += person.count;
+      reason += person.理由;
+      count += person.回数;
     });
 
     const { error } = await supabase.from("発禁者").upsert([
       {
         accountId: accountIdToBlock,
-        reason: reason + "荒らし",
-        count: count,
+        理由: reason + "荒らし",
+        回数: count,
         roomId: roomId,
       },
     ]);

@@ -14,13 +14,13 @@ async function welcome(body, messageId, roomId) {
       const welcomeId = (body.match(/\[piconname:(\d+)\]/) || [])[1];
       const { data } = await supabase
         .from("ブラックリスト")
-        .select("accountId, reason, count")
+        .select("accountId, 理由, 回数")
         .eq("accountId", welcomeId);
       let reason = "";
       let count = "";
       data.forEach((person) => {
-        reason += person.reason;
-        count += person.count;
+        reason += person.理由;
+        count += person.回数;
       });
       if (reason.includes("荒らし") || count >= 4) {
         await block(roomId, welcomeId, "ブラックリストに入っています");

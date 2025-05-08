@@ -40,11 +40,11 @@ async function sendenkinshi(body, messageId, roomId, accountId) {
       );
       const { data } = await supabase
         .from("ブラックリスト")
-        .select("accountId, reason, count")
+        .select("accountId, 理由, 回数")
         .eq("accountId", accountId);
       let count = "";
       data.forEach((person) => {
-        count += person.count;
+        count += person.回数;
       });
       const number = Number(count) + 1;
       if (number === 3) {
@@ -63,8 +63,8 @@ async function sendenkinshi(body, messageId, roomId, accountId) {
       const { error } = await supabase.from("ブラックリスト").upsert([
         {
           accountId: accountId,
-          reason: "宣伝",
-          count: number,
+          理由: "宣伝",
+          回数: number,
           roomId: roomId,
         },
       ]);
