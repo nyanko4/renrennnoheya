@@ -13,11 +13,11 @@ async function blacklist(body, message, messageId, roomId, accountId) {
       sendchatwork("管理者のみ利用可能です", roomId);
     } else {
       const { data, error } = await supabase
-        .from("発禁者")
-        .select("accountId, reason, count, roomId")
+        .from("ブラックリスト")
+        .select("accountId, 理由, 回数, roomId")
         .eq("roomId", roomId);
       if (error) {
-        console.error("発禁者取得エラー:", error);
+        console.error("ブラックリスト取得エラー:", error);
       } else {
         if (data.length === 0) {
           await sendchatwork(
@@ -27,7 +27,7 @@ async function blacklist(body, message, messageId, roomId, accountId) {
         } else {
           let messageToSend = `[rp aid=${accountId} to=${roomId}-${messageId}][pname:${accountId}]さん[info][title]ブラックリスト[/title]`;
           data.forEach((item) => {
-            messageToSend += `[picon:${item.accountId}] ${item.reason} count:${item.count}\n`;
+            messageToSend += `[picon:${item.accountId}] ${item.理由} count:${item.回数}\n`;
           });
           messageToSend += "[/info]";
           await sendchatwork(messageToSend, roomId);
