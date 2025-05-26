@@ -33,7 +33,7 @@ async function omikuji(body, messageId, roomId, accountId) {
         return;
       }
       const name = await sendername(accountId, roomId);
-      const omikujiResult = getOmikujiResult();
+      const omikujiResult = await getOmikujiResult();
       const { data: insertData, error: insertError } = await supabase
         .from("おみくじ")
         .insert([
