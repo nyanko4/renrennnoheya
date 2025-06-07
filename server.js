@@ -66,6 +66,22 @@ app.use(
   })
 );
 
+async function tsts() {
+  let msg = ""
+  const { data, error } = await supabase
+    .from("nyankoのへや")
+    .select("*")
+    .eq("accountId", "9587322");
+  data.forEach((item) => {
+    if(item.message.includes("よろ〜"))
+      msg += item.message
+  });
+  console.log(msg);
+  console.log("m")
+}
+
+tsts()
+
 app.use((req, res, next) => {
   const publicRoutes = ["/login", "/getchat", "/mention"]; // 認証をスキップするパスのリスト
 
