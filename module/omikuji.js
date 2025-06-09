@@ -3,17 +3,13 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
 );
-const { DateTime } = require("luxon");
 const { sendchatwork } = require("../ctr/message");
 const { sendername } = require("../ctr/cwdata");
 
 //おみくじ
 async function omikuji(body, messageId, roomId, accountId) {
   if (body.match(/^おみくじ$/)) {
-    try {
-      const today = new Date().toLocaleDateString("ja-JP", {
-        timeZone: "Asia/Tokyo",
-      });
+    try { 
       const { data, error } = await supabase
         .from("おみくじ")
         .select("*")
