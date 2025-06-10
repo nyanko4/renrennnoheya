@@ -65,6 +65,8 @@ async function arashi(body, messageId, roomId, accountId) {
     if (m.includes(char)) {
       count++;
     }
+  console.log(bodyChars)
+  console.log(count)
   });
   if (count >= 20) {
     block.blockMember(roomId, accountId);
