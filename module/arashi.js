@@ -59,15 +59,17 @@ const zzalgo =
 async function arashi(body, messageId, roomId, accountId) {
   const isAdmin = await isUserAdmin(accountId, roomId)
   let count = 0;
-  const bodyChars = [...body];
+  
+  m.forEach(emoticon => {
+  const escapedEmoticon = emoticon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapedEmoticon, 'g');
 
-  bodyChars.forEach((char) => {
-    if (m.includes(char)) {
-      count++;
-    }
-  console.log(bodyChars)
-  console.log(count)
-  });
+  const matches = body.match(regex);
+
+  if (matches) {
+    count += matches.length;
+  }})
+  
   if (count >= 20) {
     block.blockMember(roomId, accountId);
     return "ok";
