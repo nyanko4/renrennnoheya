@@ -9,7 +9,7 @@ const { sendername } = require("../ctr/cwdata");
 //おみくじ
 async function omikuji(body, messageId, roomId, accountId) {
   if (body.match(/^おみくじ$/)) {
-    try { 
+    try {
       const { data, error } = await supabase
         .from("おみくじ")
         .select("*")
@@ -36,14 +36,15 @@ async function omikuji(body, messageId, roomId, accountId) {
           {
             accountId: accountId,
             結果: omikujiResult,
-            名前: name
+            名前: name,
           },
         ]);
-      await sendchatwork(
-        `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
-        roomId
-      );
-
+      if (insertData) {
+        await sendchatwork(
+          `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
+          roomId
+        );
+      }
       if (insertError) {
         console.error("Supabase保存エラー:", insertError);
       } else {
