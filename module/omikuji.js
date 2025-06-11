@@ -25,7 +25,7 @@ async function omikuji(body, messageId, roomId, accountId) {
           `[rp aid=${accountId} to=${roomId}-${messageId}] おみくじは1日1回までです。`,
           roomId
         );
-        console.log(data);
+        //console.log(data);
         return;
       }
       const name = await sendername(accountId, roomId);
@@ -40,12 +40,12 @@ async function omikuji(body, messageId, roomId, accountId) {
           },
         ]);
       console.log(insertData)
-      //if (insertData) {
+      if (insertData === null) {
         await sendchatwork(
           `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
           roomId
         );
-      //}
+      }
       if (insertError) {
         console.error("Supabase保存エラー:", insertError);
       } else {
