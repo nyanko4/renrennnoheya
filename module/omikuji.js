@@ -39,12 +39,13 @@ async function omikuji(body, messageId, roomId, accountId) {
             名前: name,
           },
         ]);
-      if (insertData) {
+      console.log(insertData)
+      //if (insertData) {
         await sendchatwork(
           `[rp aid=${accountId} to=${roomId}-${messageId}]\n${omikujiResult}`,
           roomId
         );
-      }
+      //}
       if (insertError) {
         console.error("Supabase保存エラー:", insertError);
       } else {
