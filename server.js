@@ -8,13 +8,13 @@ const CronJob = require("cron").CronJob;
 const { DateTime } = require("luxon");
 const express = require("express");
 const app = express();
-const axios = require("axios")
+const axios = require("axios");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { sendchatwork } = require("./ctr/message");
 const ejs = require("ejs");
 const path = require("path");
-const renbeyalink = process.env.renbeyalink
+const renbeyalink = process.env.renbeyalink;
 const cors = require("cors");
 const cluster = require("cluster");
 const os = require("os");
@@ -66,7 +66,6 @@ app.use(
   })
 );
 
-
 app.use((req, res, next) => {
   const publicRoutes = ["/login", "/getchat", "/mention"]; // 認証をスキップするパスのリスト
 
@@ -108,18 +107,18 @@ app.post("/getchat", (req, res) => {
 });
 
 app.get("/renbeya", async (req, res) => {
-  const proxy = await getlink(renbeyalink + "/proxy")
-  const rproxy = await getlink(renbeyalink + "/renrenproxy")
-  const senden = await getlink(renbeyalink + "/senden")
-  res.render("renbeya", {proxy, rproxy, senden});
+  const proxy = await getlink(renbeyalink + "/proxy");
+  const rproxy = await getlink(renbeyalink + "/renrenproxy");
+  const senden = await getlink(renbeyalink + "/senden");
+  res.render("renbeya", { proxy, rproxy, senden });
 });
 
 async function getlink(link) {
   try {
-  const response = await axios.get(link)
-  return response.data
+    const response = await axios.get(link);
+    return response.data;
   } catch (error) {
-    return error
+    return error;
   }
 }
 
@@ -137,7 +136,7 @@ app.get("/", async (req, res) => {
     if (error) {
       throw error;
     }
-    res.render("index", { items, selectedTable, nameColumn ,resultColumn });
+    res.render("index", { items, selectedTable, nameColumn, resultColumn });
   } catch (error) {
     console.error("Supabaseデータの取得エラー:", error);
     res.status(500).send("データの取得に失敗しました");

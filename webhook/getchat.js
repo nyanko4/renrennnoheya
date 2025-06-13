@@ -18,6 +18,7 @@ const senden = require("../module/senden");
 const welcome = require("../module/welcome");
 
 async function getchat(req, res) {
+  console.log("jgjm")
   const c = await reqcheck(req);
   if (c !== "ok") {
     return res.sendStatus(400);
