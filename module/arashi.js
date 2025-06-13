@@ -50,7 +50,6 @@ const m = [
   "(beer)",
   "(handshake)",
   "(y)",
-  ")",
 ];
 const zzalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
@@ -69,8 +68,8 @@ async function arashi(body, messageId, roomId, accountId) {
   if (matches) {
     count += matches.length;
   }})
-  
-  if (count >= 20) {
+  console.log(count)
+  if (count >= 30) {
     block.blockMember(roomId, accountId);
     return "ok";
   }

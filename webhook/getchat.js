@@ -18,7 +18,6 @@ const senden = require("../module/senden");
 const welcome = require("../module/welcome");
 
 async function getchat(req, res) {
-  console.log("jgjm")
   const c = await reqcheck(req);
   if (c !== "ok") {
     return res.sendStatus(400);
@@ -41,8 +40,8 @@ async function getchat(req, res) {
       deleteMessage(body, messageId, roomId, accountId);
     } else return res.sendStatus(200);
   }
-  log(body, messageId, roomId, accountId, event, sendtime, updatetime);
   if (roomId == 374987857) {
+  log(body, messageId, roomId, accountId, event, sendtime, updatetime);
     //メッセージを保存
     const { data, error } = await supabase.from("nyankoのへや").insert({
       messageId: messageId,
