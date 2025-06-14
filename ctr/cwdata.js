@@ -151,7 +151,6 @@ const m = [
   "(beer)",
   "(handshake)",
   "(y)",
-  ")",
 ];
 const zzalgo =
   /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
@@ -159,14 +158,16 @@ const zzalgo =
 //荒らしに対して反応します
 async function arashi(body, messageId, roomId, accountId) {
   let count = 0;
-  const bodyChars = [...body];
+  m.forEach(emoticon => {
+  const escapedEmoticon = emoticon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapedEmoticon, 'g');
 
-  bodyChars.forEach((char) => {
-    if (m.includes(char)) {
-      count++;
-    }
-  });
-  if (count >= 20) {
+  const matches = body.match(regex);
+
+  if (matches) {
+    count += matches.length;
+  }})
+  if (count >= 30) {
     return "ok";
   }
  
