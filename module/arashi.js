@@ -102,8 +102,9 @@ async function arashi(body, messageId, roomId, accountId) {
     return "ok";
   }
   let mojicount = 0;
+  let bodys = [...body]
   
-  let bodys = 
+  
   
   let zalgoCount = 0;
 
