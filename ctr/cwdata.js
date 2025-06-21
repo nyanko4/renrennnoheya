@@ -184,6 +184,13 @@ async function arashi(body, messageId, roomId, accountId) {
   if ((body.match(/\[preview/g) || []).length >= 5) {
     return "ok";
   }
+  
+    let mojicount = [...body].length;
+
+  if (mojicount >= 10000) {
+    return "ok";
+  }
+  
   let zalgoCount = 0;
 
   for (let char of body) {
