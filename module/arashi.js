@@ -101,9 +101,13 @@ async function arashi(body, messageId, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  let mojicount = 0;
-  let bodys = [...body]
   
+  let mojicount = [...body].length;
+  
+  if (mojicount >= 10000) {
+    await block.blockmember(roomId, accountId);
+    return "ok";
+  }
   
   
   let zalgoCount = 0;
