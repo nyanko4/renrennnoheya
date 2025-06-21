@@ -51,6 +51,10 @@ const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
 
+app.get('/send', (req, res) => {
+  res.end(JSON.stringify(process.versions, null, 2));
+});
+
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.use(express.json());
