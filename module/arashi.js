@@ -1,6 +1,6 @@
 const block = require("../ctr/filter");
-const {isUserAdmin} = require("../ctr/cwdata");
-const {sendchatwork} = require("../ctr/message");
+const { isUserAdmin } = require("../ctr/cwdata");
+const { sendchatwork } = require("../ctr/message");
 
 const m = [
   ":D",
@@ -56,19 +56,20 @@ const zzalgo =
 
 //荒らしに対して反応します
 async function arashi(body, messageId, roomId, accountId) {
-  const isAdmin = await isUserAdmin(accountId, roomId)
+  const isAdmin = await isUserAdmin(accountId, roomId);
   let count = 0;
-  
-  m.forEach(emoticon => {
-  const escapedEmoticon = emoticon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(escapedEmoticon, 'g');
 
-  const matches = body.match(regex);
+  m.forEach((emoticon) => {
+    const escapedEmoticon = emoticon.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escapedEmoticon, "g");
 
-  if (matches) {
-    count += matches.length;
-  }})
-  console.log(count)
+    const matches = body.match(regex);
+
+    if (matches) {
+      count += matches.length;
+    }
+  });
+  console.log(count);
   if (count >= 30) {
     block.blockMember(roomId, accountId);
     return "ok";
@@ -101,15 +102,14 @@ async function arashi(body, messageId, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
-  
+
   let mojicount = [...body].length;
-  
+
   if (mojicount >= 10000) {
     await block.blockmember(roomId, accountId);
     return "ok";
   }
-  
-  
+
   let zalgoCount = 0;
 
   for (let char of body) {
@@ -124,4 +124,4 @@ async function arashi(body, messageId, roomId, accountId) {
 
   return;
 }
-module.exports = arashi
+module.exports = arashi;

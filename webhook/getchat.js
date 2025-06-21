@@ -1,4 +1,5 @@
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -83,7 +84,26 @@ async function log(
           );
         } else {
           try {
-            const localFilePath = url.filename; // 拡張子をpngに変更
+            const headResponse = await axios({
+              method: 'head',
+              url: url.fileurl,
+            });
+
+            const contentLength = headResponse.headers['content-length'];
+            if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE_BYTES) {
+              console.warn(`ファイルが大きすぎます。ダウンロードをスキップします: ${url.filename} (${contentLength} bytes)`);
+              sendchatwork(
+                `${sendername}さんが送信したファイルは、サイズ制限 (${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB) を超えているため、保存・転送されませんでした。`,
+                room_Id
+              );
+              return; // ここで処理を終了
+            }
+            const dir = 'file';
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+              console.log(`ディレクトリ '${dir}' を作成しました。`);
+            }
+            const localFilePath = `${dir}/${url.filename}`; // 拡張子をpngに変更
             const writer = fs.createWriteStream(localFilePath);
             const response = await axios({
               method: "get",
