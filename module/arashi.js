@@ -101,6 +101,10 @@ async function arashi(body, messageId, roomId, accountId) {
     await block.blockMember(roomId, accountId);
     return "ok";
   }
+  let mojicount = 0;
+  
+  let bodys = 
+  
   let zalgoCount = 0;
 
   for (let char of body) {
