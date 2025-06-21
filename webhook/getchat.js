@@ -94,7 +94,7 @@ async function log(
               console.warn(`ファイルが大きすぎます。ダウンロードをスキップします: ${url.filename} (${contentLength} bytes)`);
               sendchatwork(
                 `${sendername}さんが送信したファイルは、サイズ制限 (${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB) を超えているため、保存・転送されませんでした。`,
-                room_Id
+                389966097
               );
               return; // ここで処理を終了
             }

@@ -28,7 +28,7 @@ async function messagelink(body, message, messageId, roomId, accountId) {
     );
   } catch (error) {
     console.error("error:", error);
-    await sendchatwork("エラーが起きました", roomId);
+    await sendchatwork(`エラーが起きました ${error}`, roomId);
   }
 }
 module.exports = messagelink
