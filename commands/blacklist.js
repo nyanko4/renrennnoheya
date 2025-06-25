@@ -1,8 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+const supabase = require("../supabase/client");
 const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
 const sendchatwork = require("../ctr/message").sendchatwork;
 //ブラックリストを表示する

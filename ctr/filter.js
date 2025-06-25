@@ -1,14 +1,7 @@
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-
+const supabase = require("../supabase/client");
 const axios = require("axios");
-
 const cwdata = require("../ctr/cwdata");
 const msedit = require("../ctr/message");
-
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
 
 async function blockMember(roomId, accountIdToBlock, ms) {
