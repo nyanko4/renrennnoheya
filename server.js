@@ -20,33 +20,7 @@ const cluster = require("cluster");
 const os = require("os");
 const compression = require("compression");
 const numClusters = os.cpus().length;
-if (cluster.isMaster) {
-  for (let i = 0; i < numClusters; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker, code, signal) => {
-    cluster.fork();
-  });
-  new CronJob(
-    "0 0 0 * * *",
-    async () => {
-      const date = DateTime.now()
-        .setZone("Asia/Tokyo")
-        .toFormat("yyyy年MM月dd");
-      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
-      await supabase.from("おみくじ").delete().neq("accountId", 0);
-      await supabase.from("poker").delete().neq("accountId", 0);
-    },
-    null,
-    true,
-    "Asia/Tokyo"
-  );
-} else {
-  app.use(compression());
-  app.listen(3000, () => {
-    console.log(`${process.pid} started`);
-  });
-}
+
 const https = require("https");
 const mention = require("./webhook/mention");
 const getchat = require("./webhook/getchat");
@@ -240,3 +214,30 @@ app.post("/quiz", (req, res) => {
   console.log("受信:", req.body); // ← ここで確認！
   res.send("受信完了");
 });
+if (cluster.isMaster) {
+  for (let i = 0; i < numClusters; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker, code, signal) => {
+    cluster.fork();
+  });
+  new CronJob(
+    "0 0 0 * * *",
+    async () => {
+      const date = DateTime.now()
+        .setZone("Asia/Tokyo")
+        .toFormat("yyyy年MM月dd");
+      sendchatwork(`日付変更　今日は${date}日です`, 374987857);
+      await supabase.from("おみくじ").delete().neq("accountId", 0);
+      await supabase.from("poker").delete().neq("accountId", 0);
+    },
+    null,
+    true,
+    "Asia/Tokyo"
+  );
+} else {
+  app.use(compression());
+  app.listen(3000, () => {
+    console.log(`${process.pid} started`);
+  });
+}
