@@ -164,12 +164,12 @@ async function log(
       } else {
         if (event === "message_updated") {
           sendchatwork(
-            `${sendername}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
+            `${sendername} ${accountId}\n[qt][qtmeta aid=${accountId} time=${updatetime}]${body}[/qt]`,
             389966097
           );
         } else {
           sendchatwork(
-            `${sendername}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
+            `${sendername} ${accountId}\n[qt][qtmeta aid=${accountId} time=${sendtime}]${body}[/qt]`,
             389966097
           );
         }
