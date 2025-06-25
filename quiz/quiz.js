@@ -1,4 +1,4 @@
 async function quiz(req, res) {
-  console.log(req)
+  console.log(req.body)
 }
 module.exports = quiz;
