@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: '*', // ← file:// や null origin に対応
+  origin: '*',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));
