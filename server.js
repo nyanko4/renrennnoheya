@@ -236,3 +236,6 @@ app.put("/api/items/:id", async (req, res) => {
 
 
 const quiz = require("./quiz/quiz");
+app.post("/quiz", (req, res) => {
+  quiz(req, res);
+});
