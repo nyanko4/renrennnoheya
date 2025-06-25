@@ -71,7 +71,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  const publicRoutes = ["/login", "/getchat", "/mention"]; // 認証をスキップするパスのリスト
+  const publicRoutes = ["/login", "/getchat", "/mention", "/quiz"]; // 認証をスキップするパスのリスト
 
   if (!publicRoutes.includes(req.path) && req.cookies.nyanko_a !== "ok") {
     req.session.redirectTo = req.path !== "/" ? req.path : null;
@@ -235,7 +235,8 @@ app.put("/api/items/:id", async (req, res) => {
 });
 
 
-const quiz = require("./quiz/quiz");
+
 app.post("/quiz", (req, res) => {
-  quiz(req, res);
+  console.log("受信:", req.body); // ← ここで確認！
+  res.send("受信完了");
 });
