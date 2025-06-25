@@ -233,3 +233,6 @@ app.put("/api/items/:id", async (req, res) => {
       .json({ message: "データの更新に失敗しました", error: error.message });
   }
 });
+
+
+const quiz = require("./quiz/quiz");
