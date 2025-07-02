@@ -43,11 +43,13 @@ async function blockMember(roomId, accountIdToBlock) {
         "x-chatworktoken": CHATWORK_API_TOKEN,
       },
     });
-
       await msedit.sendchatwork(
         `[info][title]不正利用記録[/title][piconname:${accountIdToBlock}]さんに対して、不正利用フィルターが発動しました。[/info]`,
         roomId
       );
+      await msdit.sendchatwork_hon(
+        `荒らし情報\n[piconname:${accountIdToBlock}]`
+      ) 
   } catch (error) {
     console.error(
       "不正利用フィルターエラー:",
