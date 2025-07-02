@@ -9,6 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // ルート登録
 app.use("/", require("./routes/webhook"));
+app.get('/send', (req, res) => {
+  res.end(JSON.stringify(process.versions, null, 2));
+});
 
 // サーバ起動
 app.listen(3000, () => {
