@@ -2,7 +2,6 @@ const crypto = require('crypto');
 
 const webhookTokens = [
     Buffer.from(process.env.webhookToken, 'base64'),
-  　Buffer.from(process.env.t, 'base64'),
 ];
 
 async function trustSignature(req) {
