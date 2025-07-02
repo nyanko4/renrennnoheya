@@ -2,6 +2,7 @@ const CHATWORK_API_TOKEN = process.env.CWapitoken;
 const axios = require("axios");
 const reqcheck = require("../middleware/sign");
 const arashi = require("../module/arashi");
+const { readmessage } = require("../ctr/message");
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
