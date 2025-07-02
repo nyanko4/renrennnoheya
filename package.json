@@ -1,21 +1,13 @@
 {
-  "name": "nyankoのへや",
+  "name": "れんれんの部屋",
   "version": "1.0.0",
   "main": "server.js",
   "license": "CC-BY-4.0",
   "dependencies": {
     "express": "^5.1.0",
     "axios": "latest",
-    "cron": "^4.3.1",
-    "body-parser": "^2.2.0",
-    "luxon": "^3.6.1",
     "crypto": "^1.0.1",
-    "compression": "^1.8.0",
-    "@supabase/supabase-js": "^2.50.1",
-    "express-session": "^1.18.1",
-    "cookie-parser": "^1.4.7",
-    "ejs": "^3.1.10",
-    "cors": "^2.8.5"
+    "compression": "^1.8.0"
   },
   "engines": {
     "node": "16.x"
