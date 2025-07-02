@@ -1,5 +1,8 @@
 const axios = require("axios");
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
+const CHATWORK_API_TOKEN_HON = process.env.CWapitoken_hon;
+const kanribeya = process.env.kanribeya;
+
 //メッセージを送信
 async function sendchatwork(ms, roomId) {
   try {
@@ -9,6 +12,27 @@ async function sendchatwork(ms, roomId) {
       {
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    console.log("メッセージ送信成功");
+  } catch (error) {
+    console.error(
+      "Chatworkへのメッセージ送信エラー:",
+      error.response?.data || error.message
+    );
+  }
+}
+
+async function sendchatwork_hon(ms) {
+  try {
+    await axios.post(
+      `https://api.chatwork.com/v2/rooms/${kanribeya}/messages`,
+      new URLSearchParams({ body: ms }),
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN_HON,
           "Content-Type": "application/x-www-form-urlencoded",
         },
       }
@@ -75,6 +99,7 @@ async function readmessage(roomId, messageId) {
 
 module.exports = {
   sendchatwork,
+  sendchatwork_hon,
   deleteMessages,
   readmessage,
 };
