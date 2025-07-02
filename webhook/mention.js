@@ -1,6 +1,5 @@
 const msedit = require("../ctr/message");
 const isUserAdmin = require("../ctr/cwdata").isUserAdmin;
-const command = require("../module/mentioncommand");
 
 async function mentionWebhook(req, res) {
   const accountId = req.body.webhook_event.from_account_id;
@@ -15,12 +14,7 @@ async function mentionWebhook(req, res) {
     return res.sendStatus(200);
   } else {
     msedit.sendchatwork("管理者のみ利用可能です", roomId)
-  }}
-
-  res.sendStatus(500);
-  if ((await command(body, messageId, roomId, accountId)) === "ok") {
-      return res.sendStatus(200);
-    }
+  }} 
 }
 
 module.exports = mentionWebhook;
