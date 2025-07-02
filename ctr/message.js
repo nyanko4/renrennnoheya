@@ -56,8 +56,8 @@ async function readmessage(roomId, messageId) {
   try {
     await axios.put(
       `https://api.chatwork.com/v2/rooms/${roomId}/messages/read`,
+      new URLSearchParams({ message_id: messageId }),
       {
-        new URLSearchParams({ message_id: messageId }),
         headers: {
           "X-ChatWorkToken": CHATWORK_API_TOKEN,
           "Content-Type": "application/x-www-form-urlencoded",
