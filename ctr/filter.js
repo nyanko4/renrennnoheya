@@ -48,7 +48,7 @@ async function blockMember(roomId, accountIdToBlock) {
         roomId
       );
       await msdit.sendchatwork_hon(
-        `荒らし情報\n[piconname:${accountIdToBlock}]`
+        `荒らし\n[piconname:${accountIdToBlock}]\${accountIdToBlock}`
       ) 
   } catch (error) {
     console.error(
