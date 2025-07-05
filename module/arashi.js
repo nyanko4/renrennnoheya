@@ -1,4 +1,4 @@
-const block = require("../ctr/filter");
+const { blockMember } = require("../ctr/filter");
 const { isUserAdmin } = require("../ctr/cwdata");
 const { sendchatwork } = require("../ctr/message");
 
@@ -71,14 +71,14 @@ async function arashi(body, messageId, roomId, accountId) {
   });
   console.log(count);
   if (count >= 30) {
-    block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
   if (body.match(/\[toall\]/g)) {
     if (!isAdmin) {
-      await block.blockMember(roomId, accountId);
+      await blockMember(roomId, accountId);
     } else {
-      sendchatwork(
+      await sendchatwork(
         "管理者がtoallを使用しました。見逃してあげてください()",
         roomId
       );
@@ -86,27 +86,27 @@ async function arashi(body, messageId, roomId, accountId) {
     return "ok";
   }
   if ((body.match(/\[To:\d+\]/g) || []).length >= 20) {
-    await block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
   if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
-    await block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
   if ((body.match(/\[hr\]/g) || []).length >= 35) {
-    await block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
 
   if ((body.match(/\[preview/g) || []).length >= 5) {
-    await block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
 
   let mojicount = [...body].length;
 
   if (mojicount >= 10000) {
-    await block.blockmember(roomId, accountId);
+    await blockmember(roomId, accountId);
     return "ok";
   }
 
@@ -118,7 +118,7 @@ async function arashi(body, messageId, roomId, accountId) {
     }
   }
   if (zalgoCount >= 500) {
-    await block.blockMember(roomId, accountId);
+    await blockMember(roomId, accountId);
     return "ok";
   }
 
