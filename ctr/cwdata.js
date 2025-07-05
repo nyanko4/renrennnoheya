@@ -26,6 +26,29 @@ async function isUserAdmin(accountId, roomId) {
   }
 }
 
+async function getChatworkMembers(roomId) {
+  try {
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/members`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
+
+    const members = response.data;
+    return members;
+  } catch (error) {
+    console.error(
+      "Error fetching Chatwork members:",
+      error.response?.data || error.message
+    );
+    return null;
+  }
+}
+
 module.exports = {
   isUserAdmin,
+  getChatworkMembers,
 };
