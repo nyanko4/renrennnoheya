@@ -3,6 +3,7 @@ const { isUserAdmin } = require("../ctr/cwdata");
 const { sendchatwork } = require("../ctr/message");
 
 const m = [
+  ":)",
   ":D",
   "8-)",
   ":o",
