@@ -1,5 +1,4 @@
 const express = require("express");
-const compression = require("compression");
 
 const app = express();
 
@@ -9,8 +8,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // ルート登録
 app.use("/", require("./routes/webhook"));
+app.use("/member", require("./routes/member"))
 app.get('/send', (req, res) => {
-  res.end(JSON.stringify(process.versions, null, 2));
+  res.json(process.versions);
 });
 
 // サーバ起動
