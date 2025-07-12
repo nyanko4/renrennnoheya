@@ -73,4 +73,4 @@ app.get("/senden", async (req, res) => {
   res.send(result);
 });
 
-app.listen(port, () => {});
+module.exports = router;
