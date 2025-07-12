@@ -10,8 +10,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("<a href='/proxy'>proxy</a><br><a href='/renrenproxy'>れんにゃんproxy</a><br><a href='/senden'>宣伝部屋</a><br>")
 })
-app.use("/", require("./routes/webhook"));
 app.use("/member", require("./routes/member"))
+app.use("/", require("./routes/webhook"));
 app.get('/send', (req, res) => {
   res.json(process.versions);
 });
