@@ -1,5 +1,5 @@
 const express = require("express");
-const app = express();
+const router = express.Router();
 const axios = require("axios");
 const port = 3000;
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
@@ -54,21 +54,21 @@ async function getRoomMembersNotInRenren(targetRoomId, roomName) {
   );
   return membersNotInRenren.join("|") || "該当者なし";
 }
-app.get("/proxy", async (req, res) => {
+router.get("/proxy", async (req, res) => {
   const result = await getRoomMembersNotInRenren(
     ROOM_IDS.proxy,
     "プロキシ部屋"
   );
   res.send(result);
 });
-app.get("/renrenproxy", async (req, res) => {
+router.get("/renrenproxy", async (req, res) => {
   const result = await getRoomMembersNotInRenren(
     ROOM_IDS.renrenproxy,
     "れんれんプロキシ部屋"
   );
   res.send(result);
 });
-app.get("/senden", async (req, res) => {
+router.get("/senden", async (req, res) => {
   const result = await getRoomMembersNotInRenren(ROOM_IDS.senden, "宣伝部屋");
   res.send(result);
 });
