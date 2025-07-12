@@ -7,10 +7,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ルート登録
-app.use("/", require("./routes/webhook"));
 app.get("/", (req, res) => {
   res.send("<a href='/proxy'>proxy</a><br><a href='/renrenproxy'>れんにゃんproxy</a><br><a href='/senden'>宣伝部屋</a><br>")
 })
+app.use("/", require("./routes/webhook"));
 app.use("/member", require("./routes/member"))
 app.get('/send', (req, res) => {
   res.json(process.versions);
