@@ -9,7 +9,7 @@ const ROOM_IDS = {
   renrenproxy: 372453591,
   senden: 365406836,
 };
-app.use(express.json());
+router.use(express.json());
 
 async function fetchChatworkMembers(roomId) {
   try {
