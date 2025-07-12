@@ -6,8 +6,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "axios": "latest",
-    "crypto": "^1.0.1",
-    "compression": "^1.8.0"
+    "crypto": "^1.0.1"
   },
   "engines": {
     "node": "16.x"
