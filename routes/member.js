@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const os = require("os");
 const port = 3000;
 const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
 const ROOM_IDS = {
