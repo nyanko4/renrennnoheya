@@ -3,7 +3,7 @@ const cwdata = require("../ctr/cwdata");
 const msedit = require("../ctr/message");
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
 
-async function blockMember(roomId, accountIdToBlock) {
+async function blockMember(roomId, accountIdToBlock, ms) {
   try {
     const members = await cwdata.getChatworkMembers(roomId);
 
@@ -48,7 +48,7 @@ async function blockMember(roomId, accountIdToBlock) {
         roomId
       );
       await msedit.sendchatwork_hon(
-        `荒らし\n[piconname:${accountIdToBlock}]\${accountIdToBlock}`
+        `荒らし(${ms})\n[piconname:${accountIdToBlock}]${accountIdToBlock}`
       ) 
   } catch (error) {
     console.error(
