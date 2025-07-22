@@ -48,7 +48,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         roomId
       );
       await msedit.sendchatwork_hon(
-        `荒らし(${ms})\n[piconname:${accountIdToBlock}]${accountIdToBlock}`
+        `荒らし(${ms})\n[piconname:${accountIdToBlock}]　${accountIdToBlock}`
       ) 
   } catch (error) {
     console.error(
