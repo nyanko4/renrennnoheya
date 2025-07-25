@@ -17,7 +17,8 @@ app.get("/", (req, res) => {
 app.use("/member", require("./routes/member"))
 app.use("/", require("./routes/webhook"));
 app.get('/send', (req, res) => {
-  res.json(process.versions);
+  res.end(JSON.stringify(process.versions, null, 2));
+  console.log("ぬ")
 });
 
 // サーバ起動
