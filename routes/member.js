@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const port = 3000;
-const CHATWORK_API_TOKEN = process.env.CHATWORK_API_TOKEN;
+const CHATWORK_API_TOKEN = process.env.CWapitoken_hon;
 const ROOM_IDS = {
   renren: 364321548,
   proxy: 364362698,
