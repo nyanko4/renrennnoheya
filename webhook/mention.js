@@ -1,4 +1,5 @@
 const msedit = require("../ctr/message");
+const { blockMember } = require("../ctr/filter");
 const { isUserAdmin } = require("../ctr/cwdata");
 const arashi = require("../module/arashi");
 
@@ -16,7 +17,12 @@ async function mentionWebhook(req, res) {
   } else {
     msedit.sendchatwork("管理者のみ利用可能です", roomId)
   }}
-  await arashi(body, messageId, roomId, accountId)
+  if (body.match(/\[toall\]/g)) {
+    if (!isAdmin) {
+      await blockMember(roomId, accountId, "toall");
+    }
+    return "ok";
+  }
 }
 
 module.exports = mentionWebhook;
