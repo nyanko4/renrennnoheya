@@ -75,17 +75,6 @@ async function arashi(body, messageId, roomId, accountId) {
     await blockMember(roomId, accountId, "絵文字");
     return "ok";
   }
-  if (body.match(/\[toall\]/g)) {
-    if (!isAdmin) {
-      await blockMember(roomId, accountId, "toall");
-    } else {
-      await sendchatwork(
-        "管理者がtoallを使用しました。見逃してあげてください()",
-        roomId
-      );
-    }
-    return "ok";
-  }
   if ((body.match(/\[To:\d+\]/g) || []).length >= 20) {
     await blockMember(roomId, accountId, "[To:〇〇〇〇〇〇]");
     return "ok";
