@@ -20,7 +20,7 @@ async function mentionWebhook(req, res) {
   if (body.match(/\[toall\]/g)) {
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (!isAdmin) {
-      await blockMember(roomId, accountId, "toall");
+      blockMember(roomId, accountId, "toall");
     }
     return "ok";
   }
