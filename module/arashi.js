@@ -97,7 +97,7 @@ async function arashi(body, messageId, roomId, accountId) {
 
   if (mojicount >= 2000) {
     if(!isAdmin) {
-    await blockmember(roomId, accountId, "文字数多量");
+    await blockMember(roomId, accountId, "文字数多量");
     }
     return "ok";
   }
