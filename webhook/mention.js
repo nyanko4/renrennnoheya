@@ -13,11 +13,10 @@ async function mentionWebhook(req, res) {
     const isAdmin = await isUserAdmin(accountId, roomId);
     if (isAdmin){
       await msedit.deleteMessages(body, messageId, roomId, accountId);
-    return res.sendStatus(200);
-  } else {
-    msedit.sendchatwork("管理者のみ利用可能です", roomId)
-  }}
-    return "ok";
+      return res.sendStatus(200);
+    } else {
+      msedit.sendchatwork("管理者のみ利用可能です", roomId)
+    }
   }
 }
 
