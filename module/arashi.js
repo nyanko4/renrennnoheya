@@ -79,6 +79,11 @@ async function arashi(body, messageId, roomId, accountId) {
     await blockMember(roomId, accountId, "[To:〇〇〇〇〇〇]");
     return "ok";
   }
+  if (body.match(/\[toall\]/g)) {
+    if (!isAdmin) {
+      blockMember(roomId, accountId, "toall");
+      return "ok";
+    }
   if ((body.match(/\[p\D+\d+\]/g) || []).length >= 20) {
     await blockMember(roomId, accountId, "[picon or pname or piconname:〇〇〇〇〇〇]");
     return "ok";
