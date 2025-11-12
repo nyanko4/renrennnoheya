@@ -17,11 +17,6 @@ async function mentionWebhook(req, res) {
   } else {
     msedit.sendchatwork("管理者のみ利用可能です", roomId)
   }}
-  if (body.match(/\[toall\]/g)) {
-    const isAdmin = await isUserAdmin(accountId, roomId);
-    if (!isAdmin) {
-      blockMember(roomId, accountId, "toall");
-    }
     return "ok";
   }
 }
