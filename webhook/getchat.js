@@ -17,12 +17,17 @@ async function getchat(req, res) {
     room_id: roomId,
     message_id: messageId,
   } = req.body.webhook_event;
+  
   await readmessage(roomId, messageId);
+
+  if (roomId === 364321548) {
+    await commentRanking(body, messageId, roomId, accountId)
+  }
   if (accountId === 10496796) {
     return res.sendStatus(200);
   }
   
-  const handlers = [arashi, commentRanking];
+  const handlers = [arashi];
 
   for (const handler of handlers) {
     if ((await handler(body, messageId, roomId, accountId)) === "ok") {
