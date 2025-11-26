@@ -97,9 +97,32 @@ async function readmessage(roomId, messageId) {
   }
 }
 
+async function getMessages(roomId) {
+  try {
+    const response = await axios.get(
+      `https://api.chatwork.com/v2/rooms/${roomId}/messages?force=0`,
+      {
+        headers: {
+          "X-ChatWorkToken": CHATWORK_API_TOKEN,
+        },
+      }
+    );
+
+    const messages = response.data;
+    return messages;
+  } catch (error) {
+    console.error(
+      "Error fetching Chatwork messages:",
+      error.response?.data || error.message
+    );
+    return null;
+  }
+}
+
 module.exports = {
   sendchatwork,
   sendchatwork_hon,
   deleteMessages,
   readmessage,
+  getMessages,
 };
