@@ -4,11 +4,16 @@ const { commentRankingMinute } = require("../module/commentRanking");
 const { getMessages } = require("../ctr/message");
 
 function startTask() {
+  console.log("起動")
   new CronJob(
     "5 * * * * *",
     async () => {
-      console.log("1分たちました")
-      await commentRankingMinute(374987857)
+      try {
+        console.log("1分たちました");
+        await commentRankingMinute(374987857);
+      } catch (err) {
+        console.error("commentRankingMinute error:", err.message);
+      }
     },
     null,
     true,
