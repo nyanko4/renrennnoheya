@@ -10,7 +10,7 @@ function startTask() {
     async () => {
       try {
         console.log("1分たちました");
-        await commentRankingMinute(374987857);
+        await commentRankingMinute(364321548);
       } catch (err) {
         console.error("commentRankingMinute error:", err.message);
       }
@@ -29,7 +29,7 @@ function startDailyTask() {
         .from("message_num")
         .delete()
         .neq("accountId", 0);
-    await getMessages(374987857);
+    await getMessages(364321548);
     },
     null,
     true,
