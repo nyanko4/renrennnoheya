@@ -79,7 +79,7 @@ async function commentRankingMinute(roomId) {
       });
     }
   
-    const { error } = await supabase.from("message_num").upsert(upserts);
+    const { data, error } = await supabase.from("message_num").upsert(upserts);
     if (error) {
       console.error(error.message);
     }
