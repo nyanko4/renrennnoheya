@@ -2,8 +2,16 @@ const supabase = require("../supabase/client");
 const { getMessages } = require("../ctr/message");
 
 async function commentRanking(body, messageId, roomId, accountId) {
-  const messageNum = await getRankingCommentNum(accountId);
-  //コメント毎に取得
+  const data = await getRankingCommentNum(accountId);
+  const messageNum = data.number + 1;
+  await supabase
+    .from("message_num")
+    .upsert([
+      {
+        account_id: accountId,
+        number: messageNum,
+        },
+      ]);
 }
 
 async function commentRankingMinute(roomId) {
@@ -15,12 +23,18 @@ async function commentRankingMinute(roomId) {
 }
 
 async function getRankingCommentNum(accountId) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("message_num")
     .select("number")
     .eq("account_id", accountId)
-  const messageNum = data.map(entry => entry.number).reduce((sum, val) => sum + val, 0);
-  return messageNum;
+    .single()
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+  
+  return data;
 }
 
 module.exports = {
