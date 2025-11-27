@@ -1,8 +1,11 @@
 const supabase = require("../supabase/client");
 const { sendchatwork, getMessages } = require("../ctr/message");
+const { isUserAsmin } = require("../ctr/cwdata");
 
 async function commentRanking(body, messageId, roomId, accountId) {
   if (!body.match(/^commentranking$/)) return;
+  const isAdmin = await isUserAdmin(accountId, roomId);
+  if (!isAdmin) return;
 
   try {
     const { data, error } = await supabase
