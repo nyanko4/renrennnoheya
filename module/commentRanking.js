@@ -48,37 +48,41 @@ async function commentRankingRealTime(body, messageId, roomId, accountId) {
 
 
 async function commentRankingMinute(roomId) {
-  const messages = await getMessages(roomId);
-
-  const minuteCounts = {};
-  for (const message of messages) {
-    const id = message.account.account_id;
-    minuteCounts[id] = (minuteCounts[id] || 0) + 1;
-    console.log(message);
+  try {
+    const messages = await getMessages(roomId);
+  
+    const minuteCounts = {};
+    for (const message of messages) {
+      const id = message.account.account_id;
+      minuteCounts[id] = (minuteCounts[id] || 0) + 1;
+      console.log(message);
+    }
+  
+    const { data: dbList } = await supabase
+      .from("message_num")
+      .select("account_id, number, realtime_number");
+  
+    const upserts = [];
+  
+    for (const db of dbList) {
+      const accountId = db.account_id;
+      const realtime = db.realtime_number ?? 0;
+      const apiCount = minuteCounts[accountId] ?? 0;
+  
+      const add = Math.max(realtime, apiCount);
+      const newTotal = (db.number ?? 0) + add;
+  
+      upserts.push({
+        account_id: accountId,
+        number: newTotal,
+        realtime_number: 0,
+      });
+    }
+  
+    await supabase.from("message_num").upsert(upserts);
+  } catch (error) {
+    console.error("rankingMinuteError:", error.message);
   }
-
-  const { data: dbList } = await supabase
-    .from("message_num")
-    .select("account_id, number, realtime_number");
-
-  const upserts = [];
-
-  for (const db of dbList) {
-    const accountId = db.account_id;
-    const realtime = db.realtime_number ?? 0;
-    const apiCount = minuteCounts[accountId] ?? 0;
-
-    const add = Math.max(realtime, apiCount);
-    const newTotal = (db.number ?? 0) + add;
-
-    upserts.push({
-      account_id: accountId,
-      number: newTotal,
-      realtime_number: 0,
-    });
-  }
-
-  await supabase.from("message_num").upsert(upserts);
 }
 
 async function getRankingCommentNum(accountId) {
