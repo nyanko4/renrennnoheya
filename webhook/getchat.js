@@ -2,7 +2,7 @@ const CHATWORK_API_TOKEN = process.env.CWapitoken;
 const axios = require("axios");
 const reqcheck = require("../middleware/sign");
 const arashi = require("../module/arashi");
-const commentRanking = require("../module/commentRanking");
+const { commentRanking, commentRankingRealTime } = require("../module/commentRanking");
 const { readmessage } = require("../ctr/message");
 
 async function getchat(req, res) {
@@ -21,13 +21,13 @@ async function getchat(req, res) {
   await readmessage(roomId, messageId);
 
   if (roomId === 364321548) {
-    await commentRanking(body, messageId, roomId, accountId)
+    await commentRankingRealTime(body, messageId, roomId, accountId)
   }
   if (accountId === 10496796) {
     return res.sendStatus(200);
   }
   
-  const handlers = [arashi];
+  const handlers = [arashi, commentRanking];
 
   for (const handler of handlers) {
     if ((await handler(body, messageId, roomId, accountId)) === "ok") {
