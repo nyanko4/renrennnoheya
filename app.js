@@ -1,6 +1,6 @@
 "use strict";
 
-const { startTask, startDailyTask } = require("../cron/dailyTask");
+const { startTask, startDailyTask } = require("../cron/Task");
 startTask();
 startDailyTask();
 
