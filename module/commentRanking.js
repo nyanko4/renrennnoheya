@@ -49,6 +49,7 @@ async function commentRankingRealTime(body, messageId, roomId, accountId) {
 
 async function commentRankingMinute(roomId) {
   const messages = await getMessages(roomId);
+  console.log(messages)
 
   const minuteCounts = {};
   for (const message of messages) {
