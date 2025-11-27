@@ -16,8 +16,7 @@ async function commentRanking(body, messageId, roomId, accountId) {
 
 async function commentRankingMinute(roomId) {
   const messages = getMessages(roomId);
-
-  //getMessageで取得したデータを取り出し回数を取得
+  
   
   const messageNumSupabase = await getRankingCommentNum(accountId);
 }
