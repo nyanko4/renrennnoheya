@@ -20,7 +20,7 @@ function startDailyTask() {
     "0 0 0 * * *",
     async () => {
       await supabase
-        .from("comment_num")
+        .from("message_num")
         .delete()
         .neq("accountId", 0);
     await getMessages(374987857);
