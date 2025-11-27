@@ -49,12 +49,12 @@ async function commentRankingRealTime(body, messageId, roomId, accountId) {
 
 async function commentRankingMinute(roomId) {
   const messages = await getMessages(roomId);
-  console.log(messages)
 
   const minuteCounts = {};
   for (const message of messages) {
     const id = message.account.account_id;
     minuteCounts[id] = (minuteCounts[id] || 0) + 1;
+    console.log(message);
   }
 
   const { data: dbList } = await supabase
