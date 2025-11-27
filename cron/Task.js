@@ -7,6 +7,7 @@ function startTask() {
   new CronJob(
     "5 * * * * *",
     async () => {
+      console.log("1分たちました")
       await commentRankingMinute(374987857)
     },
     null,
