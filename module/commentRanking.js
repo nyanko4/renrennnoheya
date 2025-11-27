@@ -1,5 +1,5 @@
 const supabase = require("../supabase/client");
-const { getMessages } = require("../ctr/message");
+const { sendchatwork, getMessages } = require("../ctr/message");
 
 async function commentRanking(body, messageId, roomId, accountId) {
   if (!body.match(/^commentranking$/)) return;
