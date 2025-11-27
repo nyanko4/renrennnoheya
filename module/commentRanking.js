@@ -54,6 +54,7 @@ async function commentRankingMinute(roomId) {
     const minuteCounts = {};
     for (const message of messages) {
       const id = message.account.account_id;
+      console.log(id);
       minuteCounts[id] = (minuteCounts[id] || 0) + 1;
       console.log(message);
     }
