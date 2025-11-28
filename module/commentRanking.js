@@ -8,6 +8,16 @@ async function commentRanking(body, messageId, roomId, accountId) {
   const isAdmin = await isUserAdmin(accountId, roomId);
   if (!isAdmin) return;
 
+  const messageText = await getCommentRanking();
+  await sendchatwork(messageText, roomId);
+}
+
+async function dailyCommentRanking(roomId) {
+  const messageText = await getCommentRanking();
+  await sendchatwork(messageText, roomId);
+}
+
+async function getCommentRanking() {
   try {
     const { data, error } = await supabase
       .from("message_num")
@@ -16,7 +26,7 @@ async function commentRanking(body, messageId, roomId, accountId) {
       .limit(5);
 
     if (error) {
-      console.error(`Supabase fetch error for room ${roomId}:`, error.message);
+      console.error(`Supabase fetch error:`, error.message);
       return "[info][title]エラー[/title]ランキング取得に失敗しました。[/info]";
     }
 
@@ -32,7 +42,6 @@ async function commentRanking(body, messageId, roomId, accountId) {
     return "[info][title]エラー[/title]不明なエラーが発生しました。[/info]";
   }
 }
-
 
 async function commentRankingRealTime(body, messageId, roomId, accountId) {
   const data = await getRankingCommentNum(accountId);
