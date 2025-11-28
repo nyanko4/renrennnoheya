@@ -33,7 +33,7 @@ function startDailyTask() {
   );
   
   new CronJob(
-  "0 0 0 * * *",
+  "0 15 0 * * *",
   async () => {
     await weeklyComment();
     await dailyComment(364321548);
