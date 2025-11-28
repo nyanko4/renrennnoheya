@@ -1,6 +1,6 @@
 const { CronJob } = require("cron");
 const supabase = require("../supabase/client");
-const { dailyCommentRanking, commentRankingMinute, totalComment, comment } = require("../module/commentRanking");
+const { dailyCommentRanking, commentRankingMinute, weeklyComment } = require("../module/commentRanking");
 const { getMessages } = require("../ctr/message");
 const kotya = process.env.kotya;
 
@@ -35,7 +35,7 @@ function startDailyTask() {
   new CronJob(
   "0 0 0 * * *",
   async () => {
-      await totalComment();
+      await weeklyComment();
       await getMessages(364321548);
   },
     null,
