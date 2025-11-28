@@ -4,24 +4,24 @@ const { isUserAdmin } = require("../ctr/cwdata");
 
 async function commentRanking(body, messageId, roomId, accountId) {
   if (!body.match(/^commentranking$/)) return;
-
+  
   const isAdmin = await isUserAdmin(accountId, roomId);
   if (!isAdmin) return;
 
-  const messageText = await getCommentRanking();
+  const { messageText } = await getCommentRanking();
   await sendchatwork(messageText, roomId);
 }
 
 async function dailyCommentRanking(roomId) {
-  const messageText = await getCommentRanking();
-  await sendchatwork_hon(messageText, roomId);
+  const { messageText, messageTextTotal } = await getCommentRanking();
+  await sendchatwork_hon(`${messageText}\n${messageTextTotal}`, roomId);
 }
 
 async function getCommentRanking() {
   try {
     const { data, error } = await supabase
       .from("message_num")
-      .select("account_id, number")
+      .select("account_id, number, total_number, day_number")
       .order("number", { ascending: false })
       .limit(5);
 
@@ -30,18 +30,32 @@ async function getCommentRanking() {
       return "[info][title]エラー[/title]ランキング取得に失敗しました。[/info]";
     }
 
-    let messageText = "[info][title]ランキング[/title]\n";
+    if (!data || data.length === 0) {
+      return "[info][title]ランキング[/title]まだデータがありません。[/info]";
+    }
+
+    const dayNumber = data[0].day_number ?? 0;
+
+    let messageText = `[info][title]ランキング[/title]\n`;
+
+    let messageTextTotal = `[info][title]累計ランキング ${dayNumber}日目[/title]\n`;
+
     data.forEach((row, index) => {
       messageText += `No.${index + 1}：[piconname:${row.account_id}]（+${row.number}件）\n`;
+      messageTextTotal += `No.${index + 1}：[piconname:${row.account_id}]（+${row.total_number}件）\n`;
     });
+
     messageText += "[/info]";
-    return messageText;
+    messageTextTotal += "[/info]";
+
+    return { messageText, messageTextTotal };
 
   } catch (err) {
     console.error("commentRanking error:", err.message);
     return "[info][title]エラー[/title]不明なエラーが発生しました。[/info]";
   }
 }
+
 
 async function commentRankingRealTime(body, messageId, roomId, accountId) {
   const data = await getRankingCommentNum(accountId);
@@ -101,11 +115,11 @@ async function commentRankingMinute(roomId) {
   }
 }
 
-async function totalComment(roomId) {
+async function totalComment() {
   try {
     const { data: dbList } = await supabase
       .from("message_num")
-      .select("account_id, number");
+      .select("account_id, number, day_number");
 
   
     const upserts = [];
@@ -113,10 +127,12 @@ async function totalComment(roomId) {
     for (const db of dbList) {
       const accountId = db.account_id;
       const number = db.number ?? 0;
+      const dayNumber = db.day_number + 1 ?? 1;
     
       upserts.push({
         account_id: accountId,
         total_number: number,
+        day_number: dayNumber,
       });
     }
   
@@ -129,7 +145,7 @@ async function totalComment(roomId) {
     }
     
   } catch (error) {
-    console.error("rankingMinuteError:", error.message);
+    console.error("totalCommentError:", error.message);
   }
 }
 
