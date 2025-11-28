@@ -1,7 +1,6 @@
 const axios = require("axios");
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
 const CHATWORK_API_TOKEN_HON = process.env.CWapitoken_hon;
-const kanribeya = process.env.kanribeya;
 
 //メッセージを送信
 async function sendchatwork(ms, roomId) {
