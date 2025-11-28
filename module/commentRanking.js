@@ -101,6 +101,38 @@ async function commentRankingMinute(roomId) {
   }
 }
 
+async function totalComment(roomId) {
+  try {
+    const { data: dbList } = await supabase
+      .from("message_num")
+      .select("account_id, number");
+
+  
+    const upserts = [];
+
+    for (const db of dbList) {
+      const accountId = db.account_id;
+      const number = db.number ?? 0;
+    
+      upserts.push({
+        account_id: accountId,
+        total_number: number,
+      });
+    }
+  
+    const { data, error } = await supabase
+      .from("message_num")
+      .upsert(upserts)
+    
+    if (error) {
+      console.error(error);
+    }
+    
+  } catch (error) {
+    console.error("rankingMinuteError:", error.message);
+  }
+}
+
 async function getRankingCommentNum(accountId) {
   const { data, error } = await supabase
     .from("message_num")
@@ -116,4 +148,5 @@ module.exports = {
   commentRanking,
   commentRankingRealTime,
   commentRankingMinute,
+  totalComment,
 };
