@@ -1,5 +1,5 @@
 const supabase = require("../supabase/client");
-const { sendchatwork, getMessages } = require("../ctr/message");
+const { sendchatwork, sendchatwork_hon, getMessages } = require("../ctr/message");
 const { isUserAdmin } = require("../ctr/cwdata");
 
 async function commentRanking(body, messageId, roomId, accountId) {
@@ -14,7 +14,7 @@ async function commentRanking(body, messageId, roomId, accountId) {
 
 async function dailyCommentRanking(roomId) {
   const messageText = await getCommentRanking();
-  await sendchatwork(messageText, roomId);
+  await sendchatwork_hon(messageText, roomId);
 }
 
 async function getCommentRanking() {
