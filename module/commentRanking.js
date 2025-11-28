@@ -54,7 +54,6 @@ async function commentRankingMinute(roomId) {
     const minuteCounts = {};
     for (const message of messages) {
       const id = message.account.account_id;
-      console.log(id);
       minuteCounts[id] = (minuteCounts[id] || 0) + 1;
     }
   
@@ -74,16 +73,20 @@ async function commentRankingMinute(roomId) {
       const newTotal = (db.number ?? 0) + add;
   
       upserts.push({
-        account_id: String(accountId),
+        account_id: accountId,
         number: newTotal,
         realtime_number: 0,
       });
     }
   
-    const { data, error } = await supabase.from("message_num").upsert(upserts);
+    const { data, error } = await supabase
+      .from("message_num")
+      .upsert(upserts)
+    
     if (error) {
       console.error(error);
     }
+    
   } catch (error) {
     console.error("rankingMinuteError:", error.message);
   }
