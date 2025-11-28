@@ -1,6 +1,6 @@
 const { CronJob } = require("cron");
 const supabase = require("../supabase/client");
-const { dailyCommentRanking, commentRankingMinute, totalComment } = require("../module/commentRanking");
+const { dailyCommentRanking, commentRankingMinute, totalComment, comment } = require("../module/commentRanking");
 const { getMessages } = require("../ctr/message");
 const kotya = process.env.kotya;
 
@@ -26,7 +26,6 @@ function startDailyTask() {
     "0 59 23 * * *",
     async () => {
       await dailyCommentRanking(kotya);
-      await totalComment();
     },
     null,
     true,
@@ -35,6 +34,17 @@ function startDailyTask() {
   
   new CronJob(
   "0 0 0 * * *",
+  async () => {
+      await totalComment();
+      await getMessages(364321548);
+  },
+    null,
+    true,
+    "Asia/Tokyo"
+  );
+
+  new CronJob(
+  "0 0 0 1 * *",
   async () => {
     try {
       const { error } = await supabase
@@ -45,9 +55,6 @@ function startDailyTask() {
       if (error) console.error("message_num reset error:", error);
 
       console.log("message_num reset completed");
-      
-      await getMessages(364321548);
-
     } catch (err) {
       console.error("midnight task error:", err.message);
     }
