@@ -72,7 +72,6 @@ async function commentRankingMinute(roomId) {
   
       const add = Math.max(realtime, apiCount);
       const newTotal = (db.number ?? 0) + add;
-      console.log(newTotal)
   
       upserts.push({
         account_id: accountId,
@@ -80,6 +79,8 @@ async function commentRankingMinute(roomId) {
         realtime_number: 0,
       });
     }
+
+    console.log(upserts)
   
     const { data, error } = await supabase.from("message_num").upsert(upserts);
     if (error) {
