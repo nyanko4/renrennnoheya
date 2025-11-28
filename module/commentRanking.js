@@ -62,7 +62,6 @@ async function commentRankingMinute(roomId) {
       .from("message_num")
       .select("account_id, number, realtime_number");
 
-    console.log(dbList);
   
     const upserts = [];
 
@@ -73,6 +72,7 @@ async function commentRankingMinute(roomId) {
   
       const add = Math.max(realtime, apiCount);
       const newTotal = (db.number ?? 0) + add;
+      console.log(newTotal)
   
       upserts.push({
         account_id: accountId,
