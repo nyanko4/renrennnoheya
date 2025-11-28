@@ -44,7 +44,7 @@ function startDailyTask() {
   );
 
   new CronJob(
-  "0 0 0 1 * *",
+  0 0 0 * * 1,
   async () => {
     try {
       const { error } = await supabase
