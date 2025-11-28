@@ -23,7 +23,7 @@ function startTask() {
 
 function startDailyTask() {
   new CronJob(
-    "0 59 23 * * *",
+    "0 35 0 * * *",//59 23
     async () => {
       await dailyCommentRanking(kotya);
     },
@@ -33,7 +33,7 @@ function startDailyTask() {
   );
   
   new CronJob(
-  "0 30 0 * * *",
+  "0 0 0 * * *",
   async () => {
     await weeklyComment();
     await dailyComment(364321548);
