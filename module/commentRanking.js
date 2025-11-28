@@ -1,5 +1,5 @@
 const supabase = require("../supabase/client");
-const { sendchatwork, sendchatwork_hon, getMessages } = require("../ctr/message");
+const { sendchatwork, sendchatwork_hon, getMessages, getMessageNum } = require("../ctr/message");
 const { isUserAdmin } = require("../ctr/cwdata");
 
 async function commentRanking(body, messageId, roomId, accountId) {
@@ -13,11 +13,11 @@ async function commentRanking(body, messageId, roomId, accountId) {
 }
 
 async function dailyCommentRanking(roomId) {
-  const { messageText, messageTextWeekly } = await getCommentRanking();
-  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}`, roomId);
+  const { messageText, messageTextWeekly, messageTextDaily } = await getCommentRanking(roomId);
+  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n${messageTextDaily}`, roomId);
 }
 
-async function getCommentRanking() {
+async function getCommentRanking(roomId) {
   try {
     const { data, error } = await supabase
       .from("message_num")
@@ -46,9 +46,19 @@ async function getCommentRanking() {
     });
 
     messageText += "[/info]";
-    messageTextTotal += "[/info]";
+    messageTextWeekly += "[/info]";
 
-    return { messageText, messageTextWeekly };
+    const totalMessageNum = await getMessageNum(roomId);
+
+    const { data: beforeTotalMessageNum } = await supabase
+      .from("total_message_num")
+      .select("message_num")
+      .eq("room_id", roomId)
+      .single()
+
+    const messageTextDaily = totalMessageNum - beforeTotalMessageNum;
+
+    return { messageText, messageTextWeekly, messageTextDaily };
 
   } catch (err) {
     console.error("commentRanking error:", err.message);
@@ -119,7 +129,7 @@ async function weeklyComment() {
   try {
     const { data: dbList } = await supabase
       .from("message_num")
-      .select("account_id, number, day_number");
+      .select("account_id, number, day_number, weekly_number");
 
   
     const upserts = [];
@@ -127,12 +137,13 @@ async function weeklyComment() {
     for (const db of dbList) {
       const accountId = db.account_id;
       const number = db.number ?? 0;
+      const weeklyNumber = (db.weekly_number ?? 0) + number;
       const dayNumber = (db.day_number ?? 0) + 1;
     
       upserts.push({
         account_id: accountId,
         number: 0,
-        weekly_number: number,
+        weekly_number: weeklyNumber,
         day_number: dayNumber,
       });
     }
@@ -161,10 +172,23 @@ async function getRankingCommentNum(accountId) {
   return data;
 }
 
+async function dailyComment(roomId) {
+  const totalMessageNum = await getMessageNum(roomId);
+  await supabase
+    .from("total_message_num")
+    .upsert([
+      {
+        room_id: roomId,
+        message_num: totalMessageNum,
+      }
+    ])
+}
+
 module.exports = {
   commentRanking,
   dailyCommentRanking,
   commentRankingRealTime,
   commentRankingMinute,
   weeklyComment,
+  dailyComment,
 };
