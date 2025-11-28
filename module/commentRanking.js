@@ -14,7 +14,7 @@ async function commentRanking(body, messageId, roomId, accountId) {
 
 async function dailyCommentRanking(roomId) {
   const { messageText, messageTextWeekly, messageTextDaily } = await getCommentRanking(roomId);
-  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n${messageTextDaily}`, roomId);
+  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n今日のコメント数: ${messageTextDaily}件`, roomId);
 }
 
 async function getCommentRanking(roomId) {
