@@ -25,10 +25,10 @@ async function sendchatwork(ms, roomId) {
   }
 }
 
-async function sendchatwork_hon(ms) {
+async function sendchatwork_hon(ms, roomId) {
   try {
     await axios.post(
-      `https://api.chatwork.com/v2/rooms/${kanribeya}/messages`,
+      `https://api.chatwork.com/v2/rooms/${roomId}/messages`,
       new URLSearchParams({ body: ms }),
       {
         headers: {
