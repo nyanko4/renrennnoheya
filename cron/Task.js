@@ -36,7 +36,7 @@ function startDailyTask() {
   "0 0 0 * * *",
   async () => {
     await weeklyComment();
-    await dailyComment();
+    await dailyComment(364321548);
     await getMessages(364321548);
   },
     null,
