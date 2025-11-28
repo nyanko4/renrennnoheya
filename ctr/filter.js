@@ -2,6 +2,7 @@ const axios = require("axios");
 const cwdata = require("../ctr/cwdata");
 const msedit = require("../ctr/message");
 const CHATWORK_API_TOKEN = process.env.CWapitoken;
+const kanribeya = process.env.kanribeya;
 
 async function blockMember(roomId, accountIdToBlock, ms) {
   try {
@@ -48,7 +49,7 @@ async function blockMember(roomId, accountIdToBlock, ms) {
         roomId
       );
       await msedit.sendchatwork_hon(
-        `荒らし(${ms})\n[piconname:${accountIdToBlock}]　${accountIdToBlock}`
+        `荒らし(${ms})\n[piconname:${accountIdToBlock}]　${accountIdToBlock}`, kanribeya
       ) 
   } catch (error) {
     console.error(
