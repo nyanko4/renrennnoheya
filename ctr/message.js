@@ -118,6 +118,19 @@ async function getMessages(roomId) {
   }
 }
 
+async function getMessageNum(roomId) {
+  try {
+    const response = await axios.get(`https://api.chatwork.com/v2/rooms/${roomId}`, {
+      headers: {
+        "X-ChatWorkToken": CHATWORK_API_TOKEN,
+      },
+    });
+    return response.data.message_num;
+  } catch (error) {
+    console.error("getRoomInfoError:", error.response?.data || error.message);
+  }
+}
+
 module.exports = {
   sendchatwork,
   sendchatwork_hon,
