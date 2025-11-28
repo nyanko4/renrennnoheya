@@ -74,17 +74,15 @@ async function commentRankingMinute(roomId) {
       const newTotal = (db.number ?? 0) + add;
   
       upserts.push({
-        account_id: accountId,
+        account_id: String(accountId),
         number: newTotal,
         realtime_number: 0,
       });
     }
-
-    console.log(upserts)
   
     const { data, error } = await supabase.from("message_num").upsert(upserts);
     if (error) {
-      console.error(error.message);
+      console.error(error);
     }
   } catch (error) {
     console.error("rankingMinuteError:", error.message);
