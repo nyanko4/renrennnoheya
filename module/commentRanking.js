@@ -13,15 +13,15 @@ async function commentRanking(body, messageId, roomId, accountId) {
 }
 
 async function dailyCommentRanking(roomId) {
-  const { messageText, messageTextTotal } = await getCommentRanking();
-  await sendchatwork_hon(`${messageText}\n${messageTextTotal}`, roomId);
+  const { messageText, messageTextWeekly } = await getCommentRanking();
+  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}`, roomId);
 }
 
 async function getCommentRanking() {
   try {
     const { data, error } = await supabase
       .from("message_num")
-      .select("account_id, number, total_number, day_number")
+      .select("account_id, number, weekly_number, day_number")
       .order("number", { ascending: false })
       .limit(5);
 
@@ -38,17 +38,17 @@ async function getCommentRanking() {
 
     let messageText = `[info][title]ランキング[/title]\n`;
 
-    let messageTextTotal = `[info][title]累計ランキング ${dayNumber}日目[/title]\n`;
+    let messageTextWeekly = `[info][title]累計ランキング ${dayNumber}日目[/title]\n`;
 
     data.forEach((row, index) => {
       messageText += `No.${index + 1}：[piconname:${row.account_id}]（+${row.number}件）\n`;
-      messageTextTotal += `No.${index + 1}：[piconname:${row.account_id}]（+${row.total_number}件）\n`;
+      messageTextWeekly += `No.${index + 1}：[piconname:${row.account_id}]（+${row.weekly_number}件）\n`;
     });
 
     messageText += "[/info]";
     messageTextTotal += "[/info]";
 
-    return { messageText, messageTextTotal };
+    return { messageText, messageTextWeekly };
 
   } catch (err) {
     console.error("commentRanking error:", err.message);
@@ -115,7 +115,7 @@ async function commentRankingMinute(roomId) {
   }
 }
 
-async function totalComment() {
+async function weeklyComment() {
   try {
     const { data: dbList } = await supabase
       .from("message_num")
@@ -127,11 +127,12 @@ async function totalComment() {
     for (const db of dbList) {
       const accountId = db.account_id;
       const number = db.number ?? 0;
-      const dayNumber = db.day_number + 1 ?? 1;
+      const dayNumber = (db.day_number ?? 0) + 1;
     
       upserts.push({
         account_id: accountId,
-        total_number: number,
+        number: 0,
+        weekly_number: number,
         day_number: dayNumber,
       });
     }
@@ -145,7 +146,7 @@ async function totalComment() {
     }
     
   } catch (error) {
-    console.error("totalCommentError:", error.message);
+    console.error("weeklyCommentError:", error.message);
   }
 }
 
@@ -162,7 +163,8 @@ async function getRankingCommentNum(accountId) {
 
 module.exports = {
   commentRanking,
+  dailyCommentRanking,
   commentRankingRealTime,
   commentRankingMinute,
-  totalComment,
+  weeklyComment,
 };
