@@ -137,4 +137,5 @@ module.exports = {
   deleteMessages,
   readmessage,
   getMessages,
+  getMessageNum,
 };
