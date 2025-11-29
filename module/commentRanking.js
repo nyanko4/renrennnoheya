@@ -19,14 +19,24 @@ async function dailyCommentRanking(roomId) {
 
 async function getCommentRanking(roomId) {
   try {
-    const { data, error } = await supabase
+    const { data, error: dayError } = await supabase
       .from("message_num")
-      .select("account_id, number, weekly_number, day_number")
+      .select("account_id, number, day_number")
       .order("number", { ascending: false })
       .limit(5);
 
-    if (error) {
-      console.error(`Supabase fetch error:`, error.message);
+    const { data, error: weeklyError } = await supabase
+      .from("message_num")
+      .select("account_id, weekly_number")
+      .order("weekly_number", { ascending: false })
+      .limit(5);
+
+    if (dayError) {
+      console.error(`Supabase fetch error:`, dayError.message);
+    }
+
+    if (weeklyError) {
+      console.error(`Supabase fetch error:`, weeklyError.message);
     }
 
     const dayNumber = data[0].day_number ?? 0;
@@ -51,7 +61,7 @@ async function getCommentRanking(roomId) {
       .eq("room_id", roomId)
       .single()
 
-    const messageTextDaily = totalMessageNum - beforeTotalMessageNum;
+    const messageTextDaily = totalMessageNum - beforeTotalMessageNum.message_num;
 
     return { messageText, messageTextWeekly, messageTextDaily };
 
