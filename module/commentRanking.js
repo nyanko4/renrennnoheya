@@ -39,8 +39,8 @@ async function getCommentRanking(roomId) {
       console.error(`Supabase fetch error:`, weeklyError.message);
     }
 
-    const dayNumber = dayData[0].day_number ?? 0;
-
+    const dayNumber = dayData?.[0]?.day_number ?? 0;
+    
     let messageText = `[info][title]ランキング[/title]\n`;
 
     let messageTextWeekly = `[info][title]週計ランキング ${dayNumber}日目[/title]\n`;
@@ -49,7 +49,7 @@ async function getCommentRanking(roomId) {
       messageText += `${index + 1}位：[piconname:${row.account_id}]（${row.number}件）\n`;
     });
 
-    dayData.forEach((row, index) => {
+    weeklyData.forEach((row, index) => {
       messageTextWeekly += `${index + 1}位：[piconname:${row.account_id}]（${row.weekly_number}件）\n`;
     });
 
@@ -58,7 +58,7 @@ async function getCommentRanking(roomId) {
 
     const totalMessageNum = await getMessageNum(roomId);
 
-    const { data: beforeTotalMessageNum } = await supabase
+    const { data: beforeData } = await supabase
       .from("total_message_num")
       .select("message_num")
       .eq("room_id", roomId)
