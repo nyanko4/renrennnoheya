@@ -23,7 +23,7 @@ function startTask() {
 
 function startDailyTask() {
   new CronJob(
-    "0 25 0 * * *",
+    "0 59 23 * * *",
     async () => {
       try {
         console.log("23時59分になりました");
