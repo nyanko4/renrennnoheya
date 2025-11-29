@@ -27,11 +27,6 @@ async function getCommentRanking(roomId) {
 
     if (error) {
       console.error(`Supabase fetch error:`, error.message);
-      return "[info][title]エラー[/title]ランキング取得に失敗しました。[/info]";
-    }
-
-    if (!data || data.length === 0) {
-      return "[info][title]ランキング[/title]まだデータがありません。[/info]";
     }
 
     const dayNumber = data[0].day_number ?? 0;
@@ -62,7 +57,6 @@ async function getCommentRanking(roomId) {
 
   } catch (err) {
     console.error("commentRanking error:", err.message);
-    return "[info][title]エラー[/title]不明なエラーが発生しました。[/info]";
   }
 }
 
