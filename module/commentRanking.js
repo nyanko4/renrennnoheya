@@ -19,13 +19,13 @@ async function dailyCommentRanking(roomId) {
 
 async function getCommentRanking(roomId) {
   try {
-    const { data, error: dayError } = await supabase
+    const { data: dayData, error: dayError } = await supabase
       .from("message_num")
       .select("account_id, number, day_number")
       .order("number", { ascending: false })
       .limit(5);
 
-    const { data, error: weeklyError } = await supabase
+    const { data: weeklyData, error: weeklyError } = await supabase
       .from("message_num")
       .select("account_id, weekly_number")
       .order("weekly_number", { ascending: false })
@@ -39,15 +39,18 @@ async function getCommentRanking(roomId) {
       console.error(`Supabase fetch error:`, weeklyError.message);
     }
 
-    const dayNumber = data[0].day_number ?? 0;
+    const dayNumber = dayData[0].day_number ?? 0;
 
     let messageText = `[info][title]ランキング[/title]\n`;
 
-    let messageTextWeekly = `[info][title]累計ランキング ${dayNumber}日目[/title]\n`;
+    let messageTextWeekly = `[info][title]週計ランキング ${dayNumber}日目[/title]\n`;
 
-    data.forEach((row, index) => {
-      messageText += `No.${index + 1}：[piconname:${row.account_id}]（+${row.number}件）\n`;
-      messageTextWeekly += `No.${index + 1}：[piconname:${row.account_id}]（+${row.weekly_number}件）\n`;
+    dayData.forEach((row, index) => {
+      messageText += `${index + 1}位：[piconname:${row.account_id}]（${row.number}件）\n`;
+    });
+
+    dayData.forEach((row, index) => {
+      messageTextWeekly += `${index + 1}位：[piconname:${row.account_id}]（${row.weekly_number}件）\n`;
     });
 
     messageText += "[/info]";
@@ -61,7 +64,9 @@ async function getCommentRanking(roomId) {
       .eq("room_id", roomId)
       .single()
 
-    const messageTextDaily = totalMessageNum - beforeTotalMessageNum.message_num;
+    const before = beforeData?.message_num ?? 0;
+
+    const messageTextDaily = totalMessageNum - before;
 
     return { messageText, messageTextWeekly, messageTextDaily };
 
