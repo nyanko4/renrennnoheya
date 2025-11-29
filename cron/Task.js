@@ -25,6 +25,7 @@ function startDailyTask() {
   new CronJob(
     "0 59 23 * * *",
     async () => {
+      console.log("23時59分になりました");
       await dailyCommentRanking(kotya);
     },
     null,
@@ -35,6 +36,7 @@ function startDailyTask() {
   new CronJob(
   "0 0 0 * * *",
   async () => {
+    console.log("0時になりました");
     await weeklyComment();
     await dailyComment(364321548);
     await getMessages(364321548);
