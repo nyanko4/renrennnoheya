@@ -23,24 +23,10 @@ function startTask() {
 
 function startDailyTask() {
   new CronJob(
-    "0 59 23 * * *",
-    async () => {
-      try {
-        console.log("23時59分になりました");
-        await dailyCommentRanking(kotya);
-      } catch (err) {
-        console.error("dailyCommentRanking error:", err.message);
-      }
-    },
-    null,
-    true,
-    "Asia/Tokyo"
-  );
-  
-  new CronJob(
   "0 0 0 * * *",
   async () => {
     console.log("0時になりました");
+    await dailyCommentRanking(364321548, kotya);
     await weeklyComment();
     await dailyComment(364321548);
     await getMessages(364321548);
