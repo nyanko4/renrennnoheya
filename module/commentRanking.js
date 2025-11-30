@@ -12,17 +12,17 @@ async function commentRanking(body, messageId, roomId, accountId) {
   await sendchatwork(messageText, roomId);
 }
 
-async function dailyCommentRanking(roomId) {
+async function dailyCommentRanking(roomId, kotya) {
   const { messageText, messageTextWeekly, messageTextDaily } = await getCommentRanking(roomId);
-  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n今日のコメント数: ${messageTextDaily}件`, roomId);
+  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n今日のコメント数: ${messageTextDaily}件`, kotya);
 }
 
 async function getCommentRanking(roomId) {
   try {
     const { data: dayData, error: dayError } = await supabase
       .from("message_num")
-      .select("account_id, number, day_number")
-      .order("number", { ascending: false })
+      .select("account_id, number, day_number")kotya
+      .order("number", { ascending: false })kotyakotya
       .limit(5);
 
     const { data: weeklyData, error: weeklyError } = await supabase
