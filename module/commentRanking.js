@@ -2,60 +2,81 @@ const supabase = require("../supabase/client");
 const { sendchatwork, sendchatwork_hon, getMessages, getMessageNum } = require("../ctr/message");
 const { isUserAdmin } = require("../ctr/cwdata");
 
-async function commentRanking(body, messageId, roomId, accountId) {
-  if (!body.match(/^commentranking$/)) return;
-  
-  const isAdmin = await isUserAdmin(accountId, roomId);
-  if (!isAdmin) return;
-
-  const { messageText } = await getCommentRanking();
-  await sendchatwork(messageText, roomId);
-}
-
 async function dailyCommentRanking(roomId, kotya) {
-  const { messageText, messageTextWeekly, messageTextDaily } = await getCommentRanking(roomId);
-  await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n今日のコメント数: ${messageTextDaily}件`, kotya);
+  try {
+    
+    const messageText = await getTodayNumber();
+    await weeklyComment();
+    const messageTextWeekly = await getWeeklyNumber()
+    const messageTextDaily = await getDailyTotalNumber(roomId)
+    
+    await sendchatwork_hon(`${messageText}\n${messageTextWeekly}\n今日のコメント数: ${messageTextDaily}件`, kotya);
+    
+  } catch (err) {
+    console.error("dailyCommentRankingError:", err.message);
+  }
 }
 
-async function getCommentRanking(roomId) {
+async function getTodayNumber() {
   try {
+    
     const { data: dayData, error: dayError } = await supabase
-      .from("message_num")
-      .select("account_id, number, day_number")kotya
-      .order("number", { ascending: false })kotyakotya
-      .limit(5);
-
-    const { data: weeklyData, error: weeklyError } = await supabase
-      .from("message_num")
-      .select("account_id, weekly_number")
-      .order("weekly_number", { ascending: false })
-      .limit(5);
-
+        .from("message_num")
+        .select("account_id, number")
+        .order("number", { ascending: false })
+        .limit(5);
+  
     if (dayError) {
-      console.error(`Supabase fetch error:`, dayError.message);
-    }
+        console.error(`Supabase fetch error:`, dayError.message);
+      }
+    
+    let messageText = `[info][title]ランキング[/title]\n`;
+  
+    dayData.forEach((row, index) => {
+        messageText += `${index + 1}位：[piconname:${row.account_id}]（${row.number}件）\n`;
+      });
+  
+    messageText += "[/info]";
+  
+    return messageText;
+    
+  } catch (error) {
+    console.error("getTodayNumberError", error.message);
+  }
+}
 
+async function getWeeklyNumber() {
+  try {
+        
+    const { data: weeklyData, error: weeklyError } = await supabase
+        .from("message_num")
+        .select("account_id, weekly_number, day_number")
+        .order("weekly_number", { ascending: false })
+        .limit(5);
+  
     if (weeklyError) {
       console.error(`Supabase fetch error:`, weeklyError.message);
     }
-
-    const dayNumber = dayData?.[0]?.day_number ?? 0;
+  
+    const dayNumber = weeklyData?.[0]?.day_number ?? 0;
     
-    let messageText = `[info][title]ランキング[/title]\n`;
-
     let messageTextWeekly = `[info][title]週計ランキング ${dayNumber}日目[/title]\n`;
-
-    dayData.forEach((row, index) => {
-      messageText += `${index + 1}位：[piconname:${row.account_id}]（${row.number}件）\n`;
-    });
-
+  
     weeklyData.forEach((row, index) => {
       messageTextWeekly += `${index + 1}位：[piconname:${row.account_id}]（${row.weekly_number}件）\n`;
     });
-
-    messageText += "[/info]";
+  
     messageTextWeekly += "[/info]";
+  
+    return messageTextWeekly;
+    
+  } catch (error) {
+    console.error("getWeeklyNumberError", error.message);
+  }
+}
 
+async function getDailyTotalNumber(roomId) {
+  try {
     const totalMessageNum = await getMessageNum(roomId);
 
     const { data: beforeData } = await supabase
@@ -67,14 +88,13 @@ async function getCommentRanking(roomId) {
     const before = beforeData?.message_num ?? 0;
 
     const messageTextDaily = totalMessageNum - before;
-
-    return { messageText, messageTextWeekly, messageTextDaily };
-
-  } catch (err) {
-    console.error("commentRanking error:", err.message);
+    
+    return messageTextDaily;
+    
+  } catch (error) {
+    console.error("getDailyTotalNumberError", error.message);
   }
 }
-
 
 async function commentRankingRealTime(body, messageId, roomId, accountId) {
   const data = await getRankingCommentNum(accountId);
@@ -194,10 +214,8 @@ async function dailyComment(roomId) {
 }
 
 module.exports = {
-  commentRanking,
   dailyCommentRanking,
   commentRankingRealTime,
   commentRankingMinute,
-  weeklyComment,
   dailyComment,
 };
