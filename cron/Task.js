@@ -34,27 +34,6 @@ function startDailyTask() {
     true,
     "Asia/Tokyo"
   );
-
-  new CronJob(
-  "0 0 0 * * 1",
-  async () => {
-    try {
-      const { error } = await supabase
-        .from("message_num")
-        .delete()
-        .neq("account_id", 0);
-
-      if (error) console.error("message_num reset error:", error);
-
-      console.log("message_num reset completed");
-    } catch (err) {
-      console.error("midnight task error:", err.message);
-    }
-  },
-    null,
-    true,
-    "Asia/Tokyo"
-  );
 }
 
 
