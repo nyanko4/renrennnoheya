@@ -58,7 +58,14 @@ async function getWeeklyNumber() {
       console.error(`Supabase fetch error:`, weeklyError.message);
     }
   
-    const dayNumber = weeklyData?.[0]?.day_number ?? 0;
+    const { data, error } = await supabase
+      .from("message_num")
+      .select("day_number")
+      .order("day_number", { ascending: false })
+      .limit(1);
+    
+    const dayNumber = data?.[0]?.day_number ?? 0;
+
     
     let messageTextWeekly = `[info][title]週計ランキング ${dayNumber}日目[/title]\n`;
   
