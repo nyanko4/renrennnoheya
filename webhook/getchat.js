@@ -3,7 +3,6 @@ const axios = require("axios");
 const reqcheck = require("../middleware/sign");
 const arashi = require("../module/arashi");
 const { commentRankingRealTime } = require("../module/commentRanking");
-const { readmessage } = require("../ctr/message");
 
 async function getchat(req, res) {
   const c = await reqcheck(req);
@@ -18,7 +17,6 @@ async function getchat(req, res) {
     message_id: messageId,
   } = req.body.webhook_event;
   
-  await readmessage(roomId, messageId);
 
   if (roomId === 364321548) {
     await commentRankingRealTime(body, messageId, roomId, accountId)
